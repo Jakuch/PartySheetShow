@@ -5,12 +5,17 @@ import com.jakuch.IRequireOrder.srd.spells.model.Spell;
 import org.json.JSONObject;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class SpellsFetcherService extends SrdFetcherServiceBase<Spell> {
+
+    public SpellsFetcherService(RestTemplate srdRestTemplate) {
+        super(srdRestTemplate);
+    }
 
     @Override
     protected String getBaseUrl() {

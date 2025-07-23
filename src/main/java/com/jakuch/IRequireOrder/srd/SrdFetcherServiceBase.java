@@ -9,6 +9,12 @@ import java.util.List;
 
 public abstract class SrdFetcherServiceBase<D extends SrdData> {
 
+    private RestTemplate srdRestTemplate;
+
+    public SrdFetcherServiceBase(RestTemplate srdRestTemplate) {
+        this.srdRestTemplate = srdRestTemplate;
+    }
+
     protected abstract String getBaseUrl();
 
     public abstract List<D> fetchAllMappedData();
@@ -18,12 +24,11 @@ public abstract class SrdFetcherServiceBase<D extends SrdData> {
     public abstract D fetchFullDataOfSingleRecord(String srdKey);
 
     public List<JSONObject> fetchAllData() {
-        var restTemplate = new RestTemplate();
         var nextPage = getBaseUrl();
         var allSpells = new ArrayList<JSONObject>();
 
         while (nextPage != null) {
-            var response = restTemplate.getForObject(nextPage, String.class);
+            var response = srdRestTemplate.getForObject(nextPage, String.class);
             var jsonResponse = new JSONObject(response);
 
             var spells = jsonResponse.getJSONArray("results");

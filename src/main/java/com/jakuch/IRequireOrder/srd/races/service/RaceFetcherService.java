@@ -5,12 +5,17 @@ import com.jakuch.IRequireOrder.srd.races.model.Race;
 import org.json.JSONObject;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class RaceFetcherService extends SrdFetcherServiceBase<Race> {
+    public RaceFetcherService(RestTemplate srdRestTemplate) {
+        super(srdRestTemplate);
+    }
+
     @Override
     protected String getBaseUrl() {
         return "https://api.open5e.com/v2/races/";
