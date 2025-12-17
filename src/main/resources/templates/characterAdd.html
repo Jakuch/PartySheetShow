@@ -14,7 +14,8 @@
 <div th:replace="~{templates :: navbar('','active','','')}"></div>
 <main class="container">
     <div style="text-align: center"><h1>Add Character</h1></div>
-    <form id="addCharacterForm" class="row form-control bg-dark text-light mt-2 border border-4 border-dark" action="#" th:action="@{characterAdd}" th:object="${character}" method="post">
+    <form id="addCharacterForm" class="row form-control bg-dark text-light mt-2 border border-4 border-dark" action="#"
+          th:action="@{/characterAdd/submitForm}" th:object="${character}" method="post">
         <div class="col-12">
             <div class="row">
                 <div class="col-2">
@@ -25,7 +26,7 @@
                     <label for="level">Level:</label>
                     <select id="level" class="form-control" type="text" th:field="*{level}">
                         <option th:each="lvl : ${levels}"
-                                th:value="${lvl.numericValue}"
+                                th:value="${lvl}"
                                 th:text="${lvl.numericValue}">
                     </select>
                 </div>
@@ -71,52 +72,38 @@
                 </div>
             </div>
         </div>
-    </form>
-    <form id="addRace" class="row form-control bg-dark text-light mt-2 border border-4 border-dark" action="#" th:action="@{/characterAdd/addRace}" th:object="${chosenRace}" method="post">
-        <div class="col-12">
-            <div class="row">
-                <div class="col-2 mb-2">
-                    <label for="race">Race:</label>
-                    <select id="race" class="form-control" th:field="*{srdKey}" onchange="document.getElementById('addRace').submit()">
-                        <option value="" th:text="'Select a race'"></option>
-                        <option th:each="race : ${races}" th:value="${race.srdKey}" th:text="${race.name}">
-                    </select>
-                </div>
-            </div>
+        <div class="col-2 mb-2">
+            <label for="race">Race:</label>
+            <select id="race" class="form-control" th:field="*{raceKey}">
+                <option value="" th:text="'Select a race'"></option>
+                <option th:each="race : ${races}"
+                        th:value="${race.srdKey}"
+                        th:text="${race.name}">
+            </select>
         </div>
-    </form>
-    <form id="addClass" class="row form-control bg-dark text-light mt-2 border border-4 border-dark" action="#" th:action="@{/characterAdd/addClass}" th:object="${chosenClass}" method="post">
-        <div class="col-12">
-            <div class="row">
-                <div class="col-2 mb-2">
-                    <label for="class">Class:</label>
-                    <select id="class" class="form-control" th:field="*{srdKey}" onchange="document.getElementById('addClass').submit()">
-                        <option value="" th:text="'Select a class'"></option>
-                        <option th:each="class : ${classes}" th:value="${class.srdKey}" th:text="${class.name}">
-                    </select>
-                </div>
-                <div class="col-10" th:object="${character}">
-                    <div th:each="classSrd : *{characterClassSrdKey}">
-                        <div th:text="${classSrd}"></div>
-                    </div>
-                </div>
-            </div>
+        <div class="col-2 mb-2">
+            <label for="class">Class:</label>
+            <select id="class" class="form-control" th:field="*{characterClassKey}">
+                <option value="" th:text="'Select a class'"></option>
+                <option th:each="cls : ${classes}"
+                        th:value="${cls.srdKey}"
+                        th:text="${cls.name}">
+            </select>
         </div>
-    </form>
-    <form id="submitForm" class="row form-control bg-dark text-light mt-2 border border-4 border-dark" action="#" th:action="@{/characterAdd/submitForm}" method="post">
+
         <nav class="navbar navbar-expand-md navbar-dark bg-dark mt-2">
             <div class="container-fluid">
                 <div class="collapse navbar-collapse" id="navbar2">
-                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                        <li class="nav-item">
-                            <input type="submit" value="Submit" class="btn btn-success">
-                        </li>
-                    </ul>
-                    <div class="nav-item">
+                    <div class="nav-item  me-auto mb-2 mb-md-0">
                         <a href="javascript:history.back()" class="btn btn-success me-2">
                             Back
                         </a>
                     </div>
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <input type="submit" value="Submit" class="btn btn-success">
+                        </li>
+                    </ul>
                 </div>
             </div>
         </nav>

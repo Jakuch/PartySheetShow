@@ -3,6 +3,9 @@ package com.jakuch.PartySheetShow.character.model.attributes;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Data
 @NoArgsConstructor
 public class Attribute {
@@ -15,6 +18,11 @@ public class Attribute {
     }
 
     private void calculateBonus() {
-        this.bonus = (this.value-10)/2;
+        this.bonus = (this.value - 10) / 2;
+    }
+
+    public static Map<String, Attribute> initializeDefaultAttributes() {
+        return AttributeName.correctValues().stream()
+                .collect(Collectors.toMap(Enum::name, attributeName -> new Attribute(0)));
     }
 }

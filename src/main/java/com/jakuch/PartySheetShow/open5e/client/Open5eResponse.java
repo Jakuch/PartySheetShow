@@ -7,4 +7,5 @@ public record Open5eResponse<T>(
         String next,
         String previous,
         List<T> results
-) { }
+) {
+}

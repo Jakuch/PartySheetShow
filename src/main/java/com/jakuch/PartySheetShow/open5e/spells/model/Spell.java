@@ -1,20 +1,15 @@
 package com.jakuch.PartySheetShow.open5e.spells.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.jakuch.PartySheetShow.open5e.Open5eData;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class Spell {
-
-    private String name;
+public class Spell extends Open5eData {
 
     private String level;
-
-    @JsonProperty("desc")
-    private String description;
 
     @JsonProperty("casting_time")
     private String castingTime;

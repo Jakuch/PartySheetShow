@@ -18,13 +18,13 @@
     <nav class="navbar navbar-expand-md navbar-dark bg-dark border border-4 border-dark rounded mt-2">
         <div class="container-fluid">
             <div class="collapse navbar-collapse" id="navbar2">
-                <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                </ul>
-                <div class="nav-item">
+                <div class="nav-item me-auto mb-2 mb-md-0">
                     <a href="javascript:history.back()" class="btn btn-success me-2">
                         Back
                     </a>
                 </div>
+                <ul class="navbar-nav">
+                </ul>
             </div>
         </div>
     </nav>
@@ -33,20 +33,22 @@
         <div class="row">
             <div class="col-4">Name</div>
             <div class="col-2">
-                <button class="btn  btn-success btn-toggle d-inline-flex align-items-center rounded border-0" data-bs-toggle="collapse" data-bs-target="#level-collapse" aria-expanded="true">
+                <button class="btn  btn-success btn-toggle d-inline-flex align-items-center rounded border-0"
+                        data-bs-toggle="collapse" data-bs-target="#level-collapse" aria-expanded="true">
                     Level
                 </button>
             </div>
             <div class="col-2">Race</div>
             <div class="col-4">
-                <button class="btn  btn-success btn-toggle d-inline-flex align-items-center rounded border-0" data-bs-toggle="collapse" data-bs-target="#class-collapse" aria-expanded="true">
+                <button class="btn  btn-success btn-toggle d-inline-flex align-items-center rounded border-0"
+                        data-bs-toggle="collapse" data-bs-target="#class-collapse" aria-expanded="true">
                     Class
                 </button>
             </div>
         </div>
         <div class="row">
             <div class="col-4 border border-2 rounded">
-                <div class="mt-1 mb-2"  th:text="*{name}">
+                <div class="mt-1 mb-2" th:text="*{name}">
                     Name
                 </div>
             </div>

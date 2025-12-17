@@ -5,6 +5,9 @@ import com.jakuch.PartySheetShow.character.model.Proficiency;
 import com.jakuch.PartySheetShow.character.model.attributes.AttributeName;
 import com.jakuch.PartySheetShow.character.model.skills.Skill;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class SavingThrow extends Skill {
     public SavingThrow(String name) {
         setName(name);
@@ -20,5 +23,12 @@ public class SavingThrow extends Skill {
             return name.substring(0, index);
         }
         return name;
+    }
+
+    public static List<SavingThrow> initializeSavingThrows() {
+        return AttributeName.correctValues()
+                .stream()
+                .map(attributeName -> new SavingThrow(attributeName.getNormalName() + " saving throw"))
+                .collect(Collectors.toList());
     }
 }

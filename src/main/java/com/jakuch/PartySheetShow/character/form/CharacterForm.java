@@ -1,5 +1,6 @@
 package com.jakuch.PartySheetShow.character.form;
 
+import com.jakuch.PartySheetShow.level.model.Level;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CharacterForm { //TODO its actually for removal Character class should be enough (so whole characterAdd revamp)
+public class CharacterForm {
     private String name;
     private int maxHealth;
     private int currentHealth;
@@ -21,8 +22,8 @@ public class CharacterForm { //TODO its actually for removal Character class sho
     private int intelligence;
     private int wisdom;
     private int charisma;
-    private int level;
+    private Level level;
     private int walkingSpeed;
-    private List<String> characterClassSrdKey = new ArrayList<>();
-    private String raceSrdKey;
+    private List<String> characterClassKey = new ArrayList<>();
+    private String raceKey;
 }

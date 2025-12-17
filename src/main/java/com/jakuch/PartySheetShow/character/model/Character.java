@@ -1,11 +1,8 @@
 package com.jakuch.PartySheetShow.character.model;
 
 import com.jakuch.PartySheetShow.character.model.attributes.Attribute;
-import com.jakuch.PartySheetShow.character.model.attributes.AttributesInitializer;
 import com.jakuch.PartySheetShow.character.model.savingThrows.SavingThrow;
-import com.jakuch.PartySheetShow.character.model.savingThrows.SavingThrowInitializer;
 import com.jakuch.PartySheetShow.character.model.skills.Skill;
-import com.jakuch.PartySheetShow.character.model.skills.SkillsInitializer;
 import com.jakuch.PartySheetShow.level.model.Level;
 import com.jakuch.PartySheetShow.open5e.characterClass.model.CharacterClass;
 import com.jakuch.PartySheetShow.open5e.races.model.Race;
@@ -26,11 +23,11 @@ public class Character {
     private int armorClass;
     private int walkingSpeed;
     private InitiativeBonus initiativeBonus;
-    private Map<String, Attribute> attributes = AttributesInitializer.initializeDefaultAttributes();
+    private Map<String, Attribute> attributes = Attribute.initializeDefaultAttributes();
     private Level level;
     private int currentExperiencePoints;
-    private List<Skill> skills = SkillsInitializer.initializeSkills();
-    private List<SavingThrow> savingThrows = SavingThrowInitializer.initializeSavingThrows();
+    private List<Skill> skills = Skill.initializeSkills();
+    private List<SavingThrow> savingThrows = SavingThrow.initializeSavingThrows();
     private List<CharacterClass> characterClasses = new ArrayList<>();
     private Race race;
     // private PassiveSenses passiveSenses;
@@ -44,7 +41,7 @@ public class Character {
     }
 
     public void removeCustomSkill(String name) {
-        var baseSkills = SkillsInitializer.initializeSkills();
+        var baseSkills = Skill.initializeSkills();
         if (baseSkills.stream().anyMatch(el -> el.getName().equals(name))) {
             throw new UnsupportedOperationException("You can't remove base skills!");
         } else {

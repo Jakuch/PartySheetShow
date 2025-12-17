@@ -16,6 +16,6 @@ public class SpellsController {
 
     @GetMapping("/spells")
     public List<Spell> fetchSpells() {
-        return spellsService.getSpellsPage(1); //TODO change it to fetch actual data that could be needed instead of names
+        return spellsService.getSinglePage(1); //TODO change it to fetch actual data that could be needed instead of names
     }
 }

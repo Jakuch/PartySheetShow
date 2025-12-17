@@ -4,9 +4,9 @@ import com.jakuch.PartySheetShow.character.form.CharacterForm;
 import com.jakuch.PartySheetShow.character.service.CharacterService;
 import com.jakuch.PartySheetShow.level.model.Level;
 import com.jakuch.PartySheetShow.open5e.characterClass.model.CharacterClass;
-import com.jakuch.PartySheetShow.open5e.characterClass.service.CharacterClassFetcherService;
+import com.jakuch.PartySheetShow.open5e.characterClass.service.CharacterClassService;
 import com.jakuch.PartySheetShow.open5e.races.model.Race;
-import com.jakuch.PartySheetShow.open5e.races.service.RaceFetcherService;
+import com.jakuch.PartySheetShow.open5e.races.service.RaceService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @AllArgsConstructor
@@ -25,8 +26,8 @@ import java.util.List;
 public class CharacterAddController {
 
     private CharacterService characterService;
-    private CharacterClassFetcherService characterClassFetcherService;
-    private RaceFetcherService raceFetcherService;
+    private CharacterClassService characterClassService;
+    private RaceService raceService;
 
     @ModelAttribute("levels")
     public List<Level> levels() {
@@ -35,12 +36,12 @@ public class CharacterAddController {
 
     @ModelAttribute("classes")
     public List<CharacterClass> classes() {
-        return characterClassFetcherService.fetchAllMappedData();
+        return characterClassService.getAllMainClasses();
     }
 
     @ModelAttribute("races")
     public List<Race> races() {
-        return raceFetcherService.fetchAllMappedData();
+        return raceService.getAll();
     }
 
     @GetMapping("/characterAdd")
@@ -62,8 +63,8 @@ public class CharacterAddController {
     @PostMapping("/characterAdd/addRace")
     public String addRace(Race chosenRace, Model model) {
         if (!chosenRace.getSrdKey().isEmpty()) {
-            var race = raceFetcherService.fetchFullDataOfSingleRecord(chosenRace.getSrdKey());//TODO instead fetch full data (like features by level and so on)
-            ((CharacterForm) model.getAttribute("character")).setRaceSrdKey(race.getSrdKey());
+            var race = raceService.getByKey(chosenRace.getSrdKey());//TODO instead fetch full data (like features by level and so on)
+            race.ifPresent(r -> ((CharacterForm) Objects.requireNonNull(model.getAttribute("character"))).setRaceKey(r.getSrdKey()));
             model.addAttribute("chosenRace", race);
         }
 
@@ -73,8 +74,8 @@ public class CharacterAddController {
     @PostMapping("/characterAdd/addClass")
     public String addClass(CharacterClass chosenClass, Model model) {
         if (!chosenClass.getSrdKey().isEmpty()) {
-            var clazz = characterClassFetcherService.fetchFullDataOfSingleRecord(chosenClass.getSrdKey());//TODO instead fetch full data (like features by level and so on)
-            ((CharacterForm) model.getAttribute("character")).getCharacterClassSrdKey().add(clazz.getSrdKey());
+            var clazz = characterClassService.getByKey(chosenClass.getSrdKey());//TODO instead fetch full data (like features by level and so on)
+            clazz.ifPresent(c -> ((CharacterForm) Objects.requireNonNull(model.getAttribute("character"))).getCharacterClassKey().add(c.getSrdKey()));
             model.addAttribute("chosenClass", clazz);
         }
 

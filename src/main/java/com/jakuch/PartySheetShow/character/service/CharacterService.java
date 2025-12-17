@@ -4,28 +4,28 @@ import com.jakuch.PartySheetShow.character.form.CharacterForm;
 import com.jakuch.PartySheetShow.character.model.Advantage;
 import com.jakuch.PartySheetShow.character.model.Character;
 import com.jakuch.PartySheetShow.character.model.InitiativeBonus;
-import com.jakuch.PartySheetShow.level.model.Level;
+import com.jakuch.PartySheetShow.character.model.Proficiency;
 import com.jakuch.PartySheetShow.character.model.attributes.Attribute;
 import com.jakuch.PartySheetShow.character.model.attributes.AttributeName;
-import com.jakuch.PartySheetShow.character.model.Proficiency;
 import com.jakuch.PartySheetShow.character.model.skills.Skill;
 import com.jakuch.PartySheetShow.character.repository.CharacterRepository;
-import com.jakuch.PartySheetShow.open5e.characterClass.service.CharacterClassFetcherService;
-import com.jakuch.PartySheetShow.open5e.races.service.RaceFetcherService;
+import com.jakuch.PartySheetShow.open5e.characterClass.service.CharacterClassService;
+import com.jakuch.PartySheetShow.open5e.races.service.RaceService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class CharacterService {
 
     private CharacterRepository characterRepository;
-    private CharacterClassFetcherService characterClassFetcherService;
-    private RaceFetcherService raceFetcherService;
+    private CharacterClassService characterClassService;
+    private RaceService raceService;
 
     public List<Character> findAll() {
         return characterRepository.findAll();
@@ -54,7 +54,7 @@ public class CharacterService {
     private Character formToPojo(CharacterForm characterForm) {
         var character = new Character();
 
-        character.setLevel(Level.findByNumericValue(characterForm.getLevel()));
+        character.setLevel(characterForm.getLevel());
         character.setAttributes(getAttributes(characterForm));
 
         character.setCurrentExperiencePoints(character.getLevel().getRequiredExperience());
@@ -71,14 +71,15 @@ public class CharacterService {
         character.getSavingThrows()
                 .forEach(savingThrow -> savingThrow.setValue(calculateBonus(savingThrow, character)));
 
-        var classes = characterForm.getCharacterClassSrdKey()
+        var classes = characterForm.getCharacterClassKey()
                 .stream()
-                .map(el -> characterClassFetcherService.fetchMappedSingleRecord(el))
+                .map(el -> characterClassService.getByKey(el))
+                .flatMap(Optional::stream)
                 .toList();
 
         character.getCharacterClasses().addAll(classes);
 
-        character.setRace(raceFetcherService.fetchMappedSingleRecord(characterForm.getRaceSrdKey()));
+        raceService.getByKey(characterForm.getRaceKey()).ifPresent(character::setRace);
 
         return character;
     }

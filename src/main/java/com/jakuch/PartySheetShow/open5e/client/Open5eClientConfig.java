@@ -32,15 +32,4 @@ public class Open5eClientConfig {
                 .requestFactory(factory)
                 .build();
     }
-
-    @Bean
-    public RestClient open5eNextPageRestClient() {
-        var factory = new SimpleClientHttpRequestFactory();
-        factory.setConnectTimeout(Duration.ofMinutes(10));
-        factory.setReadTimeout(Duration.ofMinutes(10));
-
-        return RestClient.builder()
-                .requestFactory(factory)
-                .build();
-    }
 }

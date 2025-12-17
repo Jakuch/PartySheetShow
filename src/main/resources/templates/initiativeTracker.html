@@ -29,7 +29,8 @@
                 </thead>
                 <tbody>
                 <tr th:each="initiative,iter : *{initiativeList}">
-                    <td><input id="character-name" type="text" th:field="*{initiativeList[__${iter.index}__].characterName}"></td>
+                    <td><input id="character-name" type="text"
+                               th:field="*{initiativeList[__${iter.index}__].characterName}"></td>
                     <td><input id="initiative" type="text" th:field="*{initiativeList[__${iter.index}__].value}"></td>
                     <td><input id="armor-class" type="text" th:field="*{initiativeList[__${iter.index}__].armorClass}">
                     </td>
@@ -44,7 +45,12 @@
             <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
                 <div class="container-fluid">
                     <div class="collapse navbar-collapse" id="navbar2">
-                        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                        <div class="nav-item  me-auto mb-2 mb-md-0">
+                            <a href="javascript:history.back()" class="btn btn-success me-2">
+                                Back
+                            </a>
+                        </div>
+                        <ul class="navbar-nav">
                             <li class="nav-item">
                                 <button type="submit" name="addRow" class="btn btn-success me-2">
                                     Add row
@@ -67,18 +73,13 @@
                             </li>
                             <li class="nav-item">
                                 <form action="#" th:action="@{/initiativeTracker}" method="post">
-                                        <button type="submit" name="loadTracker" class="btn btn-success">
-                                            Load
-                                        </button>
-                                        <label for="id">Id:</label><input id="id" type="text" th:name="id" class="me-2">
+                                    <button type="submit" name="loadTracker" class="btn btn-success">
+                                        Load
+                                    </button>
+                                    <label for="id">Id:</label><input id="id" type="text" th:name="id" class="me-2">
                                 </form>
                             </li>
                         </ul>
-                        <div class="nav-item">
-                            <a href="javascript:history.back()" class="btn btn-success me-2">
-                                Back
-                            </a>
-                        </div>
                     </div>
                 </div>
             </nav>
