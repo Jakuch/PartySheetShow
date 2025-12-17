@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.jakuch</groupId>
-	<artifactId>IRequireOrder</artifactId>
+	<artifactId>PartySheetShow</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>IRequireOrder</name>
+	<name>PartySheetShow</name>
 	<description>Initiative tracker for your DnD campaign</description>
 	<url/>
 	<licenses>
@@ -55,10 +55,6 @@
 
 		<!-- CACHE -->
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-cache</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.github.ben-manes.caffeine</groupId>
 			<artifactId>caffeine</artifactId>
 		</dependency>
@@ -68,7 +64,6 @@
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
 
-		<!-- DATABASE -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

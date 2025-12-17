@@ -1,0 +1,8 @@
+spring.application.name: PartySheetShow
+
+management.endpoints.web.exposure.include: mappings
+
+server.error.path: /error
+server.error.whitelabel.enabled: false
+
+spring.data.mongodb.uri: "mongodb+srv://${MONGO_USER}:${MONGO_PASS}@${MONGO_HOST}/${MONGO_DB}?appName=PartySheetShow"
