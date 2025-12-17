@@ -1,6 +1,6 @@
-package com.jakuch.PartySheetShow.character.form;
+package com.jakuch.PartySheetShow.player.character.form;
 
-import com.jakuch.PartySheetShow.level.model.Level;
+import com.jakuch.PartySheetShow.player.level.model.Level;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

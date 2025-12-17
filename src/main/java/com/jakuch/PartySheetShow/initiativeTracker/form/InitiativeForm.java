@@ -1,6 +1,6 @@
 package com.jakuch.PartySheetShow.initiativeTracker.form;
 
-import com.jakuch.PartySheetShow.character.model.Character;
+import com.jakuch.PartySheetShow.player.character.model.Character;
 import com.jakuch.PartySheetShow.initiativeTracker.model.Initiative;
 import lombok.Getter;
 import lombok.Setter;

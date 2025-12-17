@@ -1,8 +1,8 @@
-package com.jakuch.PartySheetShow.character.controller;
+package com.jakuch.PartySheetShow.player.character.controller;
 
-import com.jakuch.PartySheetShow.character.model.Character;
-import com.jakuch.PartySheetShow.character.model.attributes.AttributeName;
-import com.jakuch.PartySheetShow.character.service.CharacterService;
+import com.jakuch.PartySheetShow.player.character.model.Character;
+import com.jakuch.PartySheetShow.player.character.model.attributes.AttributeName;
+import com.jakuch.PartySheetShow.player.character.service.CharacterService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

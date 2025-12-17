@@ -12,15 +12,6 @@ import java.time.Duration;
 @Configuration
 public class Open5eClientConfig {
 
-    //TODO remove this old man in favor of RestClient as gods commanded
-    @Bean
-    public RestTemplate srdRestTemplate() {
-        return new RestTemplateBuilder()
-                .setConnectTimeout(Duration.ofSeconds(10))
-                .setReadTimeout(Duration.ofMinutes(10))
-                .build();
-    }
-
     @Bean
     public RestClient open5eRestClient() {
         var factory = new SimpleClientHttpRequestFactory();

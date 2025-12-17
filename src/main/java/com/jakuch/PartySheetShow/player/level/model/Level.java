@@ -1,4 +1,4 @@
-package com.jakuch.PartySheetShow.level.model;
+package com.jakuch.PartySheetShow.player.level.model;
 
 import lombok.Getter;
 

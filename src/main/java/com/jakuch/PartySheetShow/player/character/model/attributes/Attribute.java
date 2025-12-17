@@ -1,4 +1,4 @@
-package com.jakuch.PartySheetShow.character.model.attributes;
+package com.jakuch.PartySheetShow.player.character.model.attributes;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

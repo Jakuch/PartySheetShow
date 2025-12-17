@@ -1,9 +1,9 @@
-package com.jakuch.PartySheetShow.character.model;
+package com.jakuch.PartySheetShow.player.character.model;
 
-import com.jakuch.PartySheetShow.character.model.attributes.Attribute;
-import com.jakuch.PartySheetShow.character.model.savingThrows.SavingThrow;
-import com.jakuch.PartySheetShow.character.model.skills.Skill;
-import com.jakuch.PartySheetShow.level.model.Level;
+import com.jakuch.PartySheetShow.player.character.model.attributes.Attribute;
+import com.jakuch.PartySheetShow.player.character.model.savingThrows.SavingThrow;
+import com.jakuch.PartySheetShow.player.character.model.skills.Skill;
+import com.jakuch.PartySheetShow.player.level.model.Level;
 import com.jakuch.PartySheetShow.open5e.characterClass.model.CharacterClass;
 import com.jakuch.PartySheetShow.open5e.races.model.Race;
 import lombok.Data;

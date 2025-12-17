@@ -1,4 +1,4 @@
-package com.jakuch.PartySheetShow.dice.model;
+package com.jakuch.PartySheetShow.player.dice.model;
 
 import lombok.Getter;
 

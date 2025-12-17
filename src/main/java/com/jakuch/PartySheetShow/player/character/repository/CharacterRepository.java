@@ -1,6 +1,6 @@
-package com.jakuch.PartySheetShow.character.repository;
+package com.jakuch.PartySheetShow.player.character.repository;
 
-import com.jakuch.PartySheetShow.character.model.Character;
+import com.jakuch.PartySheetShow.player.character.model.Character;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface CharacterRepository extends MongoRepository<Character, String> {

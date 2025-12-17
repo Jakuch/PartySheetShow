@@ -1,6 +1,6 @@
 package com.jakuch.PartySheetShow.initiativeTracker.service;
 
-import com.jakuch.PartySheetShow.character.repository.CharacterRepository;
+import com.jakuch.PartySheetShow.player.character.repository.CharacterRepository;
 import com.jakuch.PartySheetShow.initiativeTracker.form.InitiativeForm;
 import com.jakuch.PartySheetShow.initiativeTracker.form.InitiativeTrackerForm;
 import com.jakuch.PartySheetShow.initiativeTracker.model.InitiativeTracker;

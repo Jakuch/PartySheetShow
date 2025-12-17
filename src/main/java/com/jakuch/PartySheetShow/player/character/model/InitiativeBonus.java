@@ -1,4 +1,4 @@
-package com.jakuch.PartySheetShow.character.model;
+package com.jakuch.PartySheetShow.player.character.model;
 
 import lombok.Data;
 

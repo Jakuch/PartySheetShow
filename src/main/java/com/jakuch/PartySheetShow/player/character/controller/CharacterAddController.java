@@ -1,8 +1,8 @@
-package com.jakuch.PartySheetShow.character.controller;
+package com.jakuch.PartySheetShow.player.character.controller;
 
-import com.jakuch.PartySheetShow.character.form.CharacterForm;
-import com.jakuch.PartySheetShow.character.service.CharacterService;
-import com.jakuch.PartySheetShow.level.model.Level;
+import com.jakuch.PartySheetShow.player.character.form.CharacterForm;
+import com.jakuch.PartySheetShow.player.character.service.CharacterService;
+import com.jakuch.PartySheetShow.player.level.model.Level;
 import com.jakuch.PartySheetShow.open5e.characterClass.model.CharacterClass;
 import com.jakuch.PartySheetShow.open5e.characterClass.service.CharacterClassService;
 import com.jakuch.PartySheetShow.open5e.races.model.Race;

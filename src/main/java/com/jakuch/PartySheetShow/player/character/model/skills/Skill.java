@@ -1,8 +1,8 @@
-package com.jakuch.PartySheetShow.character.model.skills;
+package com.jakuch.PartySheetShow.player.character.model.skills;
 
-import com.jakuch.PartySheetShow.character.model.Advantage;
-import com.jakuch.PartySheetShow.character.model.Proficiency;
-import com.jakuch.PartySheetShow.character.model.attributes.AttributeName;
+import com.jakuch.PartySheetShow.player.character.model.Advantage;
+import com.jakuch.PartySheetShow.player.character.model.Proficiency;
+import com.jakuch.PartySheetShow.player.character.model.attributes.AttributeName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

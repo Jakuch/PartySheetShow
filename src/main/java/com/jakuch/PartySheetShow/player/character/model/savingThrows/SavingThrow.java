@@ -1,9 +1,9 @@
-package com.jakuch.PartySheetShow.character.model.savingThrows;
+package com.jakuch.PartySheetShow.player.character.model.savingThrows;
 
-import com.jakuch.PartySheetShow.character.model.Advantage;
-import com.jakuch.PartySheetShow.character.model.Proficiency;
-import com.jakuch.PartySheetShow.character.model.attributes.AttributeName;
-import com.jakuch.PartySheetShow.character.model.skills.Skill;
+import com.jakuch.PartySheetShow.player.character.model.Advantage;
+import com.jakuch.PartySheetShow.player.character.model.Proficiency;
+import com.jakuch.PartySheetShow.player.character.model.attributes.AttributeName;
+import com.jakuch.PartySheetShow.player.character.model.skills.Skill;
 
 import java.util.List;
 import java.util.stream.Collectors;

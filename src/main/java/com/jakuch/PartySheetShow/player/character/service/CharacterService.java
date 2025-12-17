@@ -1,14 +1,14 @@
-package com.jakuch.PartySheetShow.character.service;
+package com.jakuch.PartySheetShow.player.character.service;
 
-import com.jakuch.PartySheetShow.character.form.CharacterForm;
-import com.jakuch.PartySheetShow.character.model.Advantage;
-import com.jakuch.PartySheetShow.character.model.Character;
-import com.jakuch.PartySheetShow.character.model.InitiativeBonus;
-import com.jakuch.PartySheetShow.character.model.Proficiency;
-import com.jakuch.PartySheetShow.character.model.attributes.Attribute;
-import com.jakuch.PartySheetShow.character.model.attributes.AttributeName;
-import com.jakuch.PartySheetShow.character.model.skills.Skill;
-import com.jakuch.PartySheetShow.character.repository.CharacterRepository;
+import com.jakuch.PartySheetShow.player.character.form.CharacterForm;
+import com.jakuch.PartySheetShow.player.character.model.Advantage;
+import com.jakuch.PartySheetShow.player.character.model.Character;
+import com.jakuch.PartySheetShow.player.character.model.InitiativeBonus;
+import com.jakuch.PartySheetShow.player.character.model.Proficiency;
+import com.jakuch.PartySheetShow.player.character.model.attributes.Attribute;
+import com.jakuch.PartySheetShow.player.character.model.attributes.AttributeName;
+import com.jakuch.PartySheetShow.player.character.model.skills.Skill;
+import com.jakuch.PartySheetShow.player.character.repository.CharacterRepository;
 import com.jakuch.PartySheetShow.open5e.characterClass.service.CharacterClassService;
 import com.jakuch.PartySheetShow.open5e.races.service.RaceService;
 import lombok.AllArgsConstructor;

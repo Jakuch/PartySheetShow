@@ -1,8 +1,8 @@
 package com.jakuch.PartySheetShow.open5e.characterClass.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.jakuch.PartySheetShow.dice.model.DiceType;
-import com.jakuch.PartySheetShow.level.model.Level;
+import com.jakuch.PartySheetShow.player.dice.model.DiceType;
+import com.jakuch.PartySheetShow.player.level.model.Level;
 import com.jakuch.PartySheetShow.open5e.Open5eData;
 import lombok.Data;
 import lombok.NoArgsConstructor;

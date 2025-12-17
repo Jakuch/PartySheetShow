@@ -1,6 +1,6 @@
-package com.jakuch.PartySheetShow.character.model;
+package com.jakuch.PartySheetShow.player.character.model;
 
-import com.jakuch.PartySheetShow.dice.model.DiceType;
+import com.jakuch.PartySheetShow.player.dice.model.DiceType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
