@@ -18,10 +18,12 @@ public class Character {
     @Id
     private String id;
     private String name;
-    private int maxHealth;
-    private int currentHealth;
+    private int maxHealth; //TODO remove moved to Health
+    private int currentHealth; //TODO remove moved to Health
+    private int tempHealth; //TODO remove moved to Health
+    private Health health;
     private int armorClass;
-    private int walkingSpeed;
+    private int walkingSpeed; //TODO remove moved to Race
     private InitiativeBonus initiativeBonus;
     private Map<String, Attribute> attributes = Attribute.initializeDefaultAttributes();
     private Level level;

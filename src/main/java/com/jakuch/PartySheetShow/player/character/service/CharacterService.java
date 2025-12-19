@@ -63,6 +63,7 @@ public class CharacterService {
         character.setName(characterForm.getName());
         character.setMaxHealth(characterForm.getMaxHealth());
         character.setCurrentHealth(characterForm.getCurrentHealth());
+        character.setTempHealth(0);
         character.setArmorClass(characterForm.getArmorClass());
 
         character.getSkills()

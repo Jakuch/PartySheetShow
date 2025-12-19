@@ -5,6 +5,7 @@ import com.jakuch.PartySheetShow.player.character.model.attributes.AttributeName
 import com.jakuch.PartySheetShow.player.character.service.CharacterService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,18 +20,10 @@ public class CharacterController {
 
     private CharacterService characterService;
 
-    @ModelAttribute("characters")
-    public List<Character> findAll() {
-        return characterService.findAll();
-    }
-
-    @ModelAttribute("attributeNames")
-    public List<AttributeName> attributes() {
-        return AttributeName.correctValues();
-    }
-
     @GetMapping("/characters")
-    public String characters() {
+    public String characters(Model model) {
+        model.addAttribute("characters", characterService.findAll());
+        model.addAttribute("attributeNames", AttributeName.correctValues());
         return "characters";
     }
 

@@ -36,7 +36,7 @@ public class CharacterAddController {
 
     @ModelAttribute("classes")
     public List<CharacterClass> classes() {
-        return characterClassService.getAllMainClasses();
+        return characterClassService.getAllClasses();
     }
 
     @ModelAttribute("races")

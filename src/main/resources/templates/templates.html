@@ -7,9 +7,9 @@
     <title>Title</title>
 </head>
 <body>
-<nav class="navbar navbar-expand-md navbar-dark bg-dark" th:fragment="navbar(home, characters, tracker, levels)">
+<nav class="navbar navbar-expand-md navbar-dark bg-dark" th:fragment="navbar(home, users, characters, tracker, levels)" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
     <div class="container-fluid">
-        <img src="/images/d20.png" class="navbar-brand" href="/home.html" th:href="@{/home}" style="height: 50px">
+        <img src="/images/d20.png" class="navbar-brand" style="height: 50px">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
                 aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -22,7 +22,12 @@
                         Home
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" sec:authorize="hasAuthority('ROLE_ADMIN')">
+                    <a href="/admin/users.html" th:href="@{/admin/users}" class="nav-link link-body-emphasis px-2">
+                        Users
+                    </a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
                     <a href="/characters.html" th:href="@{/characters}" class="nav-link link-body-emphasis px-2"
                        th:classappend="${characters}">
                         Characters
@@ -34,7 +39,7 @@
                         Initiative Tracker
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" sec:authorize="isAuthenticated()">
                     <a href="/levelsTable.html" th:href="@{/levelsTable}" class="nav-link link-body-emphasis px-2"
                        th:classappend="${levels}">
                         Levels cheat sheet
@@ -45,9 +50,12 @@
                 <button class="btn btn-outline-light me-2" type="submit" hidden>Search</button>
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" hidden>
             </form>
-            <div class="nav-item" hidden>
-                <button type="button" class="btn btn-outline-success me-2">Login</button>
-                <button type="button" class="btn btn-success">Sign-up</button>
+            <div class="nav-item d-flex">
+                <a class="btn btn-outline-success me-2" th:href="@{/login}" sec:authorize="isAnonymous()">Log in</a>
+                <form th:action="@{/logout}" method="post" >
+                    <button class="btn btn-outline-success me-2" type="submit" sec:authorize="isAuthenticated()">Logout</button>
+                </form>
+                <a class="btn btn-success me-2" th:href="@{/register}" sec:authorize="isAnonymous()">Register</a>
             </div>
         </div>
     </div>

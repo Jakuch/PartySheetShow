@@ -6,42 +6,29 @@
     <meta charset="UTF-8">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
     <title>Party Sheet Show</title>
 
 </head>
 <body>
-<div th:replace="~{templates :: navbar('','','active','','')}"></div>
+<div th:replace="~{templates :: navbar('','active','','','')}"></div>
 <main class="d-flex flex-nowrap">
     <div class="container d-flex flex-column flex-shrink-0 p-3">
         <table class="table table-hover table-striped table-dark" style="margin-bottom: auto;">
             <tr>
                 <th></th>
                 <th>Name</th>
-                <th>Armor Class</th>
-                <th>Hit Points</th>
-                <th>Strength</th>
-                <th>Dexterity</th>
-                <th>Constitution</th>
-                <th>Intelligence</th>
-                <th>Wisdom</th>
-                <th>Charisma</th>
+                <th>Roles</th>
             </tr>
-            <tr th:each="character : ${characters}">
+            <tr th:each="user : ${users}">
                 <td>
-                    <form th:action="@{characters}" method="post">
-                        <input type="hidden" name="id" th:value="${character.id}">
-                        <input type="submit" name="characterSheet" value="Character sheet" class="btn btn-success">
+                    <form th:action="@{users}" method="post">
+                        <input type="hidden" name="id" th:value="${user.id}">
                         <input type="submit" name="delete" value="Delete" class="btn btn-success">
                     </form>
                 </td>
-                <td th:text="${character.name}"></td>
-                <td th:text="${character.armorClass}"></td>
-                <td th:text="${character.maxHealth}"></td>
-                <div th:each="attributeName : ${attributeNames}">
-                    <td th:if="${character.attributes}"
-                        th:text="${character.attributes.get(attributeName.name()).getValue()}"></td>
-                </div>
+                <td th:text="${user.username}"></td>
+                <td th:text="${user.roles}"></td>
             </tr>
         </table>
         <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
@@ -54,8 +41,8 @@
                     </div>
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a href="/characterAdd.html" th:href="@{/characterAdd}" class="btn btn-success me-2">
-                                Add character
+                            <a href="/userAdd.html" th:href="@{/userAdd}" class="btn btn-success me-2" hidden>
+                                Add user
                             </a>
                         </li>
                     </ul>

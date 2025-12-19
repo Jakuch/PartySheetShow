@@ -22,7 +22,11 @@ public class CharacterClassService extends Open5eServiceBase<CharacterClass> {
     }
 
     @Cacheable("classesAll")
-    public List<CharacterClass> getAllMainClasses() {
+    public List<CharacterClass> getAllClasses() {
         return getAll().stream().filter(characterClass -> characterClass.getSubclass() == null).collect(Collectors.toList());
+    }
+
+    public List<CharacterClass> getAllSubclassesForClass(String srdClassKey) {
+        return null;
     }
 }

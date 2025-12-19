@@ -25,7 +25,7 @@ public enum Level {
     SEVENTEENTH(17, 225000, 265000, 30000, 6),
     EIGHTEENTH(18, 265000, 305000, 40000, 6),
     NINETEENTH(19, 305000, 355000, 40000, 6),
-    TWENTIETH(20, 355000, Integer.MAX_VALUE, 50000, 6);
+    TWENTIETH(20, 355000, 0, 50000, 6);
 
     private final int numericValue;
     private final int requiredExperience;
