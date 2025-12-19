@@ -25,6 +25,7 @@ public class SecurityConfig {
                                         "/login",
                                         "/register",
                                         "/initiativeTracker",
+                                        "/levelsTable",
                                         "/css/**",
                                         "/js/**",
                                         "/images/**"
