@@ -1,34 +1,19 @@
 package com.jakuch.PartySheetShow.player.character.model.savingThrows;
 
+import com.jakuch.PartySheetShow.open5e.attributes.model.Skill;
 import com.jakuch.PartySheetShow.player.character.model.Advantage;
 import com.jakuch.PartySheetShow.player.character.model.Proficiency;
-import com.jakuch.PartySheetShow.player.character.model.attributes.AttributeName;
-import com.jakuch.PartySheetShow.player.character.model.skills.Skill;
+import com.jakuch.PartySheetShow.open5e.attributes.model.AttributeName;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class SavingThrow extends Skill {
-    public SavingThrow(String name) {
+    public SavingThrow(String name,int value) {
         setName(name);
-        setValue(0);
+        setValue(value);
         setProficiency(Proficiency.NONE);
         setAdvantage(Advantage.NONE);
-        setModifier(AttributeName.findByName(trimNameIfNeeded(name)));
-    }
-
-    private String trimNameIfNeeded(String name) {
-        int index = name.indexOf(" ");
-        if (index != -1) {
-            return name.substring(0, index);
-        }
-        return name;
-    }
-
-    public static List<SavingThrow> initializeSavingThrows() {
-        return AttributeName.correctValues()
-                .stream()
-                .map(attributeName -> new SavingThrow(attributeName.getNormalName() + " saving throw"))
-                .collect(Collectors.toList());
+        setModifier(AttributeName.findByName(name).getSrdKey());
     }
 }

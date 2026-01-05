@@ -32,15 +32,15 @@
                     <form th:action="@{characters}" method="post">
                         <input type="hidden" name="id" th:value="${character.id}">
                         <input type="submit" name="characterSheet" value="Character sheet" class="btn btn-success">
-                        <input type="submit" name="delete" value="Delete" class="btn btn-success">
+                        <input type="submit" name="delete" value="Delete" class="btn btn-danger">
                     </form>
                 </td>
                 <td th:text="${character.name}"></td>
                 <td th:text="${character.armorClass}"></td>
-                <td th:text="${character.maxHealth}"></td>
+                <td th:text="${character.health.max}"></td>
                 <div th:each="attributeName : ${attributeNames}">
                     <td th:if="${character.attributes}"
-                        th:text="${character.attributes.get(attributeName.name()).getValue()}"></td>
+                        th:text="${character.getAttribute(attributeName.getSrdKey()).getValue()}"></td>
                 </div>
             </tr>
         </table>

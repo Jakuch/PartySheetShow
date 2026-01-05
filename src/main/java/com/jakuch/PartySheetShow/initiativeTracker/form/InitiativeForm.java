@@ -1,12 +1,11 @@
 package com.jakuch.PartySheetShow.initiativeTracker.form;
 
-import com.jakuch.PartySheetShow.player.character.model.Character;
 import com.jakuch.PartySheetShow.initiativeTracker.model.Initiative;
-import lombok.Getter;
-import lombok.Setter;
+import com.jakuch.PartySheetShow.player.character.model.Character;
+import com.jakuch.PartySheetShow.player.character.model.Health;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class InitiativeForm {
 
     private String characterName;
@@ -29,23 +28,26 @@ public class InitiativeForm {
         Character character = new Character();
         character.setName(this.getCharacterName());
         character.setArmorClass(this.getArmorClass());
-        character.setCurrentHealth(this.getCurrentHp());
-        character.setMaxHealth(this.getMaxHp());
+        character.setHealth(
+                Health.builder()
+                        .current(this.getCurrentHp())
+                        .max(this.getMaxHp())
+                        .build()
+        );
         return character;
     }
 
-    public static InitiativeForm toDto(Initiative initiative, Character character) {
-        var initiativeDto = new InitiativeForm();
+    public static InitiativeForm toForm(Initiative initiative, Character character) {
+        var initiativeForm = new InitiativeForm();
 
-        initiativeDto.setValue(initiative.getValue());
-        initiativeDto.setNotes(initiative.getNotes());
+        initiativeForm.setValue(initiative.getValue());
+        initiativeForm.setNotes(initiative.getNotes());
 
-        initiativeDto.setCharacterName(character.getName());
-        initiativeDto.setArmorClass(character.getArmorClass());
-        initiativeDto.setCurrentHp(character.getCurrentHealth());
-        initiativeDto.setMaxHp(character.getMaxHealth());
+        initiativeForm.setCharacterName(character.getName());
+        initiativeForm.setArmorClass(character.getArmorClass());
+        initiativeForm.setCurrentHp(character.getHealth().getCurrent());
+        initiativeForm.setMaxHp(character.getHealth().getMax());
 
-
-        return initiativeDto;
+        return initiativeForm;
     }
 }

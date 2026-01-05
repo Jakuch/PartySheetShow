@@ -1,12 +1,17 @@
 package com.jakuch.PartySheetShow
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.jakuch.PartySheetShow.initiativeTracker.repository.InitiativeTrackerRepository
+import com.jakuch.PartySheetShow.open5e.characterClass.service.CharacterClassService
+import com.jakuch.PartySheetShow.open5e.client.Open5eClient
+import com.jakuch.PartySheetShow.open5e.races.service.RaceService
 import com.jakuch.PartySheetShow.player.character.repository.CharacterRepository
 import com.jakuch.PartySheetShow.security.model.AppUser
 import com.jakuch.PartySheetShow.security.model.UserRole
 import com.jakuch.PartySheetShow.security.repository.UsersRepository
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Test
+import org.mockito.Mock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -29,6 +34,12 @@ abstract class TestsBase {
     @MockBean
     protected lateinit var passwordEncoder: PasswordEncoder
 
+    @MockBean
+    protected lateinit var characterClassService: CharacterClassService
+
+    @MockBean
+    protected lateinit var raceService: RaceService
+
     @Autowired
     protected lateinit var usersRepository: UsersRepository
 
@@ -45,8 +56,8 @@ abstract class TestsBase {
         characterRepository.deleteAll()
     }
 
-    protected fun givenDatabaseIsEmpty() {
-        usersRepository.deleteAll()
+    protected fun givenUserRepositoryIsEmpty() {
+        usersRepository.findAll().size shouldBe 0
     }
 
     protected fun givenUserPresentInDatabase(user: AppUser) {
@@ -60,5 +71,9 @@ abstract class TestsBase {
             this.password = password
             this.roles = roles
         }
+    }
+
+    protected fun givenCharacterRepositoryIsEmpty() {
+        characterRepository.findAll().size shouldBe 0
     }
 }

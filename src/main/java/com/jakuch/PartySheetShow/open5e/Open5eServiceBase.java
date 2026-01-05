@@ -13,30 +13,41 @@ import java.util.Optional;
 public abstract class Open5eServiceBase<T> {
 
     protected final Open5eClient open5eClient;
+    protected final Open5eProperties open5eProperties;
     protected final String path;
     protected final ParameterizedTypeReference<Open5eResponse<T>> type;
     protected final Class<T> singleType;
 
-    public Open5eServiceBase(Open5eClient open5eClient, String path, ParameterizedTypeReference<Open5eResponse<T>> type, Class<T> singleType) {
+    public Open5eServiceBase(Open5eClient open5eClient, Open5eProperties open5eProperties, String path, ParameterizedTypeReference<Open5eResponse<T>> type, Class<T> singleType) {
         this.open5eClient = open5eClient;
+        this.open5eProperties = open5eProperties;
         this.path = path;
         this.type = type;
         this.singleType = singleType;
     }
 
     public List<T> getAll() {
-        List<T> spells = new ArrayList<>();
+        var data = new ArrayList<T>();
 
-        int page = 1;
-        while (true) {
-            var response = open5eClient.getPage(path, Map.of("page", page), type);
-            spells.addAll(response.results());
+        var page = 1;
+        while(true) {
+            var response = open5eClient.getPage(
+                    path,
+                    Map.of(
+                            "page", page,
+                            "limit", open5eProperties.getPagination()
+                    ),
+                    type);
 
-            if (response.next() == null) break;
+            data.addAll(response.results());
+
+            if(response.next() == null) {
+                break;
+            }
             page++;
         }
 
-        return spells;
+        return data;
     }
 
     public List<T> getSinglePage(int page) {

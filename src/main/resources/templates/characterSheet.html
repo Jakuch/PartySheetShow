@@ -115,11 +115,13 @@
                     <div class="col-12  collapse show" id="attributes-collapse">
                         <div class="row" th:if="${character.attributes}"
                              th:each="attributeName : ${attributeNames}">
-                            <div class="col-6" th:text="${attributeName.getShortName()}">name</div>
-                            <div class="col-3" th:text="${character.attributes.get(attributeName.name()).getValue()}">
+                            <div class="col-6" th:text="${attributeName.getSrdKey()}">name</div>
+                            <div class="col-3"
+                                 th:text="${character.getAttribute(attributeName.getSrdKey()).getValue()}">
                                 val
                             </div>
-                            <div class="col-3" th:text="${character.attributes.get(attributeName.name()).getBonus()}">
+                            <div class="col-3"
+                                 th:text="${character.getAttribute(attributeName.getSrdKey()).getBonus()}">
                                 bonus
                             </div>
                         </div>
@@ -173,11 +175,11 @@
                 </div>
                 <div class="row border border-2 rounded text-start">
                     <div class="col-12 collapse show" id="skills-collapse">
-                        <div class="row" th:each="skill : *{skills}">
-                            <div class="col-6" th:text="${skill.name}">name</div>
-                            <div class="col-1" th:text="${skill.proficiency.getShortName()}">profi</div>
-                            <div class="col-4" th:text="${skill.value}">value</div>
-                            <div class="col-1" th:text="${skill.advantage.getShortName()}">adv</div>
+                        <div class="row" th:each="skillName : ${skillNames}">
+                            <div class="col-6" th:text="${character.getSkill(skillName.srdKey).name}">name</div>
+                            <div class="col-1" th:text="${character.getSkill(skillName.srdKey).proficiency.getShortName()}">profi</div>
+                            <div class="col-4" th:text="${character.getSkill(skillName.srdKey).value}">value</div>
+                            <div class="col-1" th:text="${character.getSkill(skillName.srdKey).advantage.getShortName()}">adv</div>
                         </div>
                     </div>
                 </div>
@@ -253,7 +255,7 @@
                                     <div class="col-12">Current HP</div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-12" th:text="*{currentHealth}">curHp</div>
+                                    <div class="col-12" th:text="*{health.current}">curHp</div>
                                 </div>
                             </div>
                             <div class="col-2">
@@ -261,7 +263,7 @@
                                     <div class="col-12">Temp HP</div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-12" th:text="*{tempHealth}">tempHp</div>
+                                    <div class="col-12" th:text="*{health.temporary}">tempHp</div>
                                 </div>
                             </div>
                             <div class="col-2">
@@ -269,7 +271,7 @@
                                     <div class="col-12">Max HP</div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-12" th:text="*{maxHealth}">maxHp</div>
+                                    <div class="col-12" th:text="*{health.max}">maxHp</div>
                                 </div>
                             </div>
                         </div>

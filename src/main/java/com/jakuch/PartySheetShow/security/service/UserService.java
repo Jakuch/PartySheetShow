@@ -12,7 +12,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class UsersService {
+public class UserService {
 
     private UsersRepository usersRepository;
 

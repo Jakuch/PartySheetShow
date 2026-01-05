@@ -1,5 +1,6 @@
 package com.jakuch.PartySheetShow.player.character.form;
 
+import com.jakuch.PartySheetShow.open5e.characterClass.model.CharacterClass;
 import com.jakuch.PartySheetShow.player.level.model.Level;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,8 @@ public class CharacterForm {
     private int charisma;
     private Level level;
     private int walkingSpeed;
-    private List<String> characterClassKey = new ArrayList<>();
-    private String raceKey;
+    private String chosenCharacterClassKey;
+    private List<CharacterClassForm> characterClasses = new ArrayList<>();
+    private String chosenRaceKey;
+    private RaceForm race;
 }

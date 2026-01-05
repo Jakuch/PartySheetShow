@@ -72,23 +72,48 @@
                 </div>
             </div>
         </div>
-        <div class="col-2 mb-2">
-            <label for="race">Race:</label>
-            <select id="race" class="form-control" th:field="*{raceKey}">
-                <option value="" th:text="'Select a race'"></option>
-                <option th:each="race : ${races}"
-                        th:value="${race.srdKey}"
-                        th:text="${race.name}">
-            </select>
+        <div class="col-12">
+            <div class="row">
+                <div class="col-2 mb-2">
+                    <label for="race">Race:</label>
+                    <select id="race" class="form-control" th:field="*{chosenRaceKey}" onchange="this.form.action='/characterAdd?addRace'; this.form.submit();">
+                        <option value="" th:text="'Select a race'"></option>
+                        <option th:each="race : ${races}"
+                                th:value="${race.srdKey}"
+                                th:text="${race.name}">
+                    </select>
+                </div>
+                <div class="col-2 mb-2 mt-4 d-inline-flex">
+                    <div class="d-inline-flex justify-content-center align-items-center">
+                        <div class="badge text-bg-success rounded-pill me-1 d-inline-flex" th:if="*{race}">
+                            <div class="d-inline-flex align-items-center" th:text="*{race.name}"></div>
+                            <button type="submit" class="btn btn-danger badge rounded-pill ms-1" th:formaction="@{/characterAdd?deleteRace}">X</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-2 mb-2">
-            <label for="class">Class:</label>
-            <select id="class" class="form-control" th:field="*{characterClassKey}">
-                <option value="" th:text="'Select a class'"></option>
-                <option th:each="cls : ${classes}"
-                        th:value="${cls.srdKey}"
-                        th:text="${cls.name}">
-            </select>
+        <div class="col-12">
+            <div class="row">
+                <div class="col-2 mb-2">
+                    <label for="class">Class:</label>
+                    <select id="class" class="form-control" th:field="*{chosenCharacterClassKey}" onchange="this.form.action='/characterAdd?addClass'; this.form.submit();">
+                        <option value="" th:text="'Select a class'"></option>
+                        <option th:each="cls : ${classes}"
+                                th:value="${cls.srdKey}"
+                                th:text="${cls.name}">
+                    </select>
+                </div>
+                <ul class="col-2 mb-2 mt-4 list-unstyled d-inline-flex">
+                    <li class="d-inline-flex justify-content-center align-items-center" th:each="c: *{characterClasses}">
+                        <div class="badge text-bg-success rounded-pill me-1 d-inline-flex" th:if="${c}">
+                            <div class="d-inline-flex align-items-center" th:text="${c.name}"></div>
+                            <button type="submit" class="btn btn-danger badge rounded-pill ms-1" name="classKey" th:formaction="@{/characterAdd?deleteClass}" th:value="${c.key}">X</button>
+                        </div>
+
+                    </li>
+                </ul>
+            </div>
         </div>
 
         <nav class="navbar navbar-expand-md navbar-dark bg-dark mt-2">

@@ -1,14 +1,12 @@
 package com.jakuch.PartySheetShow.initiativeTracker.service;
 
-import com.jakuch.PartySheetShow.player.character.repository.CharacterRepository;
 import com.jakuch.PartySheetShow.initiativeTracker.form.InitiativeForm;
 import com.jakuch.PartySheetShow.initiativeTracker.form.InitiativeTrackerForm;
 import com.jakuch.PartySheetShow.initiativeTracker.model.InitiativeTracker;
 import com.jakuch.PartySheetShow.initiativeTracker.repository.InitiativeTrackerRepository;
+import com.jakuch.PartySheetShow.player.character.repository.CharacterRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.io.FileNotFoundException;
 
 @Service
 @AllArgsConstructor
@@ -29,26 +27,17 @@ public class InitiativeTrackerService {
         return initiativeTrackerRepository.save(initiativeTracker).getId();
     }
 
-    public InitiativeTrackerForm loadInitiativeTracker(String id) throws FileNotFoundException {
+    public InitiativeTrackerForm loadInitiativeTracker(String id) {
         var results = initiativeTrackerRepository.findById(id);
-        if (results.isPresent()) {
-            var initiativeTrackerForm = new InitiativeTrackerForm();
-            var initiativeTracker = results.get();
-            initiativeTracker.getInitiative().forEach(el ->
-            {
-                var optionalCharacter = characterRepository.findById(el.getCharacterId());
-                if (optionalCharacter.isPresent()) {
-                    var initiativeDto = InitiativeForm.toDto(el, optionalCharacter.get());
-                    initiativeTrackerForm.getInitiativeList().add(initiativeDto);
-                }
-            });
-            return initiativeTrackerForm;
-        } else {
-            throw new FileNotFoundException("Error there is no such tracker");
-        }
-    }
-
-    public void deleteAll() {
-        initiativeTrackerRepository.deleteAll();
+        var trackerForm = new InitiativeTrackerForm();
+        results.ifPresent(initiativeTracker ->
+                initiativeTracker.getInitiative().forEach(initiative -> {
+                    var optionalCharacter = characterRepository.findById(initiative.getCharacterId());
+                    optionalCharacter.ifPresent(character -> {
+                        var initiativeForm = InitiativeForm.toForm(initiative, character);
+                        trackerForm.getInitiativeList().add(initiativeForm);
+                    });
+                }));
+        return trackerForm;
     }
 }

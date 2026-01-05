@@ -2,3 +2,5 @@ spring:
   data:
     mongodb:
       database: test-db
+
+open5e.client.pagination: 200

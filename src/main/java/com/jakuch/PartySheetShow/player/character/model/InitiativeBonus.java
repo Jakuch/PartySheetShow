@@ -1,8 +1,10 @@
 package com.jakuch.PartySheetShow.player.character.model;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class InitiativeBonus {
     private int value;
     private Advantage advantage;

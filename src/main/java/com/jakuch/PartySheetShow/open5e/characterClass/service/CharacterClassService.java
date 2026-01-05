@@ -1,24 +1,22 @@
 package com.jakuch.PartySheetShow.open5e.characterClass.service;
 
+import com.jakuch.PartySheetShow.open5e.Open5eProperties;
 import com.jakuch.PartySheetShow.open5e.Open5eServiceBase;
 import com.jakuch.PartySheetShow.open5e.characterClass.model.CharacterClass;
 import com.jakuch.PartySheetShow.open5e.client.Open5eClient;
-import com.jakuch.PartySheetShow.open5e.client.Open5eResponse;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.jakuch.PartySheetShow.open5e.Open5eTypeReferences.CHARACTER_CLASS;
+
 @Service
 public class CharacterClassService extends Open5eServiceBase<CharacterClass> {
 
-    private final static ParameterizedTypeReference<Open5eResponse<CharacterClass>> TYPE = new ParameterizedTypeReference<>() {
-    };
-
-    public CharacterClassService(Open5eClient open5eClient) {
-        super(open5eClient, "/classes/", TYPE, CharacterClass.class);
+    public CharacterClassService(Open5eClient open5eClient, Open5eProperties open5eProperties) {
+        super(open5eClient, open5eProperties,"/classes/", CHARACTER_CLASS, CharacterClass.class);
     }
 
     @Cacheable("classesAll")

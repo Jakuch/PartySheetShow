@@ -4,6 +4,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.net.URI;
 import java.util.Map;
 
 @Service
@@ -22,6 +23,18 @@ public class Open5eClient {
                     if (queryParams != null) queryParams.forEach(uriBuilder::queryParam);
                     return uriBuilder.build();
                 })
+                .retrieve()
+                .body(type);
+    }
+
+    public <T> Open5eResponse<T> getByUrl(String url, ParameterizedTypeReference<Open5eResponse<T>> type ) {
+        var uri = URI.create(url);
+        if(!uri.isAbsolute()) {
+            throw new IllegalArgumentException("Expected absolute URL, got: " + url);
+        }
+
+        return open5eRestClient.get()
+                .uri(uri)
                 .retrieve()
                 .body(type);
     }

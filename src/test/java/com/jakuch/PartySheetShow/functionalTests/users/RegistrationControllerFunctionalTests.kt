@@ -32,7 +32,7 @@ class RegistrationControllerFunctionalTests : TestsBase() {
     @Test
     fun `should save user and redirect to login page`() {
         //given
-        givenDatabaseIsEmpty()
+        givenUserRepositoryIsEmpty()
         givenPasswordIsEncoded()
 
         //when
@@ -52,7 +52,7 @@ class RegistrationControllerFunctionalTests : TestsBase() {
     @Test
     fun `should return error when password does not match`() {
         ///given
-        givenDatabaseIsEmpty()
+        givenUserRepositoryIsEmpty()
 
         //when
         mockMvc.perform(post("/register")
@@ -92,7 +92,7 @@ class RegistrationControllerFunctionalTests : TestsBase() {
     @Test
     fun `should return error when roles was not selected`() {
         //given
-        givenDatabaseIsEmpty()
+        givenUserRepositoryIsEmpty()
 
         //when
         mockMvc.perform(post("/register")

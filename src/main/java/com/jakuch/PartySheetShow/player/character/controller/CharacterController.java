@@ -1,14 +1,16 @@
 package com.jakuch.PartySheetShow.player.character.controller;
 
-import com.jakuch.PartySheetShow.player.character.model.attributes.AttributeName;
+import com.jakuch.PartySheetShow.open5e.attributes.model.AttributeName;
+import com.jakuch.PartySheetShow.open5e.attributes.model.SkillName;
 import com.jakuch.PartySheetShow.player.character.service.CharacterService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.server.ResponseStatusException;
 
 @Controller
 @AllArgsConstructor
@@ -24,12 +26,14 @@ public class CharacterController {
     }
 
     @RequestMapping(value = "/characters", params = {"characterSheet"})
-    public ModelAndView characterSheet(@RequestParam String id) {
-        var character = characterService.findById(id);
-        var modelAndView = new ModelAndView();
-        modelAndView.addObject("character", character);
-        modelAndView.setViewName("characterSheet");
-        return modelAndView;
+    public String characterSheet(@RequestParam String id, Model model) {
+        var character = characterService.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        model.addAttribute("character", character);
+        model.addAttribute("attributeNames", AttributeName.correctValues());
+        model.addAttribute("skillNames", SkillName.values());
+        return "characterSheet";
     }
 
     @RequestMapping(value = "/characters", params = {"delete"})

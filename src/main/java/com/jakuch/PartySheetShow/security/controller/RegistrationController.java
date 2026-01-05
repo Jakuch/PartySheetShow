@@ -2,7 +2,7 @@ package com.jakuch.PartySheetShow.security.controller;
 
 import com.jakuch.PartySheetShow.security.form.RegistrationForm;
 import com.jakuch.PartySheetShow.security.model.UserRole;
-import com.jakuch.PartySheetShow.security.service.UsersService;
+import com.jakuch.PartySheetShow.security.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @AllArgsConstructor
 public class RegistrationController {
 
-    private final UsersService usersService;
+    private final UserService userService;
 
     @GetMapping("/register")
     public String registrationForm(Model model) {
@@ -32,7 +32,7 @@ public class RegistrationController {
         if (!form.getPassword().equals(form.getConfirmPassword())) {
             bindingResult.rejectValue("confirmPassword", "password.mismatch", "Passwords do not match");
         }
-        if (!bindingResult.hasFieldErrors("username") && usersService.isUsernamePresent(form.getUsername())) {
+        if (!bindingResult.hasFieldErrors("username") && userService.isUsernamePresent(form.getUsername())) {
             bindingResult.rejectValue("username", "username.taken", "Username is already taken");
         }
         if (form.getRoles() == null || form.getRoles().isEmpty()) {
@@ -43,7 +43,7 @@ public class RegistrationController {
             return "register";
         }
 
-        usersService.register(form);
+        userService.register(form);
         return "redirect:/login?registered";
     }
 }

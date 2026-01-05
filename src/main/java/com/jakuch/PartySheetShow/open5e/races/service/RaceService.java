@@ -1,23 +1,21 @@
 package com.jakuch.PartySheetShow.open5e.races.service;
 
+import com.jakuch.PartySheetShow.open5e.Open5eProperties;
 import com.jakuch.PartySheetShow.open5e.Open5eServiceBase;
 import com.jakuch.PartySheetShow.open5e.client.Open5eClient;
-import com.jakuch.PartySheetShow.open5e.client.Open5eResponse;
 import com.jakuch.PartySheetShow.open5e.races.model.Race;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.jakuch.PartySheetShow.open5e.Open5eTypeReferences.RACE;
+
 @Service
 public class RaceService extends Open5eServiceBase<Race> {
 
-    private final static ParameterizedTypeReference<Open5eResponse<Race>> TYPE = new ParameterizedTypeReference<>() {
-    };
-
-    public RaceService(Open5eClient open5eClient) {
-        super(open5eClient, "/species/", TYPE, Race.class);
+    public RaceService(Open5eClient open5eClient, Open5eProperties open5eProperties) {
+        super(open5eClient, open5eProperties,"/species/", RACE, Race.class);
     }
 
     @Override
