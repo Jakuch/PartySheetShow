@@ -1,6 +1,6 @@
 package com.jakuch.PartySheetShow.security.controller;
 
-import com.jakuch.PartySheetShow.security.service.UserService;
+import com.jakuch.PartySheetShow.security.service.AppUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @AllArgsConstructor
 public class UserController {
 
-    private UserService userService;
+    private AppUserService appUserService;
 
     @GetMapping("/")
     public String home() {
@@ -26,13 +26,13 @@ public class UserController {
 
     @GetMapping("/admin/users")
     public String users(Model model) {
-        model.addAttribute("users", userService.findAll());
+        model.addAttribute("users", appUserService.findAll());
         return "admin/users";
     }
 
     @RequestMapping(value = "/admin/users", params = {"delete"})
     public String deleteById(@RequestParam String id) {
-        userService.deleteById(id);
+        appUserService.deleteById(id);
         return "redirect:/users";
     }
 }

@@ -1,15 +1,15 @@
 package com.jakuch.PartySheetShow.player.character.controller;
 
-import com.jakuch.PartySheetShow.open5e.attributes.model.AttributeName;
-import com.jakuch.PartySheetShow.open5e.attributes.model.SkillName;
+import com.jakuch.PartySheetShow.player.character.model.AttributeName;
+import com.jakuch.PartySheetShow.player.character.model.SkillName;
+import com.jakuch.PartySheetShow.player.character.service.CharacterMapper;
 import com.jakuch.PartySheetShow.player.character.service.CharacterService;
+import com.jakuch.PartySheetShow.security.service.AppUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @Controller
@@ -17,27 +17,32 @@ import org.springframework.web.server.ResponseStatusException;
 public class CharacterController {
 
     private CharacterService characterService;
+    private CharacterMapper characterMapper;
+    private AppUserService appUserService;
 
     @GetMapping("/characters")
     public String characters(Model model) {
-        model.addAttribute("characters", characterService.findAll());
+        model.addAttribute("characters", characterService.findAllForUser(appUserService.getCurrentUser()));
         model.addAttribute("attributeNames", AttributeName.correctValues());
         return "characters";
     }
 
-    @RequestMapping(value = "/characters", params = {"characterSheet"})
-    public String characterSheet(@RequestParam String id, Model model) {
+    @GetMapping("/characters/{id}")
+    public String characterSheet1(@PathVariable String id, @RequestParam(defaultValue = "view") String mode, Model model) {
         var character = characterService.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        var characterForm = characterMapper.toForm(character);
 
         model.addAttribute("character", character);
+        model.addAttribute("characterForm", characterForm);
+        model.addAttribute("mode", mode);
         model.addAttribute("attributeNames", AttributeName.correctValues());
         model.addAttribute("skillNames", SkillName.values());
         return "characterSheet";
     }
 
-    @RequestMapping(value = "/characters", params = {"delete"})
-    public String deleteById(@RequestParam String id) {
+    @PostMapping("/characters/{id}/delete")
+    public String deleteById(@PathVariable String id) {
         characterService.deleteCharacter(id);
         return "redirect:/characters";
     }

@@ -1,6 +1,6 @@
 package com.jakuch.PartySheetShow.player.level.controller;
 
-import com.jakuch.PartySheetShow.player.level.model.Level;
+import com.jakuch.PartySheetShow.player.character.model.Level;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

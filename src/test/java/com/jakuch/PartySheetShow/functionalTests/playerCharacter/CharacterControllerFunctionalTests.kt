@@ -1,9 +1,9 @@
 package com.jakuch.PartySheetShow.functionalTests.playerCharacter
 
 import com.jakuch.PartySheetShow.TestsBase
-import com.jakuch.PartySheetShow.open5e.characterClass.model.CharacterClass
-import com.jakuch.PartySheetShow.open5e.races.model.Race
 import com.jakuch.PartySheetShow.player.character.model.Character
+import com.jakuch.PartySheetShow.player.character.model.CharacterClass
+import com.jakuch.PartySheetShow.player.character.model.Race
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito

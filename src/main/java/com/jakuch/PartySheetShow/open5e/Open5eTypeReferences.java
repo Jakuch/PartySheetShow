@@ -1,10 +1,10 @@
 package com.jakuch.PartySheetShow.open5e;
 
-import com.jakuch.PartySheetShow.open5e.attributes.model.Attribute;
-import com.jakuch.PartySheetShow.open5e.characterClass.model.CharacterClass;
 import com.jakuch.PartySheetShow.open5e.client.Open5eResponse;
-import com.jakuch.PartySheetShow.open5e.races.model.Race;
-import com.jakuch.PartySheetShow.open5e.spells.model.Spell;
+import com.jakuch.PartySheetShow.player.character.model.Attribute;
+import com.jakuch.PartySheetShow.player.character.model.CharacterClass;
+import com.jakuch.PartySheetShow.player.character.model.Race;
+import com.jakuch.PartySheetShow.player.character.model.Spell;
 import org.springframework.core.ParameterizedTypeReference;
 
 public class Open5eTypeReferences {

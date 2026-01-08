@@ -78,7 +78,7 @@ class UserControllerFunctionalTests : TestsBase() {
                 .andExpect(redirectedUrl("/users"))
 
         //then
-        usersRepository.findAll().size shouldBe 0
+        appUsersRepository.findAll().size shouldBe 0
     }
 
     @Test
@@ -95,6 +95,6 @@ class UserControllerFunctionalTests : TestsBase() {
                 .andExpect(status().isForbidden)
 
         //then
-        usersRepository.findAll().size shouldBe 1
+        appUsersRepository.findAll().size shouldBe 1
     }
 }

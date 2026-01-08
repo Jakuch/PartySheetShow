@@ -1,6 +1,6 @@
 package com.jakuch.PartySheetShow.security.form;
 
-import com.jakuch.PartySheetShow.security.model.UserRole;
+import com.jakuch.PartySheetShow.security.model.AppUserRole;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -19,5 +19,5 @@ public class RegistrationForm {
     @NotBlank
     private String confirmPassword;
 
-    private List<UserRole> roles = new ArrayList<>();
+    private List<AppUserRole> roles = new ArrayList<>();
 }

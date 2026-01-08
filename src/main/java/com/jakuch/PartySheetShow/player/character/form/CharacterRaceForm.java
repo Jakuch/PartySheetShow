@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class CharacterClassForm {
+public class CharacterRaceForm {
     private String key;
     private String name;
 }

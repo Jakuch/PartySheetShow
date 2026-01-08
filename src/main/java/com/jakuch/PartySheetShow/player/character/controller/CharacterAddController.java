@@ -1,14 +1,16 @@
 package com.jakuch.PartySheetShow.player.character.controller;
 
-import com.jakuch.PartySheetShow.open5e.characterClass.model.CharacterClass;
-import com.jakuch.PartySheetShow.open5e.characterClass.service.CharacterClassService;
-import com.jakuch.PartySheetShow.open5e.races.model.Race;
-import com.jakuch.PartySheetShow.open5e.races.service.RaceService;
+import com.jakuch.PartySheetShow.open5e.services.CharacterClassService;
+import com.jakuch.PartySheetShow.open5e.services.RaceService;
 import com.jakuch.PartySheetShow.player.character.form.CharacterClassForm;
 import com.jakuch.PartySheetShow.player.character.form.CharacterForm;
-import com.jakuch.PartySheetShow.player.character.form.RaceForm;
+import com.jakuch.PartySheetShow.player.character.form.CharacterRaceForm;
+import com.jakuch.PartySheetShow.player.character.model.CharacterClass;
+import com.jakuch.PartySheetShow.player.character.model.Level;
+import com.jakuch.PartySheetShow.player.character.model.Race;
 import com.jakuch.PartySheetShow.player.character.service.CharacterService;
-import com.jakuch.PartySheetShow.player.level.model.Level;
+import com.jakuch.PartySheetShow.security.model.AppUser;
+import com.jakuch.PartySheetShow.security.service.AppUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +21,6 @@ import org.thymeleaf.util.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @AllArgsConstructor
@@ -89,7 +90,7 @@ public class CharacterAddController {
         var raceKey = characterForm.getChosenRaceKey();
         if(!StringUtils.isEmptyOrWhitespace(raceKey) && characterForm.getRace() == null) {
             var race = races.stream().filter(r -> raceKey.equals(r.getSrdKey())).findFirst();
-            race.ifPresent(r -> characterForm.setRace(new RaceForm(
+            race.ifPresent(r -> characterForm.setRace(new CharacterRaceForm(
                     r.getSrdKey(),
                     r.getName()
             )));

@@ -7,442 +7,601 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <title>Party Sheet Show</title>
 
 </head>
 <body>
 <div th:replace="~{templates :: navbar('','','active','','')}"></div>
-<main class="container">
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark border border-4 border-dark rounded mt-2">
-        <div class="container-fluid">
-            <div class="collapse navbar-collapse" id="navbar2">
-                <div class="nav-item me-auto mb-2 mb-md-0">
-                    <a href="javascript:history.back()" class="btn btn-success me-2">
-                        Back
-                    </a>
+<main class="container-fluid">
+    <div class="row">
+        <div class="col-3"></div>
+        <nav class="col-6 navbar navbar-expand-md navbar-dark bg-dark border border-4 border-dark rounded mt-2">
+            <div class="container-fluid">
+                <div class="collapse navbar-collapse" id="navbar2">
+                    <div class="nav-item me-auto mb-2 mb-md-0">
+                        <a href="javascript:history.back()" class="btn btn-success me-2">
+                            Back
+                        </a>
+                    </div>
+                    <ul class="navbar-nav">
+                        <a href="javascript:history.back()" class="btn btn-success me-2">
+                            Edit
+                        </a>
+                        <a href="javascript:history.back()" class="btn btn-danger me-2">
+                            Cancel
+                        </a>
+                        <a href="javascript:history.back()" class="btn btn-success me-2">
+                            Save
+                        </a>
+                    </ul>
                 </div>
-                <ul class="navbar-nav">
-                </ul>
+            </div>
+        </nav>
+        <div class="col-3"></div>
+    </div>
+    <div class="row" th:object="${character}">
+        <div class="col-3 text-end">
+            <div class="bg-dark text-light mt-2 border border-4 border-dark rounded text-end hide collapse collapse-horizontal float-end"
+                 id="test-collapse-left">
+                DUPA
             </div>
         </div>
-    </nav>
-    <div class="container d-flex flex-column flex-shrink-0 p-3 text-center bg-dark text-light mt-2 border border-4 border-dark rounded"
-         th:object="${character}">
-        <div class="row">
-            <div class="col-4">Name</div>
-            <div class="col-2">
-                <button class="btn  btn-success btn-toggle d-inline-flex align-items-center rounded border-0"
-                        data-bs-toggle="collapse" data-bs-target="#level-collapse" aria-expanded="true">
-                    Level
-                </button>
-            </div>
-            <div class="col-2">Race</div>
-            <div class="col-4">
-                <button class="btn  btn-success btn-toggle d-inline-flex align-items-center rounded border-0"
-                        data-bs-toggle="collapse" data-bs-target="#class-collapse" aria-expanded="true">
-                    Class
-                </button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-4 border border-2 rounded">
-                <div class="mt-1 mb-2" th:text="*{name}">
-                    Name
-                </div>
-            </div>
-            <div class="col-2 border border-2 rounded">
-                <div th:if="*{level}">
-                    <div class="mt-1 mb-2" th:text="*{level.numericValue}">
-                        level
+        <div class="col-6 d-inline-flex flex-column p-3 text-center bg-dark text-light mt-2 border border-4 border-dark rounded">
+            <div class="row">
+                <div class="col-2">
+                    <div class="text-success border-0" style="margin-top: 0.35rem !important">
+                        Name
                     </div>
-                    <div class="collapse hide" id="level-collapse">
-                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                            <li>
-                                <div class="col">Experience points</div>
-                                <div class="col link-body-emphasis d-inline-flex text-decoration-none rounded"
-                                     th:text="*{currentExperiencePoints}">CurrentExp
-                                </div>
-                                /
-                                <div class="col link-body-emphasis d-inline-flex text-decoration-none rounded"
-                                     th:text="*{level.nextLevelExperience}">NextLvlExp
-                                </div>
-                            </li>
-                            <li>
-                                <div class="col">Proficiency bonus</div>
-                                <div class="col link-body-emphasis d-inline-flex text-decoration-none rounded"
-                                     th:text="*{level.proficiencyBonus}">ProficiencyBonus
-                                </div>
-                            </li>
-                        </ul>
+                </div>
+                <div class="col-2">
+                    <div class="text-success border-0" style="margin-top: 0.35rem !important">
+                        Player
+                    </div>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-outline-success btn-toggle d-inline-flex align-items-center rounded border-0"
+                            data-bs-toggle="collapse" data-bs-target="#level-collapse" aria-expanded="true">
+                        Level
+                    </button>
+                </div>
+                <div class="col-2">
+                    <div class="text-success border-0" style="margin-top: 0.35rem !important">
+                        Race
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="text-success border-0" style="margin-top: 0.35rem !important">
+                        Class
                     </div>
                 </div>
             </div>
-            <div class="col-2 border border-2 rounded">
-                <div class="mt-1 mb-2" th:text="*{race.name}">
-                    race
-                </div>
-            </div>
-            <div class="col-4 border border-2 rounded">
-                <div th:each="characterClass : *{characterClasses}">
-                    <div class="mt-1 mb-2" th:text="${characterClass.name}">
-                        class
-                    </div>
-                    <div class="collapse hide" id="class-collapse">
-                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                            <li>
-                                <div class="col">Level</div>
-                                <div class="col link-body-emphasis d-inline-flex text-decoration-none rounded"
-                                     th:text="${characterClass.level.numericValue}">Level
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <div class="row">
-                    <div class="col-12">
-                        <button class="btn  btn-success btn-toggle d-inline-flex align-items-center rounded border-0"
-                                data-bs-toggle="collapse" data-bs-target="#attributes-collapse" aria-expanded="true">
-                            Attributes
-                        </button>
-                    </div>
-                </div>
-                <div class="row border border-2 rounded">
-                    <div class="col-12  collapse show" id="attributes-collapse">
-                        <div class="row" th:if="${character.attributes}"
-                             th:each="attributeName : ${attributeNames}">
-                            <div class="col-6" th:text="${attributeName.getSrdKey()}">name</div>
-                            <div class="col-3"
-                                 th:text="${character.getAttribute(attributeName.getSrdKey()).getValue()}">
-                                val
-                            </div>
-                            <div class="col-3"
-                                 th:text="${character.getAttribute(attributeName.getSrdKey()).getBonus()}">
-                                bonus
-                            </div>
+            <div class="row">
+                <div class="col-4 border border-2 rounded">
+                    <div class="row">
+                        <div class="col-6 mt-1 mb-2" th:text="*{name}">
+                            Name
+                        </div>
+                        <div class="col-6 mt-1 mb-2">
+                            Player
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-12">
-                        <button class="btn  btn-success btn-toggle d-inline-flex align-items-center rounded border-0"
-                                data-bs-toggle="collapse" data-bs-target="#saving-throws-collapse" aria-expanded="true">
-                            Saving throws
-                        </button>
-                    </div>
-                </div>
-                <div class="row border border-2 rounded text-start">
-                    <div class="col-12 collapse show" id="saving-throws-collapse">
-                        <div class="row" th:each="savingThrow : *{savingThrows}">
-                            <div class="col-8" th:text="${savingThrow.getName()}">name</div>
-                            <div class="col-1" th:text="${savingThrow.proficiency.getShortName()}">profi</div>
-                            <div class="col-2" th:text="${savingThrow.getValue()}">value</div>
-                            <div class="col-1" th:text="${savingThrow.advantage.getShortName()}">adv</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">Senses</div>
-                </div>
-                <div class="row border border-2 rounded text-start">
-                    <div class="col-12">Passive per</div>
-                </div>
-                <div class="row">
-                    <div class="col-12">Defenses</div>
-                </div>
-                <div class="row border border-2 rounded text-start">
-                    <div class="col-12">Additional defenses like specific advantages etc.</div>
-                </div>
-                <div class="row">
-                    <div class="col-12">Conditions</div>
-                </div>
-                <div class="row border border-2 rounded text-start">
-                    <div class="col-12">Current conditions</div>
-                </div>
-            </div>
-            <div class="col-3">
-                <div class="row">
-                    <div class="col-12">
-                        <button class="btn  btn-success btn-toggle d-inline-flex align-items-center rounded border-0"
-                                data-bs-toggle="collapse" data-bs-target="#skills-collapse" aria-expanded="true">
-                            Skills
-                        </button>
-                    </div>
-                </div>
-                <div class="row border border-2 rounded text-start">
-                    <div class="col-12 collapse show" id="skills-collapse">
-                        <div class="row" th:each="skillName : ${skillNames}">
-                            <div class="col-6" th:text="${character.getSkill(skillName.srdKey).name}">name</div>
-                            <div class="col-1" th:text="${character.getSkill(skillName.srdKey).proficiency.getShortName()}">profi</div>
-                            <div class="col-4" th:text="${character.getSkill(skillName.srdKey).value}">value</div>
-                            <div class="col-1" th:text="${character.getSkill(skillName.srdKey).advantage.getShortName()}">adv</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">Proficiencies</div>
-                </div>
-                <div class="row border border-2 rounded text-start">
-                    <div class="col-12">
+                <div class="col-2 border border-2 rounded">
+                    <div th:if="*{level}">
                         <div class="row">
-                            <div class="col-12">
-                                Armor
+                            <div class="col mt-1 mb-2 text-end" th:text="*{level.name}">
+                                level
+                            </div>
+                            <div class="col mt-1 text-start">
+                                <button class="badge rounded-circle btn btn-success border-0 btn-toggle"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#test-collapse-left" aria-expanded="false"> +
+                                </button>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-12">
-                                Weapon
+                            <div class="col mt-1 mb-2 text-end">
+                                Proficiency bonus
+                            </div>
+                            <div class="col mt-1 mb-2 text-start"
+                                 th:text="*{level.proficiencyBonus}">ProficiencyBonus
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-12">
-                                Tools
-                            </div>
+                        <div class="collapse hide" id="level-collapse">
+                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                <li>
+                                    <div class="col">Experience points</div>
+                                    <div class="col link-body-emphasis d-inline-flex text-decoration-none rounded"
+                                         th:text="*{currentExperiencePoints}">CurrentExp
+                                    </div>
+                                    /
+                                    <div class="col link-body-emphasis d-inline-flex text-decoration-none rounded"
+                                         th:text="*{level.nextLevelExperience}">NextLvlExp
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
+                    </div>
+                </div>
+                <div class="col-2 border border-2 rounded">
+                    <div class="row">
+                        <div class="col-8 mt-1 mb-2 text-end" th:text="*{race.name}">
+                            race
+                        </div>
+                        <div class="col-4 text-start mt-1">
+                            <button class="badge rounded-circle btn btn-success border-0 btn-toggle"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#test-collapse-race" aria-expanded="false"
+                                    aria-controls="test-collapse-race"> >
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 border border-2 rounded">
+                    <div th:each="characterClass : *{characterClasses}">
                         <div class="row">
-                            <div class="col-12">
-                                Languages
+                            <div class="col mt-1 mb-2 text-end" th:text="${characterClass.name}">
+                                class
+                            </div>
+                            <div class="col mt-1 mb-2" th:text="${characterClass.level.name}">
+                                level
+                            </div>
+                            <div class="col text-start mt-1">
+                                <button class="badge rounded-circle btn btn-success border-0 btn-toggle"
+                                        data-bs-toggle="collapse"
+                                        th:attr="data-bs-target=${'#collapse-' + characterClass.srdKey}, aria-controls=${'collapse-' + characterClass.srdKey}"
+                                        aria-expanded="false"> >
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-6 text-center">
-                <div class="row">
-                    <div class="col-12">
-                        <button class="btn  btn-success btn-toggle d-inline-flex align-items-center rounded border-0"
-                                data-bs-toggle="collapse" data-bs-target="#basic-stats-collapse" aria-expanded="true">
-                            Basic Stats
-                        </button>
-                    </div>
-                </div>
-                <div class="row border border-2 rounded">
-                    <div class="col-12 collapse show" id="basic-stats-collapse">
-                        <div class="row">
-                            <div class="col-1">
-                                <div class="row">
-                                    <div class="col-12">AC</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-12" th:text="*{armorClass}">AC</div>
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col-12">
+                                    <button class="btn  btn-outline-success btn-toggle d-inline-flex align-items-center rounded border-0"
+                                            data-bs-toggle="collapse" data-bs-target="#attributes-collapse"
+                                            aria-expanded="true">
+                                        Attributes
+                                    </button>
                                 </div>
                             </div>
-                            <div class="col-2">
-                                <div class="row">
-                                    <div class="col-12">Speed (ft)</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-12" th:text="*{walkingSpeed}">speed</div>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="row">
-                                    <div class="col-12">Initiative Bonus</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-10" th:text="*{initiativeBonus.getValue()}">initiative</div>
-                                    <div class="col-2" th:text="*{initiativeBonus.getAdvantage().getShortName()}">
-                                        initiative
+                            <div class="row border border-2 rounded">
+                                <div class="col-12  collapse show" id="attributes-collapse">
+                                    <div class="row" th:if="${character.attributes}"
+                                         th:each="attributeName : ${attributeNames}">
+                                        <div class="col-6" th:text="${attributeName.getSrdKey()}">name</div>
+                                        <div class="col-3"
+                                             th:text="${character.getAttribute(attributeName.getSrdKey()).getValue()}">
+                                            val
+                                        </div>
+                                        <div class="col-3"
+                                             th:text="${character.getAttribute(attributeName.getSrdKey()).getBonus()}">
+                                            bonus
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-2">
-                                <div class="row">
-                                    <div class="col-12">Current HP</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-12" th:text="*{health.current}">curHp</div>
-                                </div>
-                            </div>
-                            <div class="col-2">
-                                <div class="row">
-                                    <div class="col-12">Temp HP</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-12" th:text="*{health.temporary}">tempHp</div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <button class="btn  btn-outline-success btn-toggle d-inline-flex align-items-center rounded border-0"
+                                            data-bs-toggle="collapse" data-bs-target="#saving-throws-collapse"
+                                            aria-expanded="true">
+                                        Saving throws
+                                    </button>
                                 </div>
                             </div>
-                            <div class="col-2">
-                                <div class="row">
-                                    <div class="col-12">Max HP</div>
+                            <div class="row border border-2 rounded text-start">
+                                <div class="col-12 collapse show" id="saving-throws-collapse">
+                                    <div class="row" th:each="savingThrow : *{savingThrows}">
+                                        <div class="col-8" th:text="${savingThrow.getName()}">name</div>
+                                        <div class="col-1" th:text="${savingThrow.proficiency.getShortName()}">profi
+                                        </div>
+                                        <div class="col-2" th:text="${savingThrow.getValue()}">value</div>
+                                        <div class="col-1" th:text="${savingThrow.advantage.getShortName()}">adv</div>
+                                    </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-12" th:text="*{health.max}">maxHp</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 mt-1 mb-1">
+                                    <div class="text-success border-0">
+                                        Senses
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row border border-2 rounded text-start">
+                                <div class="col-12">
+                                    Passive per
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 mt-1 mb-1">
+                                    <div class="text-success border-0">
+                                        Defenses
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row border border-2 rounded text-start">
+                                <div class="col-12">Additional defenses like specific advantages etc.</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 mt-1 mb-1">
+                                    <div class="text-success border-0">
+                                        Conditions
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row border border-2 rounded text-start">
+                                <div class="col-12">Current conditions</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col-12">
+                                    <button class="btn  btn-outline-success btn-toggle d-inline-flex align-items-center rounded border-0"
+                                            data-bs-toggle="collapse" data-bs-target="#skills-collapse"
+                                            aria-expanded="true">
+                                        Skills
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row border border-2 rounded text-start">
+                                <div class="col-12 collapse show" id="skills-collapse">
+                                    <div class="row" th:each="skillName : ${skillNames}">
+                                        <div class="col-7" th:text="${character.getSkill(skillName.srdKey).name}">name
+                                        </div>
+                                        <div class="col-1"
+                                             th:text="${character.getSkill(skillName.srdKey).proficiency.getShortName()}">
+                                            profi
+                                        </div>
+                                        <div class="col-2" th:text="${character.getSkill(skillName.srdKey).value}">
+                                            value
+                                        </div>
+                                        <div class="col-2"
+                                             th:switch="${character.getSkillAdvantage(skillName.srdKey)}">
+                                            <span th:case="${T(com.jakuch.PartySheetShow.player.character.model.Advantage).ADVANTAGE}"
+                                                  class="badge rounded-circle text-bg-success p-2">
+                                                <span class="visually-hidden">A</span>
+                                            </span>
+                                            <span th:case="${T(com.jakuch.PartySheetShow.player.character.model.Advantage).DISADVANTAGE}"
+                                                  class="badge rounded-circle text-bg-danger p-2">
+                                                <span class="visually-hidden">D</span>
+                                            </span>
+                                            <span th:case="*"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <button class="btn btn-outline-success btn-toggle d-inline-flex align-items-center rounded border-0"
+                                            data-bs-toggle="collapse" data-bs-target="#proficiencies-collapse"
+                                            aria-expanded="true">
+                                        Proficiencies
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row border border-2 rounded text-start">
+                                <div class="col-12 collapse show" id="proficiencies-collapse"
+                                     th:each="charClass : *{characterClasses}">
+                                    <div class="row">
+                                        <div class="col-12 text-success" th:text="${charClass.name}">
+                                            class
+                                        </div>
+                                    </div>
+                                    <div class="row" th:unless="${#lists.isEmpty(charClass.classProficiencies.armor)}">
+                                        <div class="col-12" th:text="${charClass.classProficiencies.armor}">
+                                            Armor
+                                        </div>
+                                    </div>
+                                    <div class="row"
+                                         th:unless="${#lists.isEmpty(charClass.classProficiencies.weapons)}">
+                                        <div class="col-12" th:text="${charClass.classProficiencies.weapons}">
+                                            Weapon
+                                        </div>
+                                    </div>
+                                    <div class="row" th:unless="${#lists.isEmpty(charClass.classProficiencies.tools)}">
+                                        <div class="col-12" th:text="${charClass.classProficiencies.tools}">
+                                            Tools
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <button class="btn  btn-success btn-toggle d-inline-flex align-items-center rounded border-0"
-                                data-bs-toggle="collapse" data-bs-target="#actions-list-collapse" aria-expanded="true">
-                            Actions
-                        </button>
+                    <div class="row">
+                        <div class="col-12">
+                            <button class="btn btn-outline-success btn-toggle d-inline-flex align-items-center rounded border-0"
+                                    data-bs-toggle="collapse" data-bs-target="#inventory-list-collapse"
+                                    aria-expanded="true">
+                                Inventory
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row border border-2 rounded">
+                        <div class="col-12 collapse show" id="inventory-list-collapse">
+                            <div class="row">
+                                <div class="col-4">Name</div>
+                                <div class="col-4">Quantity</div>
+                                <div class="col-4">Notes</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">Item 1</div>
+                                <div class="col-4">3</div>
+                                <div class="col-4">Notes 1</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">Item 2</div>
+                                <div class="col-4">5</div>
+                                <div class="col-4">Notes 2</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">Item 3</div>
+                                <div class="col-4">1</div>
+                                <div class="col-4">Notes 3</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="row border border-2 rounded">
-                    <div class="col-12 collapse show" id="actions-list-collapse">
-                        <div class="row">
-                            <button class="btn  btn-success btn-toggle d-inline-flex align-items-center rounded border-0"
-                                    data-bs-toggle="collapse" data-bs-target="#actions-collapse" aria-expanded="true">
+                <div class="col-6 text-center">
+                    <div class="row">
+                        <div class="col-12">
+                            <button class="btn  btn-outline-success btn-toggle d-inline-flex align-items-center rounded border-0"
+                                    data-bs-toggle="collapse" data-bs-target="#basic-stats-collapse"
+                                    aria-expanded="true">
+                                Basic Stats
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row border border-2 rounded">
+                        <div class="col-12 collapse show" id="basic-stats-collapse">
+                            <div class="row">
+                                <div class="col-1">
+                                    <div class="row">
+                                        <div class="col-12">AC</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12" th:text="*{armorClass}">AC</div>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="row">
+                                        <div class="col-12">Speed (ft)</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12" th:text="*{walkingSpeed}">speed</div>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="row">
+                                        <div class="col-12">Initiative Bonus</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-10" th:text="*{initiativeBonus.getValue()}">initiative</div>
+                                        <div class="col-2" th:text="*{initiativeBonus.getAdvantage().getShortName()}">
+                                            initiative
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="row">
+                                        <div class="col-12">Current HP</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12" th:text="*{health.current}">curHp</div>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="row">
+                                        <div class="col-12">Temp HP</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12" th:text="*{health.temporary}">tempHp</div>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="row">
+                                        <div class="col-12">Max HP</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12" th:text="*{health.max}">maxHp</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <button class="btn  btn-outline-success btn-toggle d-inline-flex align-items-center rounded border-0"
+                                    data-bs-toggle="collapse" data-bs-target="#actions-list-collapse"
+                                    aria-expanded="true">
                                 Actions
                             </button>
-                            <div class="collapse show" id="actions-collapse">
-                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                    <li>
-                                        <div class="col">Action 1</div>
-                                    </li>
-                                    <li>
-                                        <div class="col">Action 2</div>
-                                    </li>
-                                </ul>
+                        </div>
+                    </div>
+                    <div class="row border border-2 rounded">
+                        <div class="col-12 collapse show" id="actions-list-collapse">
+                            <div class="row">
+                                <div class="border-bottom">
+                                    <div class="text-start row">
+                                        <button class="btn btn-outline-success btn-toggle d-inline-flex align-items-center rounded border-0"
+                                                data-bs-toggle="collapse" data-bs-target="#actions-collapse"
+                                                aria-expanded="true">
+                                            Actions
+                                        </button>
+                                    </div>
+                                    <div class="collapse show" id="actions-collapse">
+                                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                            <li>
+                                                <div class="col">Action 1</div>
+                                            </li>
+                                            <li>
+                                                <div class="col">Action 2</div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="border-bottom">
+                                    <div class="text-start row">
+                                        <button class="btn  btn-outline-success btn-toggle d-inline-flex align-items-center rounded border-0"
+                                                data-bs-toggle="collapse" data-bs-target="#bonus-actions-collapse"
+                                                aria-expanded="true">
+                                            Bonus Actions
+                                        </button>
+                                    </div>
+                                    <div class="collapse show" id="bonus-actions-collapse">
+                                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                            <li>
+                                                <div class="col">Bonus Action 1</div>
+                                            </li>
+                                            <li>
+                                                <div class="col">Bonus Action 2</div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="border-bottom">
+                                    <div class="text-start row">
+                                        <button class="btn  btn-outline-success btn-toggle d-inline-flex align-items-center rounded border-0"
+                                                data-bs-toggle="collapse" data-bs-target="#reaction-collapse"
+                                                aria-expanded="true">
+                                            Reactions
+                                        </button>
+                                    </div>
+                                    <div class="collapse show" id="reaction-collapse">
+                                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                            <li>
+                                                <div class="col">Reaction 1</div>
+                                            </li>
+                                            <li>
+                                                <div class="col">Reaction 2</div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
-                            <button class="btn  btn-success btn-toggle d-inline-flex align-items-center rounded border-0"
-                                    data-bs-toggle="collapse" data-bs-target="#bonus-actions-collapse"
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <button class="btn  btn-outline-success btn-toggle d-inline-flex align-items-center rounded border-0"
+                                    data-bs-toggle="collapse" data-bs-target="#spells-list-collapse"
                                     aria-expanded="true">
-                                Bonus Actions
+                                Spells
                             </button>
-                            <div class="collapse show" id="bonus-actions-collapse">
-                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                    <li>
-                                        <div class="col">Bonus Action 1</div>
-                                    </li>
-                                    <li>
-                                        <div class="col">Bonus Action 2</div>
-                                    </li>
-                                </ul>
-                            </div>
-                            <button class="btn  btn-success btn-toggle d-inline-flex align-items-center rounded border-0"
-                                    data-bs-toggle="collapse" data-bs-target="#reaction-collapse" aria-expanded="true">
-                                Reactions
-                            </button>
-                            <div class="collapse show" id="reaction-collapse">
-                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                    <li>
-                                        <div class="col">Reaction 1</div>
-                                    </li>
-                                    <li>
-                                        <div class="col">Reaction 2</div>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <button class="btn  btn-success btn-toggle d-inline-flex align-items-center rounded border-0"
-                                data-bs-toggle="collapse" data-bs-target="#spells-list-collapse"
-                                aria-expanded="true">
-                            Spells
-                        </button>
-                    </div>
-                </div>
-                <div class="row border border-2 rounded">
-                    <div class="col-12 collapse show" id="spells-list-collapse">
-                        <div class="row">
-                            <button class="btn  btn-success btn-toggle d-inline-flex align-items-center rounded border-0"
-                                    data-bs-toggle="collapse" data-bs-target="#cantrips-collapse" aria-expanded="true">
-                                Cantrips
-                            </button>
-                            <div class="collapse show" id="cantrips-collapse">
-                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                    <li>
-                                        <div class="col">Cantrip 1</div>
-                                    </li>
-                                    <li>
-                                        <div class="col">Cantrip 2</div>
-                                    </li>
-                                </ul>
-                            </div>
-                            <button class="btn  btn-success btn-toggle d-inline-flex align-items-center rounded border-0"
-                                    data-bs-toggle="collapse" data-bs-target="#spells-1-collapse" aria-expanded="true">
-                                Level 1
-                            </button>
-                            <div class="collapse show" id="spells-1-collapse">
-                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                    <li>
-                                        <div class="col">Spell slots</div>
-                                    </li>
-                                    <li>
-                                        <div class="col">Spell 1</div>
-                                    </li>
-                                    <li>
-                                        <div class="col">Spell 2</div>
-                                    </li>
-                                </ul>
-                            </div>
-                            <button class="btn  btn-success btn-toggle d-inline-flex align-items-center rounded border-0"
-                                    data-bs-toggle="collapse" data-bs-target="#spells-2-collapse" aria-expanded="true">
-                                Level 2
-                            </button>
-                            <div class="collapse show" id="spells-2-collapse">
-                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                    <li>
-                                        <div class="col">Spell slots</div>
-                                    </li>
-                                    <li>
-                                        <div class="col">Spell 1</div>
-                                    </li>
-                                    <li>
-                                        <div class="col">Spell 2</div>
-                                    </li>
-                                </ul>
+                    <div class="row border border-2 rounded">
+                        <div class="col-12 collapse show" id="spells-list-collapse">
+                            <div class="row">
+                                <div class="border-bottom">
+                                    <div class="text-start row">
+                                        <button class="btn  btn-outline-success btn-toggle d-inline-flex align-items-center rounded border-0"
+                                                data-bs-toggle="collapse" data-bs-target="#cantrips-collapse"
+                                                aria-expanded="true">
+                                            Cantrips
+                                        </button>
+                                    </div>
+                                    <div class="collapse show" id="cantrips-collapse">
+                                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                            <li>
+                                                <div class="col">Cantrip 1</div>
+                                            </li>
+                                            <li>
+                                                <div class="col">Cantrip 2</div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <button class="btn  btn-outline-success btn-toggle d-inline-flex align-items-center rounded border-0"
+                                        data-bs-toggle="collapse" data-bs-target="#spells-1-collapse"
+                                        aria-expanded="true">
+                                    Level 1
+                                </button>
+                                <div class="collapse show" id="spells-1-collapse">
+                                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                        <li>
+                                            <div class="col">Spell slots</div>
+                                        </li>
+                                        <li>
+                                            <div class="col">Spell 1</div>
+                                        </li>
+                                        <li>
+                                            <div class="col">Spell 2</div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <button class="btn  btn-outline-success btn-toggle d-inline-flex align-items-center rounded border-0"
+                                        data-bs-toggle="collapse" data-bs-target="#spells-2-collapse"
+                                        aria-expanded="true">
+                                    Level 2
+                                </button>
+                                <div class="collapse show" id="spells-2-collapse">
+                                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                        <li>
+                                            <div class="col">Spell slots</div>
+                                        </li>
+                                        <li>
+                                            <div class="col">Spell 1</div>
+                                        </li>
+                                        <li>
+                                            <div class="col">Spell 2</div>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <button class="btn  btn-success btn-toggle d-inline-flex align-items-center rounded border-0"
-                                data-bs-toggle="collapse" data-bs-target="#inventory-list-collapse"
-                                aria-expanded="true">
-                            Inventory
-                        </button>
-                    </div>
-                </div>
-                <div class="row border border-2 rounded">
-                    <div class="col-12 collapse show" id="inventory-list-collapse">
-                        <div class="row">
-                            <div class="col-4">Name</div>
-                            <div class="col-4">Quantity</div>
-                            <div class="col-4">Notes</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">Item 1</div>
-                            <div class="col-4">3</div>
-                            <div class="col-4">Notes 1</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">Item 2</div>
-                            <div class="col-4">5</div>
-                            <div class="col-4">Notes 2</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">Item 3</div>
-                            <div class="col-4">1</div>
-                            <div class="col-4">Notes 3</div>
+                    <div class="row">
+                        <div class="col-12">
+                            <button class="btn btn-outline-success btn-toggle d-inline-flex align-items-center rounded border-0"
+                                    data-bs-toggle="collapse" data-bs-target="#feats-list-collapse"
+                                    aria-expanded="true">
+                                Feats
+                            </button>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <button class="btn  btn-success btn-toggle d-inline-flex align-items-center rounded border-0"
-                                data-bs-toggle="collapse" data-bs-target="#feats-list-collapse" aria-expanded="true">
+                    <div class="row border border-2 rounded">
+                        <div class="col-12 collapse show" id="feats-list-collapse">
                             Feats
-                        </button>
+                        </div>
                     </div>
                 </div>
-                <div class="row border border-2 rounded">
-                    <div class="col-12 collapse show" id="feats-list-collapse">
-                        Feats
-                    </div>
-                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div th:each="charClass : *{characterClasses}"
+                 class="bg-dark text-light text-start text-wrap mt-2 border border-4 border-dark rounded collapse multi-collapse collapse-horizontal hide float-start overflow-auto"
+                 style="max-width: 23vw" th:id="${'collapse-' + charClass.srdKey}">
+                <div th:text="${charClass.name}" class="text-center text-success">name</div>
+                <ul th:each="feature: ${charClass.getClassLevelFeatures()}" class="list-unstyled mb-2 ms-2">
+                    <li th:text="${feature.name}" class="border-bottom"></li>
+                    <li>
+                        <ul th:each="gAt: ${feature.gainedAt}">
+                            <li th:text="${gAt.getGainedAtLevelDescription()}"></li>
+                        </ul>
+                    </li>
+                    <li th:text="${feature.description}"></li>
+                </ul>
+            </div>
+            <div class="bg-dark text-light text-start  mt-2 border border-4 border-dark rounded collapse multi-collapse collapse-horizontal hide float-start overflow-auto"
+                 style="max-width: 23vw" id="test-collapse-race">
+                <div th:text="*{race.name}" class="text-center text-success">name</div>
+                <ul th:each="trait: *{race.raceTraits}" class="list-unstyled mb-2 ms-2">
+                    <li th:text="${trait.name}" class="border-bottom"></li>
+                    <li th:text="${trait.description}"></li>
+                </ul>
+            </div>
+            <div class="row bg-dark text-light text-start text-wrap mt-2 border border-4 border-dark rounded collapse multi-collapse collapse-horizontal hide float-start overflow-auto"
+                 style="max-width: 23vw" id="test-collapse-right3">
+                DUPA
             </div>
         </div>
     </div>

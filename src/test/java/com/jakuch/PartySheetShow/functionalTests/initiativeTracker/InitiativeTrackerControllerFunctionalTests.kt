@@ -7,8 +7,6 @@ import com.jakuch.PartySheetShow.initiativeTracker.model.Initiative
 import com.jakuch.PartySheetShow.initiativeTracker.model.InitiativeTracker
 import com.jakuch.PartySheetShow.player.character.model.Character
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.string.beEmpty
-import org.hamcrest.beans.HasPropertyWithValue.hasProperty
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get

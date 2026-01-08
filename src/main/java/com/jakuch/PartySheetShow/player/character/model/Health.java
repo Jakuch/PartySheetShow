@@ -1,6 +1,6 @@
 package com.jakuch.PartySheetShow.player.character.model;
 
-import com.jakuch.PartySheetShow.player.dice.model.DiceType;
+import com.jakuch.PartySheetShow.player.dice.DiceType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,5 +16,5 @@ public class Health {
     private int current;
     private int max;
     private int temporary;
-    private Map<Integer, DiceType> hitDices; //TODO dice type should be taken from Class
+    private Map<Integer, DiceType> hitDices;
 }

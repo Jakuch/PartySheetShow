@@ -1,6 +1,7 @@
 package com.jakuch.PartySheetShow.security;
 
-import com.jakuch.PartySheetShow.security.repository.UsersRepository;
+import com.jakuch.PartySheetShow.security.repository.AppUsersRepository;
+import com.jakuch.PartySheetShow.security.service.AppUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,8 +16,9 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity security) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity security, AppUserDetailsService appUserDetailsService) throws Exception {
         security
+                .userDetailsService(appUserDetailsService)
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers(
                                 "/",
@@ -50,17 +52,5 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService(UsersRepository repository) {
-        return username -> repository.findByUsername(username)
-                .map(u -> User.withUsername(u.getUsername())
-                        .password(u.getPassword())
-                        .roles(u.getRoles().stream()
-                                .map(Enum::name)
-                                .toArray(String[]::new))
-                        .build()
-                ).orElseThrow(() -> new UsernameNotFoundException("User not found: "+ username));
     }
 }

@@ -1,6 +1,5 @@
 package com.jakuch.PartySheetShow.player.character.model;
 
-import com.jakuch.PartySheetShow.player.level.model.Level;
 import lombok.Getter;
 
 @Getter
@@ -17,6 +16,10 @@ public enum Proficiency {
     }
 
     public static int calculateProficiencyBonus(Proficiency type, Level level) {
+        if(type == null) {
+            type = Proficiency.NONE;
+        }
+
         return switch (type) {
             case NONE -> 0;
             case HALF -> level.getProficiencyBonus() / 2;

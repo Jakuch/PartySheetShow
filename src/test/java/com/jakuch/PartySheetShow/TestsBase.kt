@@ -1,17 +1,14 @@
 package com.jakuch.PartySheetShow
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.jakuch.PartySheetShow.initiativeTracker.repository.InitiativeTrackerRepository
-import com.jakuch.PartySheetShow.open5e.characterClass.service.CharacterClassService
-import com.jakuch.PartySheetShow.open5e.client.Open5eClient
-import com.jakuch.PartySheetShow.open5e.races.service.RaceService
+import com.jakuch.PartySheetShow.open5e.services.CharacterClassService
+import com.jakuch.PartySheetShow.open5e.services.RaceService
 import com.jakuch.PartySheetShow.player.character.repository.CharacterRepository
 import com.jakuch.PartySheetShow.security.model.AppUser
-import com.jakuch.PartySheetShow.security.model.UserRole
-import com.jakuch.PartySheetShow.security.repository.UsersRepository
+import com.jakuch.PartySheetShow.security.model.AppUserRole
+import com.jakuch.PartySheetShow.security.repository.AppUsersRepository
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.AfterEach
-import org.mockito.Mock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -41,7 +38,7 @@ abstract class TestsBase {
     protected lateinit var raceService: RaceService
 
     @Autowired
-    protected lateinit var usersRepository: UsersRepository
+    protected lateinit var appUsersRepository: AppUsersRepository
 
     @Autowired
     protected lateinit var initiativeTrackerRepository: InitiativeTrackerRepository
@@ -51,20 +48,20 @@ abstract class TestsBase {
 
     @AfterEach
     fun cleanupDatabase() {
-        usersRepository.deleteAll()
+        appUsersRepository.deleteAll()
         initiativeTrackerRepository.deleteAll()
         characterRepository.deleteAll()
     }
 
     protected fun givenUserRepositoryIsEmpty() {
-        usersRepository.findAll().size shouldBe 0
+        appUsersRepository.findAll().size shouldBe 0
     }
 
     protected fun givenUserPresentInDatabase(user: AppUser) {
-        usersRepository.save(user)
+        appUsersRepository.save(user)
     }
 
-    protected fun givenUser(id: String? = null, username: String = "username", password: String = "secret", roles: List<UserRole> = listOf(UserRole.PLAYER, UserRole.DM)): AppUser {
+    protected fun givenUser(id: String? = null, username: String = "username", password: String = "secret", roles: List<AppUserRole> = listOf(AppUserRole.ROLE_PLAYER, AppUserRole.ROLE_DM)): AppUser {
         return AppUser().apply {
             this.id = id
             this.username = username

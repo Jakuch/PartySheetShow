@@ -2,7 +2,7 @@ package com.jakuch.PartySheetShow.functionalTests.users
 
 import com.jakuch.PartySheetShow.TestsBase
 import com.jakuch.PartySheetShow.security.model.AppUser
-import com.jakuch.PartySheetShow.security.model.UserRole
+import com.jakuch.PartySheetShow.security.model.AppUserRole
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.optional.shouldBePresent
@@ -41,7 +41,7 @@ class RegistrationControllerFunctionalTests : TestsBase() {
                 .param("username", "username")
                 .param("password", "secret")
                 .param("confirmPassword", "secret")
-                .param("roles", UserRole.PLAYER.name, UserRole.DM.name))
+                .param("roles", AppUserRole.ROLE_PLAYER.name, AppUserRole.ROLE_DM.name))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login?registered"))
 
@@ -60,13 +60,13 @@ class RegistrationControllerFunctionalTests : TestsBase() {
                 .param("username", "username")
                 .param("password", "secret")
                 .param("confirmPassword", "incorrect")
-                .param("roles", UserRole.PLAYER.name, UserRole.DM.name))
+                .param("roles", AppUserRole.ROLE_PLAYER.name, AppUserRole.ROLE_DM.name))
                 .andExpect(status().isOk)
                 .andExpect(view().name("register"))
                 .andExpect(model().attributeHasFieldErrors("registrationForm", "confirmPassword"))
 
         //then
-        usersRepository.findByUsername("username") shouldBe Optional.empty()
+        appUsersRepository.findByUsername("username") shouldBe Optional.empty()
     }
 
     @Test
@@ -80,13 +80,13 @@ class RegistrationControllerFunctionalTests : TestsBase() {
                 .param("username", "username")
                 .param("password", "secret")
                 .param("confirmPassword", "secret")
-                .param("roles", UserRole.PLAYER.name, UserRole.DM.name))
+                .param("roles", AppUserRole.ROLE_PLAYER.name, AppUserRole.ROLE_DM.name))
                 .andExpect(status().isOk)
                 .andExpect(view().name("register"))
                 .andExpect(model().attributeHasFieldErrors("registrationForm", "username"))
 
         //then
-        usersRepository.findAll().size shouldBe 1
+        appUsersRepository.findAll().size shouldBe 1
     }
 
     @Test
@@ -106,11 +106,11 @@ class RegistrationControllerFunctionalTests : TestsBase() {
                 .andExpect(model().attributeHasFieldErrors("registrationForm", "roles"))
 
         //then
-        usersRepository.findAll().size shouldBe 0
+        appUsersRepository.findAll().size shouldBe 0
     }
 
     private fun thenUserWasSavedInDatabase(appUser: AppUser) {
-        val saved = usersRepository.findByUsername(appUser.username)
+        val saved = appUsersRepository.findByUsername(appUser.username)
         saved.shouldBePresent {
             this.username shouldBeEqual appUser.username
             this.password shouldBeEqual "ENCODED"
