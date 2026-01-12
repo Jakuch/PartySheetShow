@@ -17,4 +17,17 @@ public class Attribute extends Open5eData {
     public String getUpperCaseName() {
         return this.name.toUpperCase();
     }
+
+    public void calculateBonusesAndSkills(Level level) {
+        calculateBonus();
+        calculateSkills(level);
+    }
+
+    private void calculateBonus() {
+        this.bonus = (this.value - 10) / 2;
+    }
+
+    private void calculateSkills(Level level) {
+        this.skills.forEach(skill -> skill.setValueWithProficiency(this.getBonus(), level));
+    }
 }

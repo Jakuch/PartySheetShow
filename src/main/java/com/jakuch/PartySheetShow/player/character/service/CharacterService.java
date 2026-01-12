@@ -1,7 +1,11 @@
 package com.jakuch.PartySheetShow.player.character.service;
 
+import com.jakuch.PartySheetShow.player.character.form.CharacterClassForm;
 import com.jakuch.PartySheetShow.player.character.form.CharacterForm;
+import com.jakuch.PartySheetShow.player.character.form.CharacterRaceForm;
 import com.jakuch.PartySheetShow.player.character.model.Character;
+import com.jakuch.PartySheetShow.player.character.model.CharacterClass;
+import com.jakuch.PartySheetShow.player.character.model.Race;
 import com.jakuch.PartySheetShow.player.character.repository.CharacterRepository;
 import com.jakuch.PartySheetShow.security.model.AccessRules;
 import com.jakuch.PartySheetShow.security.model.AppUser;
@@ -34,16 +38,51 @@ public class CharacterService {
     }
 
     public void saveCharacter(CharacterForm characterForm) {
-        var character = characterMapper.fromForm(characterForm);
+        var character = characterMapper.addNew(characterForm);
         var accessRules = AccessRules.builder()
-                .ownerId(appUserService.getCurrentUser().getId())
+                .owner(appUserService.getCurrentUser())
                 .build();
         character.setAccessRules(accessRules);
 
         characterRepository.save(character);
     }
 
+    public void updateCharacter(String id, CharacterForm characterForm) {
+        var character = characterRepository.findById(id);
+
+        character.ifPresent(c -> {
+            var updatedCharacter = characterMapper.update(characterForm, c);
+            characterRepository.save(updatedCharacter);
+        });
+    }
+
     public void deleteCharacter(String id) {
         characterRepository.deleteById(id);
+    }
+
+    public void addClassToForm(CharacterForm characterForm, List<CharacterClass> classes) {
+        var characterClass = classes.stream().filter(c -> characterForm.getChosenCharacterClassKey().equals(c.getSrdKey())).findFirst();
+        characterClass.ifPresent(c -> {
+            characterForm.getClasses().put(c.getSrdKey(), CharacterClassForm.builder()
+                    .key(c.getSrdKey())
+                    .name(c.getName())
+                    .level(c.getLevel().getNumericValue())
+                    .build());
+        });
+    }
+
+    public void addRaceToForm(CharacterForm characterForm, List<Race> races) {
+        var race = races.stream().filter(r -> characterForm.getChosenRaceKey().equals(r.getSrdKey())).findFirst();
+        race.ifPresent(r -> characterForm.setRace(CharacterRaceForm.builder()
+                .key(r.getSrdKey())
+                .name(r.getName()).build()));
+    }
+
+    public void deleteClassFromForm(CharacterForm characterForm, String classKey) {
+        characterForm.getClasses().computeIfPresent(classKey, (key, val) -> characterForm.getClasses().remove(key));
+    }
+
+    public void deleteRaceFromForm(CharacterForm characterForm) {
+        characterForm.setRace(null);
     }
 }

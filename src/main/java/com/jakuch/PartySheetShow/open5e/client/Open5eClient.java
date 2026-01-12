@@ -27,9 +27,9 @@ public class Open5eClient {
                 .body(type);
     }
 
-    public <T> Open5eResponse<T> getByUrl(String url, ParameterizedTypeReference<Open5eResponse<T>> type ) {
+    public <T> Open5eResponse<T> getByUrl(String url, ParameterizedTypeReference<Open5eResponse<T>> type) {
         var uri = URI.create(url);
-        if(!uri.isAbsolute()) {
+        if (!uri.isAbsolute()) {
             throw new IllegalArgumentException("Expected absolute URL, got: " + url);
         }
 

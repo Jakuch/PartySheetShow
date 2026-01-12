@@ -30,7 +30,7 @@ public abstract class Open5eServiceBase<T> {
         var data = new ArrayList<T>();
 
         var page = 1;
-        while(true) {
+        while (true) {
             var response = open5eClient.getPage(
                     path,
                     Map.of(
@@ -41,7 +41,7 @@ public abstract class Open5eServiceBase<T> {
 
             data.addAll(response.results());
 
-            if(response.next() == null) {
+            if (response.next() == null) {
                 break;
             }
             page++;

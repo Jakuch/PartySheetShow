@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="https://www.thymeleaf.org">
+      xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-<nav class="navbar navbar-expand-md navbar-dark bg-dark" th:fragment="navbar(home, users, characters, tracker, levels)" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<nav class="navbar navbar-expand-md navbar-dark bg-dark" th:fragment="navbar(home, users, characters, tracker, levels)">
     <div class="container-fluid">
         <img src="/images/d20.png" class="navbar-brand" style="height: 50px">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"

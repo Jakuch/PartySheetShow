@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="https://www.thymeleaf.org">
+      xmlns:th="https://www.thymeleaf.org"
+>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,27 +21,32 @@
             <div class="container-fluid">
                 <div class="collapse navbar-collapse" id="navbar2">
                     <div class="nav-item me-auto mb-2 mb-md-0">
-                        <a href="javascript:history.back()" class="btn btn-success me-2">
+                        <a th:href="@{/characters}" class="btn btn-success me-2">
                             Back
                         </a>
                     </div>
                     <ul class="navbar-nav">
-                        <a href="javascript:history.back()" class="btn btn-success me-2">
+                        <a class="btn btn-success me-2" th:if="${mode == 'view'}"
+                           th:href="@{/characters/{id}(id=${character.id}, mode='edit')}">
                             Edit
                         </a>
-                        <a href="javascript:history.back()" class="btn btn-danger me-2">
+                        <a class="btn btn-danger me-2" th:if="${mode == 'edit'}"
+                           th:href="@{/characters/{id}(id=${character.id}, mode='view')}">
                             Cancel
                         </a>
-                        <a href="javascript:history.back()" class="btn btn-success me-2">
+                        <button class="btn btn-success me-2" th:if="${mode == 'edit'}" type="submit" form="editForm">
                             Save
-                        </a>
+                        </button>
                     </ul>
                 </div>
             </div>
         </nav>
         <div class="col-3"></div>
     </div>
-    <div class="row" th:object="${character}">
+    <form class="row" id="editForm"
+          th:action="@{/characters/{id}(id=${character.id})}"
+          th:object="${editForm}"
+          method="post">
         <div class="col-3 text-end">
             <div class="bg-dark text-light mt-2 border border-4 border-dark rounded text-end hide collapse collapse-horizontal float-end"
                  id="test-collapse-left">
@@ -79,7 +85,7 @@
             <div class="row">
                 <div class="col-4 border border-2 rounded">
                     <div class="row">
-                        <div class="col-6 mt-1 mb-2" th:text="*{name}">
+                        <div class="col-6 mt-1 mb-2" th:text="${character.name}">
                             Name
                         </div>
                         <div class="col-6 mt-1 mb-2">
@@ -88,24 +94,28 @@
                     </div>
                 </div>
                 <div class="col-2 border border-2 rounded">
-                    <div th:if="*{level}">
+                    <div th:if="${character.level}">
                         <div class="row">
-                            <div class="col mt-1 mb-2 text-end" th:text="*{level.name}">
-                                level
+                            <div class="col-3"></div>
+                            <div class="col-6 mt-1 mb-2">
+                                <div th:if="${mode == 'view'}" th:text="${character.level.getNumericValue()}">
+                                    level
+                                </div>
+                                <select th:if="${mode == 'edit'}" class="form-control text-center" type="text"
+                                        th:field="*{level}">
+                                    <option th:each="lvl : ${levels}"
+                                            th:value="${lvl}"
+                                            th:text="${lvl.getNumericValue()}">
+                                </select>
                             </div>
-                            <div class="col mt-1 text-start">
-                                <button class="badge rounded-circle btn btn-success border-0 btn-toggle"
-                                        data-bs-toggle="collapse"
-                                        data-bs-target="#test-collapse-left" aria-expanded="false"> +
-                                </button>
-                            </div>
+                            <div class="col-3"></div>
                         </div>
                         <div class="row">
                             <div class="col mt-1 mb-2 text-end">
                                 Proficiency bonus
                             </div>
                             <div class="col mt-1 mb-2 text-start"
-                                 th:text="*{level.proficiencyBonus}">ProficiencyBonus
+                                 th:text="${character.level.proficiencyBonus}">ProficiencyBonus
                             </div>
                         </div>
                         <div class="collapse hide" id="level-collapse">
@@ -113,11 +123,11 @@
                                 <li>
                                     <div class="col">Experience points</div>
                                     <div class="col link-body-emphasis d-inline-flex text-decoration-none rounded"
-                                         th:text="*{currentExperiencePoints}">CurrentExp
+                                         th:text="${character.currentExperiencePoints}">CurrentExp
                                     </div>
                                     /
                                     <div class="col link-body-emphasis d-inline-flex text-decoration-none rounded"
-                                         th:text="*{level.nextLevelExperience}">NextLvlExp
+                                         th:text="${character.level.nextLevelExperience}">NextLvlExp
                                     </div>
                                 </li>
                             </ul>
@@ -126,29 +136,39 @@
                 </div>
                 <div class="col-2 border border-2 rounded">
                     <div class="row">
-                        <div class="col-8 mt-1 mb-2 text-end" th:text="*{race.name}">
+                        <div class="col-8 mt-1 mb-2 text-end" th:text="${character.race.name}">
                             race
                         </div>
                         <div class="col-4 text-start mt-1">
                             <button class="badge rounded-circle btn btn-success border-0 btn-toggle"
+                                    type="button"
                                     data-bs-toggle="collapse"
-                                    data-bs-target="#test-collapse-race" aria-expanded="false"
-                                    aria-controls="test-collapse-race"> >
+                                    data-bs-target="#desc-collapse-race" aria-expanded="false"
+                                    aria-controls="desc-collapse-race"> >
                             </button>
                         </div>
                     </div>
                 </div>
                 <div class="col-4 border border-2 rounded">
-                    <div th:each="characterClass : *{characterClasses}">
+                    <div th:each="characterClass : ${character.characterClasses}">
                         <div class="row">
-                            <div class="col mt-1 mb-2 text-end" th:text="${characterClass.name}">
+                            <div class="col-4 mt-1 mb-2 text-end" th:text="${characterClass.name}">
                                 class
                             </div>
-                            <div class="col mt-1 mb-2" th:text="${characterClass.level.name}">
-                                level
+                            <div class="col-4 mt-1 mb-2">
+                                <div th:if="${mode == 'view'}" th:text="${characterClass.level.getNumericValue()}">
+                                    level
+                                </div>
+                                <select th:if="${mode == 'edit'}" class="form-control text-center" type="text"
+                                        th:field="*{classes[__${characterClass.srdKey}__].level}">
+                                    <option th:each="lvl : ${levels}"
+                                            th:value="${lvl.getNumericValue()}"
+                                            th:text="${lvl.getNumericValue()}">
+                                </select>
                             </div>
-                            <div class="col text-start mt-1">
+                            <div class="col-4 text-start mt-1">
                                 <button class="badge rounded-circle btn btn-success border-0 btn-toggle"
+                                        type="button"
                                         data-bs-toggle="collapse"
                                         th:attr="data-bs-target=${'#collapse-' + characterClass.srdKey}, aria-controls=${'collapse-' + characterClass.srdKey}"
                                         aria-expanded="false"> >
@@ -177,8 +197,14 @@
                                          th:each="attributeName : ${attributeNames}">
                                         <div class="col-6" th:text="${attributeName.getSrdKey()}">name</div>
                                         <div class="col-3"
-                                             th:text="${character.getAttribute(attributeName.getSrdKey()).getValue()}">
-                                            val
+                                             style="padding-left: 0px !important; padding-right: 0px !important">
+                                            <div th:if="${mode == 'view'}"
+                                                 th:text="${character.getAttribute(attributeName.getSrdKey()).getValue()}">
+                                                val
+                                            </div>
+                                            <input th:if="${mode == 'edit'}"
+                                                   class="form-control text-center"
+                                                   th:field="*{attributes[__${attributeName}__]}">
                                         </div>
                                         <div class="col-3"
                                              th:text="${character.getAttribute(attributeName.getSrdKey()).getBonus()}">
@@ -198,12 +224,13 @@
                             </div>
                             <div class="row border border-2 rounded text-start">
                                 <div class="col-12 collapse show" id="saving-throws-collapse">
-                                    <div class="row" th:each="savingThrow : *{savingThrows}">
+                                    <div class="row" th:each="savingThrow : ${character.savingThrows}">
                                         <div class="col-8" th:text="${savingThrow.getName()}">name</div>
                                         <div class="col-1" th:text="${savingThrow.proficiency.getShortName()}">profi
                                         </div>
                                         <div class="col-2" th:text="${savingThrow.getValue()}">value</div>
-                                        <div class="col-1" th:text="${savingThrow.advantage.getShortName()}">adv</div>
+                                        <div class="col-1" th:text="${savingThrow.advantage.getShortName()}">adv
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -253,7 +280,8 @@
                             <div class="row border border-2 rounded text-start">
                                 <div class="col-12 collapse show" id="skills-collapse">
                                     <div class="row" th:each="skillName : ${skillNames}">
-                                        <div class="col-7" th:text="${character.getSkill(skillName.srdKey).name}">name
+                                        <div class="col-7" th:text="${character.getSkill(skillName.srdKey).name}">
+                                            name
                                         </div>
                                         <div class="col-1"
                                              th:text="${character.getSkill(skillName.srdKey).proficiency.getShortName()}">
@@ -288,13 +316,14 @@
                             </div>
                             <div class="row border border-2 rounded text-start">
                                 <div class="col-12 collapse show" id="proficiencies-collapse"
-                                     th:each="charClass : *{characterClasses}">
+                                     th:each="charClass : ${character.characterClasses}">
                                     <div class="row">
                                         <div class="col-12 text-success" th:text="${charClass.name}">
                                             class
                                         </div>
                                     </div>
-                                    <div class="row" th:unless="${#lists.isEmpty(charClass.classProficiencies.armor)}">
+                                    <div class="row"
+                                         th:unless="${#lists.isEmpty(charClass.classProficiencies.armor)}">
                                         <div class="col-12" th:text="${charClass.classProficiencies.armor}">
                                             Armor
                                         </div>
@@ -305,7 +334,8 @@
                                             Weapon
                                         </div>
                                     </div>
-                                    <div class="row" th:unless="${#lists.isEmpty(charClass.classProficiencies.tools)}">
+                                    <div class="row"
+                                         th:unless="${#lists.isEmpty(charClass.classProficiencies.tools)}">
                                         <div class="col-12" th:text="${charClass.classProficiencies.tools}">
                                             Tools
                                         </div>
@@ -366,7 +396,7 @@
                                         <div class="col-12">AC</div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-12" th:text="*{armorClass}">AC</div>
+                                        <div class="col-12" th:text="${character.armorClass}">AC</div>
                                     </div>
                                 </div>
                                 <div class="col-2">
@@ -374,7 +404,7 @@
                                         <div class="col-12">Speed (ft)</div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-12" th:text="*{walkingSpeed}">speed</div>
+                                        <div class="col-12" th:text="${character.walkingSpeed}">speed</div>
                                     </div>
                                 </div>
                                 <div class="col-3">
@@ -382,8 +412,11 @@
                                         <div class="col-12">Initiative Bonus</div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-10" th:text="*{initiativeBonus.getValue()}">initiative</div>
-                                        <div class="col-2" th:text="*{initiativeBonus.getAdvantage().getShortName()}">
+                                        <div class="col-10" th:text="${character.initiativeBonus.getValue()}">
+                                            initiative
+                                        </div>
+                                        <div class="col-2"
+                                             th:text="${character.initiativeBonus.getAdvantage().getShortName()}">
                                             initiative
                                         </div>
                                     </div>
@@ -392,16 +425,19 @@
                                     <div class="row">
                                         <div class="col-12">Current HP</div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-12" th:text="*{health.current}">curHp</div>
+                                    <div class="row" th:if="${mode == 'view'}">
+                                        <div class="col-12" th:text="${character.health.current}">curHp</div>
                                     </div>
+                                    <input th:if="${mode == 'edit'}"
+                                           class="form-control text-center"
+                                           th:field="*{currentHealth}" th:value="*{currentHealth}">
                                 </div>
                                 <div class="col-2">
                                     <div class="row">
                                         <div class="col-12">Temp HP</div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-12" th:text="*{health.temporary}">tempHp</div>
+                                        <div class="col-12" th:text="${character.health.temporary}">tempHp</div>
                                     </div>
                                 </div>
                                 <div class="col-2">
@@ -409,7 +445,7 @@
                                         <div class="col-12">Max HP</div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-12" th:text="*{health.max}">maxHp</div>
+                                        <div class="col-12" th:text="${character.health.max}">maxHp</div>
                                     </div>
                                 </div>
                             </div>
@@ -577,7 +613,7 @@
             </div>
         </div>
         <div class="col-3">
-            <div th:each="charClass : *{characterClasses}"
+            <div th:each="charClass : ${character.characterClasses}"
                  class="bg-dark text-light text-start text-wrap mt-2 border border-4 border-dark rounded collapse multi-collapse collapse-horizontal hide float-start overflow-auto"
                  style="max-width: 23vw" th:id="${'collapse-' + charClass.srdKey}">
                 <div th:text="${charClass.name}" class="text-center text-success">name</div>
@@ -592,9 +628,9 @@
                 </ul>
             </div>
             <div class="bg-dark text-light text-start  mt-2 border border-4 border-dark rounded collapse multi-collapse collapse-horizontal hide float-start overflow-auto"
-                 style="max-width: 23vw" id="test-collapse-race">
-                <div th:text="*{race.name}" class="text-center text-success">name</div>
-                <ul th:each="trait: *{race.raceTraits}" class="list-unstyled mb-2 ms-2">
+                 style="max-width: 23vw" id="desc-collapse-race">
+                <div th:text="${character.race.name}" class="text-center text-success">name</div>
+                <ul th:each="trait: ${character.race.raceTraits}" class="list-unstyled mb-2 ms-2">
                     <li th:text="${trait.name}" class="border-bottom"></li>
                     <li th:text="${trait.description}"></li>
                 </ul>
@@ -604,7 +640,7 @@
                 DUPA
             </div>
         </div>
-    </div>
+    </form>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"

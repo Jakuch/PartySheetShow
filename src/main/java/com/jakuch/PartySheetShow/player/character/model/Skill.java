@@ -24,7 +24,7 @@ public class Skill extends Open5eData {
         }
 
         var proficiencyBonus = Proficiency.calculateProficiencyBonus(this.proficiency, level);
-        this.value = value + proficiencyBonus;
+        this.value = value + proficiencyBonus + this.customBonus;
     }
     public void addToValue(int value) {
         this.value += value;

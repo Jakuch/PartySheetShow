@@ -4,10 +4,15 @@ import com.jakuch.PartySheetShow.open5e.Open5eProperties;
 import com.jakuch.PartySheetShow.open5e.Open5eServiceBase;
 import com.jakuch.PartySheetShow.open5e.client.Open5eClient;
 import com.jakuch.PartySheetShow.player.character.model.CharacterClass;
+import org.apache.tomcat.util.threads.VirtualThreadExecutor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.scheduling.concurrent.SimpleAsyncTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import static com.jakuch.PartySheetShow.open5e.Open5eTypeReferences.CHARACTER_CLASS;

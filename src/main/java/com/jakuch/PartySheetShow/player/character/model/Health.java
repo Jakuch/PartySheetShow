@@ -16,5 +16,6 @@ public class Health {
     private int current;
     private int max;
     private int temporary;
+    private Map<Integer, DiceType> availableHitDices;
     private Map<Integer, DiceType> hitDices;
 }

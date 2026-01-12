@@ -33,7 +33,7 @@ public class SecurityConfig {
                                 )
                                 .permitAll()
                                 .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                                .anyRequest().permitAll() //TODO for development only, permit all to make it easier to work with
+                                .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")

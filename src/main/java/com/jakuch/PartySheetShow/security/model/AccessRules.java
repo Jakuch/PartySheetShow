@@ -6,7 +6,7 @@ import java.util.List;
 
 @Builder
 public record AccessRules(
-        String ownerId,
+        AppUser owner,
         List<String> editorIds,
         List<String> viewerIds
 ) {
@@ -22,6 +22,6 @@ public record AccessRules(
     }
 
     public boolean isOwner(AppUser user) {
-        return user != null && ownerId != null && ownerId().equals(user.getId());
+        return user != null && owner.getId() != null && owner.getId().equals(user.getId());
     }
 }

@@ -1,10 +1,16 @@
 package com.jakuch.PartySheetShow.player.character.form;
 
+import com.jakuch.PartySheetShow.player.character.model.AttributeName;
 import com.jakuch.PartySheetShow.player.character.model.Level;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -12,20 +18,18 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class CharacterForm {
+    private String ownerName;
     private String name;
     private int maxHealth;
     private int currentHealth;
     private int armorClass;
-    private int strength;
-    private int dexterity;
-    private int constitution;
-    private int intelligence;
-    private int wisdom;
-    private int charisma;
+    private int currentExperiencePoints;
+    @NotNull
+    private Map<AttributeName, @Min(0) @Max(30) Integer> attributes = new HashMap<>();
     private Level level;
     private int walkingSpeed;
     private String chosenCharacterClassKey;
-    private List<CharacterClassForm> characterClasses = new ArrayList<>();
+    private Map<String, CharacterClassForm> classes = new HashMap<>();
     private String chosenRaceKey;
     private CharacterRaceForm race;
 }

@@ -1,6 +1,8 @@
 package com.jakuch.PartySheetShow.player.character.controller;
 
+import com.jakuch.PartySheetShow.player.character.form.CharacterForm;
 import com.jakuch.PartySheetShow.player.character.model.AttributeName;
+import com.jakuch.PartySheetShow.player.character.model.Level;
 import com.jakuch.PartySheetShow.player.character.model.SkillName;
 import com.jakuch.PartySheetShow.player.character.service.CharacterMapper;
 import com.jakuch.PartySheetShow.player.character.service.CharacterService;
@@ -9,39 +11,58 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @Controller
 @AllArgsConstructor
+@RequestMapping("/characters")
 public class CharacterController {
 
     private CharacterService characterService;
     private CharacterMapper characterMapper;
     private AppUserService appUserService;
 
-    @GetMapping("/characters")
+    @GetMapping
     public String characters(Model model) {
         model.addAttribute("characters", characterService.findAllForUser(appUserService.getCurrentUser()));
         model.addAttribute("attributeNames", AttributeName.correctValues());
         return "characters";
     }
 
-    @GetMapping("/characters/{id}")
-    public String characterSheet1(@PathVariable String id, @RequestParam(defaultValue = "view") String mode, Model model) {
+    @GetMapping("/{id}")
+    public String characterSheet(@PathVariable String id, @RequestParam(defaultValue = "view") String mode, Model model) {
+        addPageAttributes(id, mode, model);
+
+        return "characterSheet";
+    }
+
+    @PostMapping("/{id}")
+    public String updateCharacter(@PathVariable String id, @ModelAttribute("editForm") CharacterForm characterForm, BindingResult bindingResult, Model model) {
+        if(bindingResult.hasErrors()) {
+            addPageAttributes(id, "edit", model);
+            return "characterSheet";
+        }
+
+        characterService.updateCharacter(id, characterForm);
+        return "redirect:/characters/" + id + "?mode=view";
+    }
+
+    private void addPageAttributes(String id, String mode, Model model) {
         var character = characterService.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         var characterForm = characterMapper.toForm(character);
 
         model.addAttribute("character", character);
-        model.addAttribute("characterForm", characterForm);
+        model.addAttribute("editForm", characterForm);
         model.addAttribute("mode", mode);
+        model.addAttribute("levels", Level.values());
         model.addAttribute("attributeNames", AttributeName.correctValues());
         model.addAttribute("skillNames", SkillName.values());
-        return "characterSheet";
     }
 
-    @PostMapping("/characters/{id}/delete")
+    @PostMapping("/{id}/delete")
     public String deleteById(@PathVariable String id) {
         characterService.deleteCharacter(id);
         return "redirect:/characters";

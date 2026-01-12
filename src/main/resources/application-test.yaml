@@ -1,6 +1,7 @@
+%YAML 1.2
+---
+
 spring:
-  data:
-    mongodb:
-      database: test-db
+  data.mongodb.database: test-db
 
 open5e.client.pagination: 200
