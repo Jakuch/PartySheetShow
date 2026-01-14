@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class Attribute extends Open5eData {
+public class Ability extends Open5eData {
 
     private int value;
 
@@ -29,5 +29,10 @@ public class Attribute extends Open5eData {
 
     private void calculateSkills(Level level) {
         this.skills.forEach(skill -> skill.setValueWithProficiency(this.getBonus(), level));
+    }
+
+    public void updateValue(int value, Level level) {
+        this.value += value;
+        calculateBonusesAndSkills(level);
     }
 }

@@ -12,4 +12,7 @@ spring:
   data.mongodb.uri: "mongodb+srv://${MONGO_USER}:${MONGO_PASS}@${MONGO_HOST}/${MONGO_DB}?appName=PartySheetShow"
   threads.virtual.enabled: true
 
-open5e.client.pagination: 200
+open5e.client:
+  pagination: 200
+  default-gamesystem: "5e-2014"
+  use-default-gamesystem: true

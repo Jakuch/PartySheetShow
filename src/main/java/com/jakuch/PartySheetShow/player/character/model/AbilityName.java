@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Getter
-public enum AttributeName {
+public enum AbilityName {
     STRENGTH("Strength", "STR"),
     DEXTERITY("Dexterity", "DEX"),
     CONSTITUTION("Constitution", "CON"),
@@ -18,20 +18,23 @@ public enum AttributeName {
     private final String name;
     private final String srdKey;
 
-    AttributeName(String name, String srdKey) {
+    AbilityName(String name, String srdKey) {
         this.name = name;
         this.srdKey = srdKey;
     }
 
-    public static AttributeName findByName(String name) {
-        return correctValues().stream().filter(el -> el.name.equals(name)).findFirst().orElse(NONE);
+    public static AbilityName findByName(String name) {
+        return correctValues().stream()
+                .filter(el -> el.name.equalsIgnoreCase(name.trim()))
+                .findFirst()
+                .orElse(NONE);
     }
 
-    public static AttributeName findBySrdKey(String srdKey) {
+    public static AbilityName findBySrdKey(String srdKey) {
         return correctValues().stream().filter(el -> el.srdKey.equalsIgnoreCase(srdKey)).findFirst().orElse(NONE);
     }
 
-    public static List<AttributeName> correctValues() {
+    public static List<AbilityName> correctValues() {
         return Arrays.asList(STRENGTH, DEXTERITY, CONSTITUTION, INTELLIGENCE, WISDOM, CHARISMA);
     }
 }

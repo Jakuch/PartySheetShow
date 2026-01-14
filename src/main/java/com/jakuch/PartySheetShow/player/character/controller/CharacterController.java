@@ -1,11 +1,12 @@
 package com.jakuch.PartySheetShow.player.character.controller;
 
 import com.jakuch.PartySheetShow.player.character.form.CharacterForm;
-import com.jakuch.PartySheetShow.player.character.model.AttributeName;
+import com.jakuch.PartySheetShow.player.character.model.AbilityName;
 import com.jakuch.PartySheetShow.player.character.model.Level;
 import com.jakuch.PartySheetShow.player.character.model.SkillName;
 import com.jakuch.PartySheetShow.player.character.service.CharacterMapper;
 import com.jakuch.PartySheetShow.player.character.service.CharacterService;
+import com.jakuch.PartySheetShow.player.dice.DiceType;
 import com.jakuch.PartySheetShow.security.service.AppUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,13 +28,13 @@ public class CharacterController {
     @GetMapping
     public String characters(Model model) {
         model.addAttribute("characters", characterService.findAllForUser(appUserService.getCurrentUser()));
-        model.addAttribute("attributeNames", AttributeName.correctValues());
+        model.addAttribute("abilityNames", AbilityName.correctValues());
         return "characters";
     }
 
     @GetMapping("/{id}")
     public String characterSheet(@PathVariable String id, @RequestParam(defaultValue = "view") String mode, Model model) {
-        addPageAttributes(id, mode, model);
+        populateModel(id, mode, model);
 
         return "characterSheet";
     }
@@ -41,7 +42,7 @@ public class CharacterController {
     @PostMapping("/{id}")
     public String updateCharacter(@PathVariable String id, @ModelAttribute("editForm") CharacterForm characterForm, BindingResult bindingResult, Model model) {
         if(bindingResult.hasErrors()) {
-            addPageAttributes(id, "edit", model);
+            populateModel(id, "edit", model);
             return "characterSheet";
         }
 
@@ -49,7 +50,7 @@ public class CharacterController {
         return "redirect:/characters/" + id + "?mode=view";
     }
 
-    private void addPageAttributes(String id, String mode, Model model) {
+    private void populateModel(String id, String mode, Model model) {
         var character = characterService.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         var characterForm = characterMapper.toForm(character);
@@ -58,7 +59,7 @@ public class CharacterController {
         model.addAttribute("editForm", characterForm);
         model.addAttribute("mode", mode);
         model.addAttribute("levels", Level.values());
-        model.addAttribute("attributeNames", AttributeName.correctValues());
+        model.addAttribute("abilityNames", AbilityName.correctValues());
         model.addAttribute("skillNames", SkillName.values());
     }
 

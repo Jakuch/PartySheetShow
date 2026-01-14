@@ -2,14 +2,15 @@ package com.jakuch.PartySheetShow.open5e;
 
 import com.jakuch.PartySheetShow.open5e.client.Open5eClient;
 import com.jakuch.PartySheetShow.open5e.client.Open5eResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
+@Slf4j
 public abstract class Open5eServiceBase<T> {
 
     protected final Open5eClient open5eClient;
@@ -27,26 +28,24 @@ public abstract class Open5eServiceBase<T> {
     }
 
     public List<T> getAll() {
-        var data = new ArrayList<T>();
+        log.info("Started fetching data from " + path + " Open5e endpoint.");
 
-        var page = 1;
-        while (true) {
-            var response = open5eClient.getPage(
-                    path,
-                    Map.of(
-                            "page", page,
-                            "limit", open5eProperties.getPagination()
-                    ),
-                    type);
+        var response = open5eClient.getPage(
+                path,
+                null,
+                type);
 
-            data.addAll(response.results());
+        var data = new ArrayList<>(response.results());
+        var nextPageUrl = response.next();
 
-            if (response.next() == null) {
-                break;
-            }
-            page++;
+        while (nextPageUrl != null) {
+            var byUrl = open5eClient.getByUrl(nextPageUrl, type);
+
+            nextPageUrl = byUrl.next();
+            data.addAll(byUrl.results());
         }
 
+        log.info("Finished fetching data from " + path + " Open5e endpoint.");
         return data;
     }
 

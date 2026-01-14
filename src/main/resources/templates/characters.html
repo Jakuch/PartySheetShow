@@ -45,9 +45,9 @@
                 <td th:text="${character.name}"></td>
                 <td th:text="${character.armorClass}"></td>
                 <td th:text="${character.health.max}"></td>
-                <div th:each="attributeName : ${attributeNames}">
-                    <td th:if="${character.attributes}"
-                        th:text="${character.getAttribute(attributeName.getSrdKey()).getValue()}"></td>
+                <div th:each="abilityName : ${abilityNames}">
+                    <td th:if="${character.abilities}"
+                        th:text="${character.getAbility(abilityName.getSrdKey()).getValue()}"></td>
                 </div>
             </tr>
         </table>

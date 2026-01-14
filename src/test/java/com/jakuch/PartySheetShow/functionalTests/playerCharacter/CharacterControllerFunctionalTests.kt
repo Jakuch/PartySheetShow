@@ -25,7 +25,7 @@ class CharacterControllerFunctionalTests : TestsBase() {
                 .andExpect(status().isOk)
                 .andExpect(view().name("characters"))
                 .andExpect(model().attributeExists("characters"))
-                .andExpect(model().attributeExists("attributeNames"))
+                .andExpect(model().attributeExists("abilityNames"))
     }
 
     @Test

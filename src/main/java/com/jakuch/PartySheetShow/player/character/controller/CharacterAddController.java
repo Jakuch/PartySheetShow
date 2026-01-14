@@ -14,8 +14,10 @@ import org.thymeleaf.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Controller
@@ -28,55 +30,59 @@ public class CharacterAddController {
     private CharacterClassService characterClassService;
     private RaceService raceService;
 
+
     @ModelAttribute("character")
     public CharacterForm characterForm() {
         var characterForm = new CharacterForm();
-        characterForm.setAttributes(Arrays.stream(AttributeName.values())
+        characterForm.setAbilities(Arrays.stream(AbilityName.values())
                 .collect(Collectors.toMap(
-                        attributeName -> attributeName,
+                        abilityName -> abilityName,
                         attr -> 0)
                 ));
 
         return characterForm;
     }
 
-    @ModelAttribute("levels")
-    public List<Level> levels() {
-        return Arrays.asList(Level.values());
-    }
-
-    @ModelAttribute("classes")
-    public List<CharacterClass> classes() {
-        return characterClassService.getAllClasses();
-    }
-
     @ModelAttribute("selectedClassesFeatures")
-    public List<CharacterClass> selectedClassesFeatures() {
+    public List<Feature> classFeatures() {
         return new ArrayList<>();
-    }
-
-    @ModelAttribute("races")
-    public List<Race> races() {
-        return raceService.getAll();
     }
 
     @ModelAttribute("selectedRaceTraits")
-    public List<RaceTrait> selectedRaceTraits() {
+    public List<RaceTrait> raceTraits() {
         return new ArrayList<>();
     }
 
-    @GetMapping
-    public String addCharacterForm(Model model) {
-        model.addAttribute("attributeNames", AttributeName.correctValues());
+    @ModelAttribute
+    public void populateModel(Model model) {
+        model.addAttribute("levels", Arrays.asList(Level.values()));
+        model.addAttribute("abilityNames", AbilityName.correctValues());
 
+        try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            var futureClasses = executor.submit(() -> characterClassService.getAllClasses());
+            var futureRaces = executor.submit(() -> raceService.getAll());
+
+            model.addAttribute("classes", futureClasses.get());
+            model.addAttribute("races", futureRaces.get());
+
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @GetMapping
+    public String addCharacterForm() {
         return "characterAdd";
     }
 
     @PostMapping(params = {"addClass"})
-    public String addClass(@ModelAttribute("character") CharacterForm characterForm, @ModelAttribute("classes") List<CharacterClass> classes, @ModelAttribute("selectedClassesFeatures") List<CharacterClass> selectedClassesFeatures) {
+    public String addClass(@ModelAttribute("character") CharacterForm characterForm, @ModelAttribute("classes") List<CharacterClass> classes, @ModelAttribute("selectedClassesFeatures") List<Feature> selectedClassesFeatures) {
         var classKey = characterForm.getChosenCharacterClassKey();
-        if(!StringUtils.isEmptyOrWhitespace(classKey) && characterForm.getClasses().get(classKey) == null) {
-            characterClassService.getByKey(classKey).ifPresent(selectedClassesFeatures::add);
+        if (!StringUtils.isEmptyOrWhitespace(classKey) && characterForm.getClasses().get(classKey) == null) {
+            characterClassService.getByKey(classKey).ifPresent(characterClass -> {
+                selectedClassesFeatures.addAll(characterClass.getFeatures());
+                selectedClassesFeatures.sort(Comparator.comparingInt(Feature::getLowestGainedAtLevel));
+            });
             characterService.addClassToForm(characterForm, classes);
         }
         characterForm.setChosenCharacterClassKey(null);
@@ -85,8 +91,8 @@ public class CharacterAddController {
     }
 
     @PostMapping(params = {"deleteClass"})
-    public String deleteClass(@ModelAttribute("character") CharacterForm characterForm, @RequestParam String classKey, @ModelAttribute("selectedClassesFeatures") List<CharacterClass> selectedClassesFeatures) {
-        selectedClassesFeatures.removeIf(characterClass -> classKey.equalsIgnoreCase(characterClass.getSrdKey()));
+    public String deleteClass(@ModelAttribute("character") CharacterForm characterForm, @RequestParam String classKey, @ModelAttribute("selectedClassesFeatures") List<Feature> selectedClassesFeatures) {
+        selectedClassesFeatures.removeIf(feature -> classKey.equalsIgnoreCase(feature.getClassSrdKey()));
         characterService.deleteClassFromForm(characterForm, classKey);
         return "redirect:/characterAdd";
     }

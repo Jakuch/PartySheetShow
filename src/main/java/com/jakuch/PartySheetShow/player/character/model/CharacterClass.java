@@ -2,6 +2,7 @@ package com.jakuch.PartySheetShow.player.character.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jakuch.PartySheetShow.open5e.Open5eData;
+import com.jakuch.PartySheetShow.open5e.dataParser.model.ClassProficiencies;
 import com.jakuch.PartySheetShow.player.dice.DiceType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,10 +28,7 @@ public class CharacterClass extends Open5eData {
     private ClassProficiencies classProficiencies;
 
     public List<Feature> getClassLevelFeatures() {
-        features.sort(Comparator.comparingInt(f -> f.getGainedAt().stream()
-                .mapToInt(FeatureGainedAt::getLevel)
-                .min()
-                .orElse(0)));
+        features.sort(Comparator.comparingInt(Feature::getLowestGainedAtLevel));
         return this.features.stream().filter(f -> "CLASS_LEVEL_FEATURE".equalsIgnoreCase(f.getType())).toList();
     }
 

@@ -8,5 +8,10 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 public class Open5eProperties {
+
     private int pagination;
+
+    private String defaultGamesystem;
+
+    private boolean useDefaultGamesystem;
 }

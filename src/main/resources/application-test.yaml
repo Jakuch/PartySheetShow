@@ -4,4 +4,7 @@
 spring:
   data.mongodb.database: test-db
 
-open5e.client.pagination: 200
+open5e.client:
+  pagination: 200
+  default-gamesystem: "5e-2014"
+  use-default-gamesystem: true

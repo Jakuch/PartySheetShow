@@ -11,6 +11,7 @@ import org.springframework.scheduling.concurrent.SimpleAsyncTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -26,7 +27,19 @@ public class CharacterClassService extends Open5eServiceBase<CharacterClass> {
 
     @Cacheable("classesAll")
     public List<CharacterClass> getAllClasses() {
+        getAll().forEach(this::setClassSrdKeyInFeatures);
         return getAll().stream().filter(characterClass -> characterClass.getSubclass() == null).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<CharacterClass> getByKey(String key) {
+        var optionalCharacterClass = super.getByKey(key);
+        optionalCharacterClass.ifPresent(this::setClassSrdKeyInFeatures);
+        return optionalCharacterClass;
+    }
+
+    private void setClassSrdKeyInFeatures(CharacterClass characterClass) {
+        characterClass.getFeatures().forEach(feature -> feature.setClassSrdKey(characterClass.getSrdKey()));
     }
 
     public List<CharacterClass> getAllSubclassesForClass(String srdClassKey) {

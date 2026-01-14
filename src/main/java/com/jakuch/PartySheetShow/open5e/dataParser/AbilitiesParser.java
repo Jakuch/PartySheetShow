@@ -1,0 +1,123 @@
+package com.jakuch.PartySheetShow.open5e.dataParser;
+
+import com.jakuch.PartySheetShow.open5e.dataParser.model.AbilityBonuses;
+import com.jakuch.PartySheetShow.open5e.dataParser.model.choice.*;
+import com.jakuch.PartySheetShow.player.character.model.AbilityName;
+import org.springframework.stereotype.Component;
+
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import static com.jakuch.PartySheetShow.open5e.dataParser.ParserHelper.WORD_NUMBERS;
+
+@Component
+public class AbilitiesParser {
+
+    private static final Pattern FIXED = Pattern.compile(
+            "(?i)your\\s+([A-Za-z]+)\\s+score\\s+increases\\s+by\\s+(\\d+)"
+    );
+
+    private static final Pattern EACH = Pattern.compile(
+            "(?i)your\\s+ability\\s+scores\\s+each\\s+increase\\s+by\\s+(\\d+)"
+    );
+
+    private static final Pattern CHOOSE_ANY = Pattern.compile(
+            "(?i)(one|two|three|four|five|six|\\d+)\\s+(?:different\\s+)?(?:other\\s+)?ability\\s+scores?\\s+of\\s+your\\s+choice\\s+increases?\\s+by\\s+(\\d+)"
+    );
+
+    private static final Pattern CHOOSE_ANY_EXCEPT = Pattern.compile(
+            "(?i)(one|two|three|four|five|six|\\d+)\\s+ability\\s+scores?\\s+of\\s+your\\s+choice,\\s+other\\s+than\\s+([A-Za-z]+),\\s+increases?\\s+by\\s+(\\d+)"
+    );
+
+    private static final Pattern CHOOSE_ONE_OF = Pattern.compile(
+            "(?i)your\\s+([A-Za-z]+)\\s+or\\s+([A-Za-z]+)\\s+score\\s+increases\\s+by\\s+(\\d+)"
+    );
+
+    private static final Pattern CHOOSE_EITHER_OR = Pattern.compile(
+            "(?i)choose\\s+to\\s+increase\\s+either\\s+your\\s+([A-Za-z]+)\\s+or\\s+([A-Za-z]+)\\s+score\\s+by\\s+(\\d+)"
+    );
+
+    public AbilityBonuses parse(String description) {
+        var text = ParserHelper.removeSpecialCharacters(description);
+
+        var fixed = new HashMap<AbilityName, Integer>();
+        var choices = new ArrayList<Choice>();
+
+        Matcher mEach = EACH.matcher(text);
+        if (mEach.find()) {
+            int amount = Integer.parseInt(mEach.group(1));
+            fixed.putAll(Arrays.stream(AbilityName.values()).collect(Collectors.toMap(
+                    abilityName -> abilityName, abilityName -> amount
+            )));
+            text = removeMatch(text, mEach);
+        }
+
+        Matcher mOr = CHOOSE_ONE_OF.matcher(text);
+        if (mOr.find()) {
+            var a = AbilityName.findByName(filterAbilityName(mOr.group(1)));
+            var b =  AbilityName.findByName(filterAbilityName(mOr.group(2)));
+            int amount = Integer.parseInt(mOr.group(3));
+            choices.add(new ChooseOrPair(a, b, amount));
+            text = removeMatch(text, mOr);
+        }
+
+        Matcher mEither = CHOOSE_EITHER_OR.matcher(text);
+        if (mEither.find()) {
+            var a = AbilityName.findByName(filterAbilityName(mEither.group(1)));
+            var b =  AbilityName.findByName(filterAbilityName(mEither.group(2)));
+            int amount = Integer.parseInt(mEither.group(3));
+            choices.add(new ChooseFrom(1, amount, List.of(a, b)));
+            text = removeMatch(text, mEither);
+        }
+
+        Matcher mExcept = CHOOSE_ANY_EXCEPT.matcher(text);
+        if (mExcept.find()) {
+            int count = parseNumber(mExcept.group(1));
+            var excluded = AbilityName.findByName(filterAbilityName(mExcept.group(2)));
+            int amount = Integer.parseInt(mExcept.group(3));
+            choices.add(new ChooseAnyExcept(excluded, count, amount));
+            text = removeMatch(text, mExcept);
+        }
+
+        Matcher mChooseAny = CHOOSE_ANY.matcher(text);
+        if (mChooseAny.find()) {
+            int count = parseNumber(mChooseAny.group(1));
+            int amount = Integer.parseInt(mChooseAny.group(2));
+            boolean different = text.toLowerCase().contains("different ability scores");
+            if(!different) {
+                different = text.toLowerCase().contains("other ability scores");
+            }
+            choices.add(new ChooseAny(count, amount, different));
+            text = removeMatch(text, mChooseAny);
+        }
+
+        Matcher mFixed = FIXED.matcher(text);
+        while (mFixed.find()) {
+            AbilityName attr = AbilityName.findByName(filterAbilityName(mFixed.group(1)));
+            int amount = Integer.parseInt(mFixed.group(2));
+            fixed.merge(attr, amount, Integer::sum);
+        }
+
+        return new AbilityBonuses(description, fixed, choices);
+    }
+
+    private String filterAbilityName(String text) {
+        String[] split = text.split(" ");
+        return text;
+    }
+
+    private String removeMatch(String text, Matcher matcher) {
+        int start = matcher.start();
+        int end = matcher.end();
+        return (text.substring(0, start) + " " + text.substring(end)).replaceAll("\\s+", " ").trim();
+    }
+
+    private int parseNumber(String number) {
+        if (number.chars().allMatch(Character::isDigit)) {
+            return Integer.parseInt(number);
+        }
+        return WORD_NUMBERS.getOrDefault(number.toLowerCase(), 0);
+    }
+}

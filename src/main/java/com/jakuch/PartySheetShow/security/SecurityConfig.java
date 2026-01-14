@@ -29,7 +29,8 @@ public class SecurityConfig {
                                         "/levelsTable",
                                         "/css/**",
                                         "/js/**",
-                                        "/images/**"
+                                        "/images/**",
+                                        "/open5e/**"
                                 )
                                 .permitAll()
                                 .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")

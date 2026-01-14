@@ -1,9 +1,10 @@
 package com.jakuch.PartySheetShow.player.character.service;
 
 import com.jakuch.PartySheetShow.open5e.Open5eData;
-import com.jakuch.PartySheetShow.open5e.services.AttributeService;
+import com.jakuch.PartySheetShow.open5e.dataParser.ProficienciesParser;
+import com.jakuch.PartySheetShow.open5e.dataParser.RaceTraitsParser;
+import com.jakuch.PartySheetShow.open5e.services.AbilityService;
 import com.jakuch.PartySheetShow.open5e.services.CharacterClassService;
-import com.jakuch.PartySheetShow.open5e.services.ClassProficienciesParser;
 import com.jakuch.PartySheetShow.open5e.services.RaceService;
 import com.jakuch.PartySheetShow.player.character.form.CharacterClassForm;
 import com.jakuch.PartySheetShow.player.character.form.CharacterForm;
@@ -13,7 +14,10 @@ import com.jakuch.PartySheetShow.player.dice.DiceType;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -22,23 +26,24 @@ public class CharacterMapper {
 
     private CharacterClassService characterClassService;
     private RaceService raceService;
-    private AttributeService attributeService;
-    private ClassProficienciesParser classProficienciesParser;
+    private AbilityService abilityService;
+    private ProficienciesParser proficienciesParser;
+    private RaceTraitsParser raceTraitsParser;
 
     public CharacterForm toForm(Character character) {
         return CharacterForm.builder()
-                .ownerName(character.getAccessRules().owner().getUsername())
+                .playerName(character.getPlayerName())
                 .name(character.getName())
                 .maxHealth(character.getHealth().getMax())
                 .currentHealth(character.getHealth().getCurrent())
                 .level(character.getLevel())
                 .armorClass(character.getArmorClass())
-                .attributes(character.getAttributes()
+                .abilities(character.getAbilities()
                         .stream()
-                        .collect(Collectors.toMap(attribute -> AttributeName.findByName(attribute.getName()), Attribute::getValue)))
+                        .collect(Collectors.toMap(ability -> AbilityName.findBySrdKey(ability.getSrdKey()), Ability::getValue)))
                 .classes(character.getCharacterClasses()
                         .stream()
-                        .collect(Collectors.toMap(Open5eData::getSrdKey, characterClass ->  CharacterClassForm.builder()
+                        .collect(Collectors.toMap(Open5eData::getSrdKey, characterClass -> CharacterClassForm.builder()
                                 .key(characterClass.getSrdKey())
                                 .name(characterClass.getName())
                                 .level(characterClass.getLevel().getNumericValue())
@@ -52,46 +57,45 @@ public class CharacterMapper {
         character.setLevel(characterForm.getLevel());
         character.setCurrentExperiencePoints(character.getLevel().getRequiredExperience());
 
-        character.setAttributes(mapAttributes(characterForm));
+        character.setAbilities(mapAbilities(characterForm));
         character.setInitiativeBonus(InitiativeBonus.builder()
-                .value(character.getAttribute(AttributeName.DEXTERITY.getSrdKey()).getBonus())
+                .value(character.getAbility(AbilityName.DEXTERITY.getSrdKey()).getBonus())
                 .advantage(Advantage.NONE)
                 .build());
         character.setName(characterForm.getName());
         character.setArmorClass(characterForm.getArmorClass());
 
         var formClasses = characterForm.getClasses();
-        if(!formClasses.isEmpty()) {
+        if (!formClasses.isEmpty()) {
             var classes = formClasses.keySet()
                     .stream()
                     .map(k -> characterClassService.getByKey(k))
                     .flatMap(Optional::stream)
                     .toList();
 
-            classes.forEach(this::mapToClassProficiencies);
-
-            calculateSavingThrows(character, classes.stream().findFirst().orElseThrow(
-                    () -> new NoSuchElementException("Missing class")
-            ));//for now find first
+            mapToClassProficiencies(classes.getFirst());
+            calculateSavingThrows(character, classes.getFirst());
 
             character.getCharacterClasses().addAll(classes);
             character.setHealth(setHealthAndCalculateHitDices(characterForm, classes));
         }
 
         var race = characterForm.getRace();
-        if(race != null) {
-            raceService.getByKey(race.getKey()).ifPresent(character::setRace);
+        if (race != null) {
+            raceService.getByKey(race.getKey()).ifPresent(r -> {
+                character.setRace(r);
+                setRaceTraits(character, r);
+            });
         }
-
-        character.setWalkingSpeed(characterForm.getWalkingSpeed()); //TODO for now like this it should be taken from race later (its in traits)
+        character.setWalkingSpeed(character.getWalkingSpeed() + characterForm.getWalkingSpeed()); //TODO for now like this it should be taken from race later (its in traits)
 
         return character;
     }
 
     public Character update(CharacterForm characterForm, Character character) {
         character.setLevel(characterForm.getLevel());
-        updateAttributes(characterForm.getAttributes(), character.getAttributes());
-        calculateSkillValues(character.getAttributes(), character.getLevel());
+        updateAbilities(characterForm.getAbilities(), character.getAbilities());
+        calculateSkillValues(character.getAbilities(), character.getLevel());
 //        character.setCurrentExperiencePoints(characterForm.getCurrentExperiencePoints()); TODO
 //        character.setInitiativeBonus(); TODO
 
@@ -115,10 +119,10 @@ public class CharacterMapper {
         return character;
     }
 
-    private void updateAttributes(Map<AttributeName, Integer> attributes, List<Attribute> toUpdate) {
-        toUpdate.forEach(attribute -> {
-            var value = attributes.get(AttributeName.findByName(attribute.getName()));
-            attribute.setValue(value);
+    private void updateAbilities(Map<AbilityName, Integer> abilities, List<Ability> toUpdate) {
+        toUpdate.forEach(ability -> {
+            var value = abilities.get(AbilityName.findByName(ability.getName()));
+            ability.setValue(value);
         });
     }
 
@@ -132,7 +136,7 @@ public class CharacterMapper {
     }
 
     private void mapToClassProficiencies(CharacterClass characterClass) {
-        characterClass.setClassProficiencies(classProficienciesParser.mapToClassProficiencies(characterClass.getClassProficienciesFeature().getDescription()));
+        characterClass.setClassProficiencies(proficienciesParser.mapToClassProficiencies(characterClass.getClassProficienciesFeature().getDescription()));
     }
 
     private Health setHealthAndCalculateHitDices(CharacterForm characterForm, List<CharacterClass> classes) {
@@ -140,47 +144,47 @@ public class CharacterMapper {
 
         return Health.builder()
                 .max(characterForm.getMaxHealth())
-                .current(characterForm.getCurrentHealth())
+                .current(characterForm.getMaxHealth())
                 .availableHitDices(hitDices)
                 .hitDices(hitDices)
                 .build();
     }
 
-    private Map<Integer, DiceType> calculateHitDices(List<CharacterClass> classes) {
-       return classes.stream().collect(Collectors.toMap(characterClass -> characterClass.getLevel().getNumericValue(), CharacterClass::getHitDice));
+    private Map<DiceType, Integer> calculateHitDices(List<CharacterClass> classes) {
+        return classes.stream().collect(Collectors.toMap(CharacterClass::getHitDice, characterClass -> characterClass.getLevel().getNumericValue()));
     }
 
-    private List<Attribute> mapAttributes(CharacterForm characterForm) {
-        var attributes = attributeService.getAll();
+    private List<Ability> mapAbilities(CharacterForm characterForm) {
+        var abilities = abilityService.getAll();
 
-        characterForm.getAttributes().forEach((attrName, value) -> {
-            attributes.forEach(attribute -> {
-                if(attribute.getName().equalsIgnoreCase(attrName.getName())) {
-                    attribute.setValue(value);
-                    attribute.calculateBonusesAndSkills(characterForm.getLevel());
+        characterForm.getAbilities().forEach((attrName, value) -> {
+            abilities.forEach(ability -> {
+                if (ability.getName().equalsIgnoreCase(attrName.getName())) {
+                    ability.setValue(value);
+                    ability.calculateBonusesAndSkills(characterForm.getLevel());
                 }
             });
         });
 
-        return attributes;
+        return abilities;
     }
 
-    private void calculateSkillValues(List<Attribute> attributes, Level level) {
-        attributes.forEach(attribute ->
-                attribute.getSkills().forEach(skill -> skill.setValueWithProficiency(attribute.getBonus(), level))
+    private void calculateSkillValues(List<Ability> abilities, Level level) {
+        abilities.forEach(ability ->
+                ability.getSkills().forEach(skill -> skill.setValueWithProficiency(ability.getBonus(), level))
         );
     }
 
     private void calculateSavingThrows(Character character, CharacterClass characterClass) {
-        var savingThrows = AttributeName.correctValues()
+        var savingThrows = AbilityName.correctValues()
                 .stream()
-                .map(attributeName -> {
-                    var attribute = character.getAttribute(attributeName.getSrdKey());
-                    var savingThrow = new SavingThrow(attribute.getName() + " saving throw");
+                .map(abilityName -> {
+                    var ability = character.getAbility(abilityName.getSrdKey());
+                    var savingThrow = new SavingThrow(ability.getName() + " saving throw");
                     characterClass.getClassProficiencies().savingThrows().forEach(st -> {
-                        if(st.getSrdKey().equalsIgnoreCase(attribute.getSrdKey())) {
+                        if (st.getSrdKey().equalsIgnoreCase(ability.getSrdKey())) {
                             savingThrow.setProficiency(Proficiency.FULL);
-                            savingThrow.setValueWithProficiency(attribute.getBonus(), character.getLevel());
+                            savingThrow.setValueWithProficiency(ability.getBonus(), character.getLevel());
                         }
                     });
 
@@ -189,5 +193,10 @@ public class CharacterMapper {
                 .toList();
 
         character.setSavingThrows(savingThrows);
+    }
+
+    private void setRaceTraits(Character character, Race race) {
+        var raceTraitsKeyObjectMap = raceTraitsParser.parseRaceTraits(race);
+        //TODO
     }
 }

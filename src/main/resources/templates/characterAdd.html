@@ -47,9 +47,9 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-2" th:each="attrName: ${attributeNames}">
+                <div class="col-2" th:each="attrName: ${abilityNames}">
                     <label th:for="${attrName.name}" th:text="${attrName.name}"></label>
-                    <input th:id="${attrName.name}" class="form-control" type="text" th:field="*{attributes[__${attrName}__]}">
+                    <input th:id="${attrName.name}" class="form-control" type="text" th:field="*{abilities[__${attrName}__]}">
                 </div>
             </div>
         </div>
@@ -113,13 +113,20 @@
         </div>
         <div class="col-12">
             <div class="row">
-                <div class="col-12" th:each="classFeature : ${selectedClassesFeatures}">
+                <div class="col-12" th:each="classEntry: *{classes}">
                     <div class="badge text-bg-success rounded-pill me-1 d-inline-flex">
-                        <div class="d-inline-flex align-items-center" th:text="${classFeature.name}">class.name</div>
-                        <button type="submit" class="btn btn-danger badge rounded-pill ms-1" name="classKey" th:formaction="@{/characterAdd?deleteClass}" th:value="${classFeature.srdKey}">X</button>
+                        <div class="d-inline-flex align-items-center" th:text="${classEntry.value.name}">class.name</div>
+                        <button type="submit" class="btn btn-danger badge rounded-pill ms-1" name="classKey" th:formaction="@{/characterAdd?deleteClass}" th:value="${classEntry.key}">X</button>
                     </div>
-                    <ul th:each="feature : ${classFeature.features}">
-                        <li th:text="${feature.name}" class="border-bottom">feature.name</li>
+                    <ul th:each="feature : ${selectedClassesFeatures}">
+                        <li class="row border-bottom">
+                            <div class="col-6" th:text="${feature.name}">
+                                feature.name
+                            </div>
+                            <div class="col-6" th:text="${feature.getGainedAtLevels()}">
+                                feature.gainedAt
+                            </div>
+                        </li>
                         <li th:text="${feature.description}">feature.desc</li>
                     </ul>
                 </div>

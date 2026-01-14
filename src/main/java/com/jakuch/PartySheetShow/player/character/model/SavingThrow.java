@@ -1,7 +1,9 @@
 package com.jakuch.PartySheetShow.player.character.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class SavingThrow extends Skill {
     public SavingThrow(String name) {
@@ -9,6 +11,6 @@ public class SavingThrow extends Skill {
         setValue(0);
         setProficiency(Proficiency.NONE);
         setAdvantage(Advantage.NONE);
-        setModifier(AttributeName.findByName(name).getSrdKey());
+        setModifier(AbilityName.findByName(name).getSrdKey());
     }
 }

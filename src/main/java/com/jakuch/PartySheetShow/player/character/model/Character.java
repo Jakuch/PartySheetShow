@@ -15,11 +15,13 @@ public class Character {
     private AccessRules accessRules;
     private String campaignId; //TODO NOT IMPLEMENTED - specific campaign that character belongs to
     private String name;
+    private String playerName;
     private Health health;
     private int armorClass;
     private int walkingSpeed; //it can be taken from multiple sources (like race or specific class/items properties) and added so let it stay
+    private Size size;
     private InitiativeBonus initiativeBonus;
-    private List<Attribute> attributes = new ArrayList<>();
+    private List<Ability> abilities = new ArrayList<>();
     private Level level;
     private int currentExperiencePoints;
     private List<SavingThrow> savingThrows = new ArrayList<>();
@@ -30,13 +32,13 @@ public class Character {
     // private AdditionalInformation additionalInformation; TODO add here background, player, alignment, etc.
     // private List<Object> customData; TODO move it to AdditionalInformation when its implemented
 
-    public Attribute getAttribute(String srdKey) {
-        return this.attributes.stream().filter(a -> srdKey.equalsIgnoreCase(a.getSrdKey())).findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Missing attribute"));
+    public Ability getAbility(String srdKey) {
+        return this.abilities.stream().filter(a -> srdKey.equalsIgnoreCase(a.getSrdKey())).findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Missing ability"));
     }
 
     public Skill getSkill(String srdKey) {
-        return this.attributes.stream().flatMap(attribute -> attribute.getSkills().stream().filter(skill -> srdKey.equalsIgnoreCase(skill.getSrdKey()))).findFirst()
+        return this.abilities.stream().flatMap(ability -> ability.getSkills().stream().filter(skill -> srdKey.equalsIgnoreCase(skill.getSrdKey()))).findFirst()
                 .orElseThrow(() -> new NoSuchElementException("Missing skill"));
     }
 

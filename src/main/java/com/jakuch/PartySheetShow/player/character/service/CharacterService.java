@@ -1,5 +1,6 @@
 package com.jakuch.PartySheetShow.player.character.service;
 
+import com.jakuch.PartySheetShow.open5e.dataParser.RaceTraitsParser;
 import com.jakuch.PartySheetShow.player.character.form.CharacterClassForm;
 import com.jakuch.PartySheetShow.player.character.form.CharacterForm;
 import com.jakuch.PartySheetShow.player.character.form.CharacterRaceForm;
@@ -24,6 +25,7 @@ public class CharacterService {
     private CharacterRepository characterRepository;
     private CharacterMapper characterMapper;
     private AppUserService appUserService;
+    private RaceTraitsParser raceTraitsParser;
 
     public List<Character> findAllForUser(AppUser appUser) {
         if(appUser.getRoles().contains(AppUserRole.ROLE_ADMIN)) {
@@ -39,10 +41,12 @@ public class CharacterService {
 
     public void saveCharacter(CharacterForm characterForm) {
         var character = characterMapper.addNew(characterForm);
+        var currentUser = appUserService.getCurrentUser();
         var accessRules = AccessRules.builder()
-                .owner(appUserService.getCurrentUser())
+                .ownerId(currentUser.getId())
                 .build();
         character.setAccessRules(accessRules);
+        character.setPlayerName(currentUser.getUsername());
 
         characterRepository.save(character);
     }
@@ -62,24 +66,28 @@ public class CharacterService {
 
     public void addClassToForm(CharacterForm characterForm, List<CharacterClass> classes) {
         var characterClass = classes.stream().filter(c -> characterForm.getChosenCharacterClassKey().equals(c.getSrdKey())).findFirst();
-        characterClass.ifPresent(c -> {
+        characterClass.ifPresent(c ->
             characterForm.getClasses().put(c.getSrdKey(), CharacterClassForm.builder()
                     .key(c.getSrdKey())
                     .name(c.getName())
                     .level(c.getLevel().getNumericValue())
-                    .build());
-        });
+                    .build()));
     }
 
     public void addRaceToForm(CharacterForm characterForm, List<Race> races) {
         var race = races.stream().filter(r -> characterForm.getChosenRaceKey().equals(r.getSrdKey())).findFirst();
-        race.ifPresent(r -> characterForm.setRace(CharacterRaceForm.builder()
-                .key(r.getSrdKey())
-                .name(r.getName()).build()));
+        race.ifPresent(r ->
+            characterForm.setRace(CharacterRaceForm.builder()
+                    .key(r.getSrdKey())
+                    .name(r.getName())
+                    .abilityBonuses(raceTraitsParser.parseAbilityIncrease(r))
+                    .build()));
     }
 
     public void deleteClassFromForm(CharacterForm characterForm, String classKey) {
-        characterForm.getClasses().computeIfPresent(classKey, (key, val) -> characterForm.getClasses().remove(key));
+        if(!characterForm.getClasses().isEmpty()) {
+            characterForm.getClasses().remove(classKey);
+        }
     }
 
     public void deleteRaceFromForm(CharacterForm characterForm) {
