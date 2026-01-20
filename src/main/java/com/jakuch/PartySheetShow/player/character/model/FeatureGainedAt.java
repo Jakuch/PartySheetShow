@@ -10,8 +10,4 @@ public class FeatureGainedAt {
 
     @JsonProperty("detail")
     private String description;
-
-    public String getGainedAtLevelDescription() {
-        return "Gained at level: " + level;
-    }
 }

@@ -1,5 +1,10 @@
 package com.jakuch.PartySheetShow.player.character.model;
 
+import com.jakuch.PartySheetShow.open5e.model.Open5eClass;
+import com.jakuch.PartySheetShow.player.character.model.skill.Initiative;
+import com.jakuch.PartySheetShow.player.character.model.skill.PassiveSkill;
+import com.jakuch.PartySheetShow.player.character.model.skill.SavingThrow;
+import com.jakuch.PartySheetShow.player.character.model.skill.Skill;
 import com.jakuch.PartySheetShow.security.model.AccessRules;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -20,37 +25,36 @@ public class Character {
     private int armorClass;
     private int walkingSpeed; //it can be taken from multiple sources (like race or specific class/items properties) and added so let it stay
     private Size size;
-    private InitiativeBonus initiativeBonus;
+    private Initiative initiative;
     private List<Ability> abilities = new ArrayList<>();
     private Level level;
     private int currentExperiencePoints;
     private List<SavingThrow> savingThrows = new ArrayList<>();
-    private List<CharacterClass> characterClasses = new ArrayList<>();
+    private List<Open5eClass> characterClasses = new ArrayList<>();
     private Race race;
-    // private PassiveSenses passiveSenses;
+    private List<PassiveSkill> passiveSenses = new ArrayList<>();
 
-    // private AdditionalInformation additionalInformation; TODO add here background, player, alignment, etc.
-    // private List<Object> customData; TODO move it to AdditionalInformation when its implemented
+    // private AdditionalInformation additionalInformation; TODO add here background, alignment, etc. + customData like notes, custom, familiars etc.
 
     public Ability getAbility(String srdKey) {
-        return this.abilities.stream().filter(a -> srdKey.equalsIgnoreCase(a.getSrdKey())).findFirst()
+        return this.abilities.stream().filter(a -> srdKey.equalsIgnoreCase(a.getName().getSrdKey())).findFirst()
                 .orElseThrow(() -> new NoSuchElementException("Missing ability"));
     }
 
     public Skill getSkill(String srdKey) {
-        return this.abilities.stream().flatMap(ability -> ability.getSkills().stream().filter(skill -> srdKey.equalsIgnoreCase(skill.getSrdKey()))).findFirst()
+        return this.abilities.stream().flatMap(ability -> ability.getSkills().stream().filter(skill -> srdKey.equalsIgnoreCase(skill.getSkillName().getSrdKey()))).findFirst()
                 .orElseThrow(() -> new NoSuchElementException("Missing skill"));
+    }
+
+    public String getSkillDisplayName(String srdKey) {
+        return getSkill(srdKey).getSkillName().getDisplayName();
+    }
+
+    public String getSkillProficiencyShortName(String srdKey) {
+        return getSkill(srdKey).getProficiency().getShortName();
     }
 
     public Advantage getSkillAdvantage(String srdKey) {
         return getSkill(srdKey).getAdvantage();
-    }
-
-    public void addCustomSkill(Skill skill) {
-        //TODO
-    }
-
-    public void removeCustomSkill(String name) {
-        //TODO
     }
 }

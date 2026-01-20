@@ -1,5 +1,6 @@
-package com.jakuch.PartySheetShow.player.character.model;
+package com.jakuch.PartySheetShow.player.character.model.skill;
 
+import com.jakuch.PartySheetShow.player.character.model.AbilityName;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -18,6 +19,8 @@ public enum SkillName {
     INVESTIGATION(AbilityName.INTELLIGENCE, "investigation", "Investigation"),
     NATURE(AbilityName.INTELLIGENCE, "nature", "Nature"),
     RELIGION(AbilityName.INTELLIGENCE, "religion", "Religion"),
+    AGRICULTURE(AbilityName.INTELLIGENCE, "a5e-ag_culture", "Agriculture"),
+    ENGINEERING(AbilityName.INTELLIGENCE, "a5e-ag_engineering", "Engineering"),
 
     ANIMAL_HANDLING(AbilityName.WISDOM, "animal-handling", "Animal Handling"),
     INSIGHT(AbilityName.WISDOM, "insight", "Insight"),
@@ -40,6 +43,17 @@ public enum SkillName {
         this.displayName = displayName;
     }
 
+    public static Optional<SkillName> fromNameOrSrdKey(String keyOrName) {
+        var skillName = fromSrdKey(keyOrName);
+        if(skillName.isPresent()) {
+            return skillName;
+        }
+        return fromName(keyOrName);
+    }
+
+    public static Optional<SkillName> fromSrdKey(String key) {
+        return Arrays.stream(values()).filter(skillName -> skillName.srdKey.equalsIgnoreCase(key)).findFirst();
+    }
 
     public static Optional<SkillName> fromName(String name) {
         if(name.equalsIgnoreCase("Animal")) {

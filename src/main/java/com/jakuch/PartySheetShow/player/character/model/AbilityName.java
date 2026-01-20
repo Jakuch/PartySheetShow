@@ -34,6 +34,14 @@ public enum AbilityName {
         return correctValues().stream().filter(el -> el.srdKey.equalsIgnoreCase(srdKey)).findFirst().orElse(NONE);
     }
 
+    public static AbilityName findByNameOrSrdKey(String nameOrKey) {
+        var ability = findByName(nameOrKey);
+        if(NONE.equals(ability)) {
+            ability = findBySrdKey(nameOrKey);
+        }
+        return ability;
+    }
+
     public static List<AbilityName> correctValues() {
         return Arrays.asList(STRENGTH, DEXTERITY, CONSTITUTION, INTELLIGENCE, WISDOM, CHARISMA);
     }

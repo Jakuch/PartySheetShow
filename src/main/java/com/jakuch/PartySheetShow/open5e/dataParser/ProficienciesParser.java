@@ -2,7 +2,7 @@ package com.jakuch.PartySheetShow.open5e.dataParser;
 
 import com.jakuch.PartySheetShow.player.character.model.AbilityName;
 import com.jakuch.PartySheetShow.open5e.dataParser.model.ClassProficiencies;
-import com.jakuch.PartySheetShow.player.character.model.SkillName;
+import com.jakuch.PartySheetShow.player.character.model.skill.SkillName;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -37,6 +37,7 @@ public class ProficienciesParser {
 
         return Arrays.stream(section.split(","))
                 .map(String::trim)
+                .map(s -> s.replace("None", ""))
                 .filter(s -> !s.isBlank())
                 .toList();
     }
@@ -46,7 +47,7 @@ public class ProficienciesParser {
 
         return Arrays.stream(value.split(","))
                 .map(String::trim)
-                .map(AbilityName::findByName)
+                .map(AbilityName::findByNameOrSrdKey)
                 .toList();
     }
 
@@ -58,6 +59,7 @@ public class ProficienciesParser {
                     .replace("*", "")
                     .replace(" and ", ", ")
                     .replaceAll(",", " ")
+                    .replace("none", "")
                     .trim();
 
             return Arrays.stream(skills.split(" "))

@@ -1,14 +1,16 @@
 package com.jakuch.PartySheetShow.open5e.dataParser;
 
 import com.jakuch.PartySheetShow.open5e.dataParser.model.AbilityBonuses;
-import com.jakuch.PartySheetShow.player.character.model.Race;
-import com.jakuch.PartySheetShow.player.character.model.RaceTrait;
+import com.jakuch.PartySheetShow.open5e.model.Open5eData;
+import com.jakuch.PartySheetShow.open5e.model.Open5eRace;
+import com.jakuch.PartySheetShow.open5e.model.Open5eRaceTrait;
 import com.jakuch.PartySheetShow.player.character.model.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
@@ -16,27 +18,53 @@ public class RaceTraitsParser {
 
     private AbilitiesParser abilityIncreaseParser;
 
-    public Map<RaceTraitsKey, Object> parseRaceTraits(Race race) {
+    public Map<RaceTraitsKey, Object> parseRaceTraits(Open5eRace open5eRace) {
         var traitsMap = new HashMap<RaceTraitsKey, Object>();
+        var traitsFromRace = new ArrayList<>(open5eRace.getRaceTraits());
 
-        traitsMap.put(RaceTraitsKey.ABILITY_INCREASE, parseAbilityIncrease(race));
-        traitsMap.put(RaceTraitsKey.SPEED, parseSpeedInFt(race));
-        traitsMap.put(RaceTraitsKey.SIZE, parseSize(race));
+        traitsMap.put(RaceTraitsKey.ABILITY_INCREASE, parseAbilityIncrease(open5eRace));
+        traitsFromRace.removeIf(trait -> trait.getName().contains(RaceTraitsKey.ABILITY_INCREASE.srdName));
+
+        traitsMap.put(RaceTraitsKey.SPEED, parseSpeedInFt(open5eRace));
+        traitsFromRace.removeIf(trait -> trait.getName().contains(RaceTraitsKey.SPEED.srdName));
+
+        traitsMap.put(RaceTraitsKey.SIZE, parseSize(open5eRace));
+        traitsFromRace.removeIf(trait -> trait.getName().contains(RaceTraitsKey.SIZE.srdName));
+
+        filterTraitsByKey(open5eRace.getRaceTraits(), RaceTraitsKey.DARKVISION)
+                .ifPresent(t -> {
+                    traitsMap.put(RaceTraitsKey.DARKVISION, parseDarkvision(t));
+                    traitsFromRace.remove(t);
+                } );
+
+        traitsMap.put(RaceTraitsKey.SPECIFIC, traitsFromRace.stream().collect(Collectors.toMap(Open5eData::getName, Open5eData::getDescription)));
 
         return traitsMap;
     }
 
-    public int parseSpeedInFt(RaceTrait trait) {
-        var speedValue = trait.getDescription().replaceAll("[^-?0-9]+", " ").trim();
-        return Integer.parseInt(speedValue);
+    private int parseDarkvision(Open5eRaceTrait trait) {
+        return ParserHelper.safeParseInt(ParserHelper.removeSpecialCharacters(trait.getDescription())
+                .replaceAll("[^-?0-9]+", " ")
+                .trim(), 60);
     }
 
-    public int parseSpeedInFt(Race race) {
-        var trait = filterTraitsBy(race.getRaceTraits(), RaceTraitsKey.SPEED);
+    private int parseDarkvision(Open5eRace open5eRace) {
+        return filterTraitsByKey(open5eRace.getRaceTraits(), RaceTraitsKey.DARKVISION)
+                .map(this::parseDarkvision)
+                .orElse(0);
+    }
+
+    public int parseSpeedInFt(Open5eRaceTrait trait) {
+        var speedValue = trait.getDescription().replaceAll("[^-?0-9]+", " ").trim();
+        return ParserHelper.safeParseInt(speedValue, 30);
+    }
+
+    public int parseSpeedInFt(Open5eRace open5eRace) {
+        var trait = filterTraitsByKey(open5eRace.getRaceTraits(), RaceTraitsKey.SPEED);
         return trait.map(this::parseSpeedInFt).orElse(0);
     }
 
-    public Size parseSize(RaceTrait trait) {
+    public Size parseSize(Open5eRaceTrait trait) {
         var size = Arrays.stream(ParserHelper.removeSpecialCharacters(trait.getDescription())
                         .split(" "))
                 .map(String::toUpperCase)
@@ -46,21 +74,21 @@ public class RaceTraitsParser {
         return Size.valueOf(size);
     }
 
-    public Size parseSize(Race race) {
-        var trait = filterTraitsBy(race.getRaceTraits(), RaceTraitsKey.SIZE);
+    public Size parseSize(Open5eRace open5eRace) {
+        var trait = filterTraitsByKey(open5eRace.getRaceTraits(), RaceTraitsKey.SIZE);
         return trait.map(this::parseSize).orElse(Size.MEDIUM);
     }
 
-    public AbilityBonuses parseAbilityIncrease(RaceTrait trait) {
+    public AbilityBonuses parseAbilityIncrease(Open5eRaceTrait trait) {
         return abilityIncreaseParser.parse(trait.getDescription());
     }
 
-    public AbilityBonuses parseAbilityIncrease(Race race) {
-        var trait = filterTraitsBy(race.getRaceTraits(), RaceTraitsKey.ABILITY_INCREASE);
-        return trait.map(this::parseAbilityIncrease).orElse(new AbilityBonuses("", new HashMap<>(), List.of()));
+    public AbilityBonuses parseAbilityIncrease(Open5eRace open5eRace) {
+        return filterTraitsByKey(open5eRace.getRaceTraits(), RaceTraitsKey.ABILITY_INCREASE)
+                .map(this::parseAbilityIncrease).orElse(AbilityBonuses.builder().build());
     }
 
-    private Optional<RaceTrait> filterTraitsBy(List<RaceTrait> traits, RaceTraitsKey key) {
+    private Optional<Open5eRaceTrait> filterTraitsByKey(List<Open5eRaceTrait> traits, RaceTraitsKey key) {
         return traits.stream().filter(t -> t.getName().contains(key.srdName)).findFirst();
     }
 
@@ -69,7 +97,8 @@ public class RaceTraitsParser {
         ABILITY_INCREASE("Ability Score Increase"),
         SPEED("Speed"),
         SIZE("Size"),
-        DARKVISION("Darkvision");
+        DARKVISION("Darkvision"),
+        SPECIFIC("Specific");
 
         private final String srdName;
 

@@ -1,38 +1,47 @@
 package com.jakuch.PartySheetShow.player.character.model;
 
-import com.jakuch.PartySheetShow.open5e.Open5eData;
+import com.jakuch.PartySheetShow.player.character.model.skill.Skill;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class Ability extends Open5eData {
-
+@Builder
+public class Ability {
+    private AbilityName name;
     private int value;
-
+    private int bonusValue;
     private int bonus;
-
     private List<Skill> skills;
 
-    public String getUpperCaseName() {
-        return this.name.toUpperCase();
-    }
-
-    public void calculateBonusesAndSkills(Level level) {
-        calculateBonus();
-        calculateSkills(level);
+    public int getTotalValue() {
+        return this.value + this.bonusValue;
     }
 
     private void calculateBonus() {
         this.bonus = (this.value - 10) / 2;
     }
 
-    private void calculateSkills(Level level) {
-        this.skills.forEach(skill -> skill.setValueWithProficiency(this.getBonus(), level));
+    private void setSkillValues() {
+        this.skills.forEach(skill -> skill.setValue(this.getBonus()));
     }
 
-    public void updateValue(int value, Level level) {
+    public void addValue(int value) {
         this.value += value;
-        calculateBonusesAndSkills(level);
+        calculateBonus();
+    }
+
+    public static class AbilityBuilder {
+        private int value;
+        private int bonus;
+        private List<Skill> skills;
+
+        public AbilityBuilder setSkillValues() {
+            this.bonus = (this.value - 10) / 2;
+            this.skills.forEach(skill -> skill.setValue(this.bonus));
+            return this;
+        }
+
     }
 }

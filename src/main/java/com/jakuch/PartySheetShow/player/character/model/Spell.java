@@ -1,7 +1,7 @@
 package com.jakuch.PartySheetShow.player.character.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.jakuch.PartySheetShow.open5e.Open5eData;
+import com.jakuch.PartySheetShow.open5e.model.Open5eData;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

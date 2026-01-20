@@ -28,25 +28,11 @@ public abstract class Open5eServiceBase<T> {
     }
 
     public List<T> getAll() {
-        log.info("Started fetching data from " + path + " Open5e endpoint.");
+        return all(null);
+    }
 
-        var response = open5eClient.getPage(
-                path,
-                null,
-                type);
-
-        var data = new ArrayList<>(response.results());
-        var nextPageUrl = response.next();
-
-        while (nextPageUrl != null) {
-            var byUrl = open5eClient.getByUrl(nextPageUrl, type);
-
-            nextPageUrl = byUrl.next();
-            data.addAll(byUrl.results());
-        }
-
-        log.info("Finished fetching data from " + path + " Open5e endpoint.");
-        return data;
+    public List<T> getAll(Map<String, ?> queryParams) {
+        return all(queryParams);
     }
 
     public List<T> getSinglePage(int page) {
@@ -61,5 +47,27 @@ public abstract class Open5eServiceBase<T> {
         } catch (HttpClientErrorException.NotFound e) {
             return Optional.empty();
         }
+    }
+
+    private List<T> all(Map<String, ?> queryParams) {
+        log.info("Started fetching data from " + path + " Open5e endpoint.");
+
+        var response = open5eClient.getPage(
+                path,
+                queryParams,
+                type);
+
+        var data = new ArrayList<>(response.results());
+        var nextPageUrl = response.next();
+
+        while (nextPageUrl != null) {
+            var byUrl = open5eClient.getByUrl(nextPageUrl, type);
+
+            nextPageUrl = byUrl.next();
+            data.addAll(byUrl.results());
+        }
+
+        log.info("Finished fetching data from " + path + " Open5e endpoint.");
+        return data;
     }
 }

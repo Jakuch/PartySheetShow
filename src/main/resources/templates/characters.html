@@ -46,8 +46,8 @@
                 <td th:text="${character.armorClass}"></td>
                 <td th:text="${character.health.max}"></td>
                 <div th:each="abilityName : ${abilityNames}">
-                    <td th:if="${character.abilities}"
-                        th:text="${character.getAbility(abilityName.getSrdKey()).getValue()}"></td>
+                    <td th:unless="${#lists.isEmpty(character.abilities)}"
+                        th:text="${character.getAbility(abilityName.getSrdKey()).getTotalValue()}"></td>
                 </div>
             </tr>
         </table>

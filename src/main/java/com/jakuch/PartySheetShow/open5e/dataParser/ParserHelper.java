@@ -10,4 +10,12 @@ public class ParserHelper {
     public static String removeSpecialCharacters(String string) {
         return string.replaceAll("[^a-zA-Z0-9]+", " ");
     }
+
+    public static Integer safeParseInt(String string, Integer defaultValue) {
+        try {
+            return Integer.parseInt(string);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
 }

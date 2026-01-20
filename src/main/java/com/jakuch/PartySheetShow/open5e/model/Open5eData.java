@@ -1,4 +1,4 @@
-package com.jakuch.PartySheetShow.open5e;
+package com.jakuch.PartySheetShow.open5e.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

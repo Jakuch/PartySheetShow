@@ -1,17 +1,13 @@
 package com.jakuch.PartySheetShow.player.character.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.jakuch.PartySheetShow.open5e.Open5eData;
-import lombok.Data;
+import com.jakuch.PartySheetShow.open5e.dataParser.RaceTraitsParser;
+import lombok.Builder;
 
-import java.util.List;
+import java.util.Map;
 
-@Data
-public class Race extends Open5eData {
-
-    @JsonProperty("is_subspecies")
-    private boolean isSubspecies;
-
-    @JsonProperty("traits")
-    private List<RaceTrait> raceTraits;
-}
+@Builder
+public record Race(
+        String srdKey,
+        String name,
+        Map<RaceTraitsParser.RaceTraitsKey, Object> traits
+) {}

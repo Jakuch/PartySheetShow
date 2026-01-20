@@ -1,5 +1,9 @@
 package com.jakuch.PartySheetShow.player.character.controller;
 
+import com.jakuch.PartySheetShow.open5e.model.Open5eClass;
+import com.jakuch.PartySheetShow.open5e.model.Open5eFeature;
+import com.jakuch.PartySheetShow.open5e.model.Open5eRace;
+import com.jakuch.PartySheetShow.open5e.model.Open5eRaceTrait;
 import com.jakuch.PartySheetShow.open5e.services.CharacterClassService;
 import com.jakuch.PartySheetShow.open5e.services.RaceService;
 import com.jakuch.PartySheetShow.player.character.form.CharacterForm;
@@ -12,10 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.thymeleaf.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -44,12 +45,12 @@ public class CharacterAddController {
     }
 
     @ModelAttribute("selectedClassesFeatures")
-    public List<Feature> classFeatures() {
+    public List<Open5eFeature> classFeatures() {
         return new ArrayList<>();
     }
 
     @ModelAttribute("selectedRaceTraits")
-    public List<RaceTrait> raceTraits() {
+    public List<Open5eRaceTrait> raceTraits() {
         return new ArrayList<>();
     }
 
@@ -76,46 +77,44 @@ public class CharacterAddController {
     }
 
     @PostMapping(params = {"addClass"})
-    public String addClass(@ModelAttribute("character") CharacterForm characterForm, @ModelAttribute("classes") List<CharacterClass> classes, @ModelAttribute("selectedClassesFeatures") List<Feature> selectedClassesFeatures) {
+    public String addClass(@ModelAttribute("character") CharacterForm characterForm, @ModelAttribute("classes") List<Open5eClass> classes, @ModelAttribute("selectedClassesFeatures") List<Open5eFeature> selectedClassesFeatures) {
         var classKey = characterForm.getChosenCharacterClassKey();
         if (!StringUtils.isEmptyOrWhitespace(classKey) && characterForm.getClasses().get(classKey) == null) {
             characterClassService.getByKey(classKey).ifPresent(characterClass -> {
                 selectedClassesFeatures.addAll(characterClass.getFeatures());
-                selectedClassesFeatures.sort(Comparator.comparingInt(Feature::getLowestGainedAtLevel));
+                selectedClassesFeatures.sort(Comparator.comparingInt(Open5eFeature::getLowestGainedAtLevel));
             });
             characterService.addClassToForm(characterForm, classes);
         }
-        characterForm.setChosenCharacterClassKey(null);
 
         return "redirect:/characterAdd";
     }
 
     @PostMapping(params = {"deleteClass"})
-    public String deleteClass(@ModelAttribute("character") CharacterForm characterForm, @RequestParam String classKey, @ModelAttribute("selectedClassesFeatures") List<Feature> selectedClassesFeatures) {
+    public String deleteClass(@ModelAttribute("character") CharacterForm characterForm, @RequestParam String classKey, @ModelAttribute("selectedClassesFeatures") List<Open5eFeature> selectedClassesFeatures) {
         selectedClassesFeatures.removeIf(feature -> classKey.equalsIgnoreCase(feature.getClassSrdKey()));
         characterService.deleteClassFromForm(characterForm, classKey);
+        characterForm.setChosenCharacterClassKey(null);
         return "redirect:/characterAdd";
     }
 
     @PostMapping(params = {"addRace"})
-    public String addRace(@ModelAttribute("character") CharacterForm characterForm, @ModelAttribute("races") List<Race> races, @ModelAttribute("selectedRaceTraits") List<RaceTrait> selectedRaceTraits) {
+    public String addRace(@ModelAttribute("character") CharacterForm characterForm, @ModelAttribute("races") List<Open5eRace> races, @ModelAttribute("selectedRaceTraits") List<Open5eRaceTrait> selectedRaceTraits) {
         var raceKey = characterForm.getChosenRaceKey();
         if (!StringUtils.isEmptyOrWhitespace(raceKey) && characterForm.getRace() == null) {
-            raceService.getByKey(raceKey).ifPresent(race -> {
-                selectedRaceTraits.addAll(race.getRaceTraits());
-            });
+            raceService.getByKey(raceKey).ifPresent(race -> selectedRaceTraits.addAll(race.getRaceTraits()));
             characterService.addRaceToForm(characterForm, races);
         }
-        characterForm.setChosenRaceKey(null);
 
         return "redirect:/characterAdd";
     }
 
     @PostMapping(params = {"deleteRace"})
-    public String deleteRace(@ModelAttribute("character") CharacterForm characterForm, @ModelAttribute("selectedRaceTraits") List<RaceTrait> selectedRaceTraits) {
+    public String deleteRace(@ModelAttribute("character") CharacterForm characterForm, @ModelAttribute("selectedRaceTraits") List<Open5eRaceTrait> selectedRaceTraits) {
         if (characterForm.getRace() != null) {
             selectedRaceTraits.clear();
             characterService.deleteRaceFromForm(characterForm);
+            characterForm.setChosenRaceKey(null);
         }
 
         return "redirect:/characterAdd";

@@ -1,5 +1,5 @@
 function pleaseTakeMeFromHere() {
-    var arrayOfEndpoints = ["/home", "/heroes", "/initiativeTracker", "/heroesAll", "/heroesAdd", "/levelsTable"];
+    var arrayOfEndpoints = ["/home", "/characters", "/initiativeTracker", "/characterAdd", "/levelsTable"];
 
     var randomEndpoint = arrayOfEndpoints[Math.floor(Math.random() * arrayOfEndpoints.length)];
 

@@ -2,8 +2,8 @@ package com.jakuch.PartySheetShow.functionalTests.playerCharacter
 
 import com.jakuch.PartySheetShow.TestsBase
 import com.jakuch.PartySheetShow.player.character.model.Character
-import com.jakuch.PartySheetShow.player.character.model.CharacterClass
-import com.jakuch.PartySheetShow.player.character.model.Race
+import com.jakuch.PartySheetShow.open5e.model.Open5eClass
+import com.jakuch.PartySheetShow.open5e.model.Open5eRace
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
@@ -76,9 +76,9 @@ class CharacterControllerFunctionalTests : TestsBase() {
     @WithMockUser(authorities = ["ROLE_PLAYER"])
     fun `should show add character form page`() {
         //given
-        Mockito.`when`(characterClassService.allClasses).thenReturn(listOf(CharacterClass()
+        Mockito.`when`(characterClassService.allClasses).thenReturn(listOf(Open5eClass()
                 .apply { name = "Class" }))
-        Mockito.`when`(raceService.all).thenReturn(listOf(Race()
+        Mockito.`when`(raceService.all).thenReturn(listOf(Open5eRace()
                 .apply { name = "Race" }))
 
         //when then
