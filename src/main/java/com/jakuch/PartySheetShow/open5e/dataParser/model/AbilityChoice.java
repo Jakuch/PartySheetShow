@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class Choice {
+public class AbilityChoice {
     private AbilityName chosenAbility;
     private int amount;
     private List<AbilityName> options;

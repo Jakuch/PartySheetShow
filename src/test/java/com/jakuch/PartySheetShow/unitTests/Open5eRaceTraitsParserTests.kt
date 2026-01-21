@@ -5,7 +5,7 @@ import com.jakuch.PartySheetShow.open5e.dataParser.AbilitiesParser
 import com.jakuch.PartySheetShow.open5e.dataParser.RaceTraitsParser
 import com.jakuch.PartySheetShow.open5e.dataParser.RaceTraitsParser.RaceTraitsKey
 import com.jakuch.PartySheetShow.open5e.dataParser.model.AbilityBonuses
-import com.jakuch.PartySheetShow.open5e.dataParser.model.Choice
+import com.jakuch.PartySheetShow.open5e.dataParser.model.AbilityChoice
 import com.jakuch.PartySheetShow.open5e.model.Open5eRace
 import com.jakuch.PartySheetShow.player.character.model.AbilityName
 import com.jakuch.PartySheetShow.player.character.model.Size
@@ -71,7 +71,7 @@ class Open5eRaceTraitsParserTests {
             return mapOf(
                     RaceTraitsKey.ABILITY_INCREASE to AbilityBonuses.builder()
                             .fixed(mapOf(AbilityName.CHARISMA to 2))
-                            .choices(listOf(Choice(AbilityName.NONE, 1, AbilityName.correctValues())))
+                            .choices(listOf(AbilityChoice(AbilityName.NONE, 1, AbilityName.correctValues())))
                             .build(),
                     RaceTraitsKey.SIZE to Size.MEDIUM,
                     RaceTraitsKey.SPEED to 30,
@@ -94,7 +94,7 @@ class Open5eRaceTraitsParserTests {
             return mapOf(
                     RaceTraitsKey.ABILITY_INCREASE to AbilityBonuses.builder()
                             .fixed(emptyMap())
-                            .choices(listOf(Choice(AbilityName.NONE, 1, AbilityName.correctValues())))
+                            .choices(listOf(AbilityChoice(AbilityName.NONE, 1, AbilityName.correctValues())))
                             .build(),
                     RaceTraitsKey.SIZE to Size.MEDIUM,
                     RaceTraitsKey.SPEED to 30,

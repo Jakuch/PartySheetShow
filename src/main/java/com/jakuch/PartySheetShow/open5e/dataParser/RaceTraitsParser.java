@@ -37,6 +37,9 @@ public class RaceTraitsParser {
                     traitsFromRace.remove(t);
                 });
 
+        //TODO
+        //parse whats left and find any text containing proficiency / advantage
+
         traitsMap.put(RaceTraitsKey.SPECIFIC, traitsFromRace.stream().collect(Collectors.toMap(Open5eData::getName, Open5eData::getDescription)));
 
         return traitsMap;

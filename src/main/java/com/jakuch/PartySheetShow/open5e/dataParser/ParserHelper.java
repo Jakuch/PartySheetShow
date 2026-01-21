@@ -18,4 +18,9 @@ public class ParserHelper {
             return defaultValue;
         }
     }
+
+    public static Integer safeParseInt(String string) {
+        var s = removeSpecialCharacters(string);
+        return safeParseInt(s, 0);
+    }
 }

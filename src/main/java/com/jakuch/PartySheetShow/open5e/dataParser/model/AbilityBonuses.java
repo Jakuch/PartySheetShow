@@ -13,5 +13,5 @@ import java.util.Map;
 @AllArgsConstructor
 public class AbilityBonuses {
     private Map<AbilityName, Integer> fixed;
-    private List<Choice> choices;
+    private List<AbilityChoice> choices;
 }

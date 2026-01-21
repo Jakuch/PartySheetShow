@@ -6,10 +6,8 @@ import com.jakuch.PartySheetShow.open5e.client.Open5eClient;
 import com.jakuch.PartySheetShow.open5e.dataParser.ProficienciesParser;
 import com.jakuch.PartySheetShow.open5e.dataParser.model.ClassProficiencies;
 import com.jakuch.PartySheetShow.open5e.model.Open5eClass;
-import com.jakuch.PartySheetShow.player.character.model.CharacterClass;
-import com.jakuch.PartySheetShow.player.character.model.Feature;
-import com.jakuch.PartySheetShow.player.character.model.FeatureType;
-import com.jakuch.PartySheetShow.player.character.model.Level;
+import com.jakuch.PartySheetShow.open5e.model.Open5eFeatureDataTable;
+import com.jakuch.PartySheetShow.player.character.model.*;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -80,8 +78,14 @@ public class CharacterClassService extends Open5eServiceBase<Open5eClass> {
                                         .name(feature.getName())
                                         .description(feature.getDescription())
                                         .gainedAtLevel(Level.findByNumericValue(lvl))
+                                        .improvedWithLevel(mapImprovedWithLevel(feature.getData()))
                                         .build()))
                 .toList();
+    }
+
+    private Map<Level, String> mapImprovedWithLevel(List<Open5eFeatureDataTable> dataTable) {
+        return dataTable.stream()
+                .collect(Collectors.toMap(tab -> Level.findByNumericValue(tab.getLevel()), Open5eFeatureDataTable::getValue));
     }
 
     private ClassProficiencies mapClassProficiencies(Open5eClass open5eClass) {

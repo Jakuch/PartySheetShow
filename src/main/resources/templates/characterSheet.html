@@ -732,8 +732,14 @@
                  style="max-width: 23vw" id="desc-collapse-race">
                 <div th:text="${character.race.name}" class="text-center text-success">name</div>
                 <ul th:each="trait: ${character.race.traits}" class="list-unstyled mb-2 ms-2">
-                    <li th:text="${trait.key}" class="border-bottom"></li>
-                    <li th:text="${trait.value}"></li>
+                    <li th:if="${trait.key.srdName} != 'Specific'" th:text="${trait.key}" class="border-bottom">key</li>
+                    <li th:if="${trait.key.srdName} != 'Specific'" th:text="${trait.value}">value</li>
+                    <li th:if="${trait.key.srdName} == 'Specific'" th:text="${trait.key}" class="border-bottom">specific</li>
+                    <ul th:if="${trait.key.srdName} == 'Specific'" th:each="entry : ${trait.value}" class="list-unstyled">
+                        <li><div class="col-4 border-bottom" th:text="${entry.key}">key</div></li>
+                        <li class="mb-2" th:text="${entry.value}">value</li>
+                    </ul>
+
                 </ul>
             </div>
             <div class="row bg-dark text-light text-start text-wrap mt-2 border border-4 border-dark rounded collapse multi-collapse collapse-horizontal hide float-start overflow-auto"

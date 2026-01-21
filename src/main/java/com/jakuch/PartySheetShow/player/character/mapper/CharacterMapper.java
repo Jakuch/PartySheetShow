@@ -1,7 +1,7 @@
 package com.jakuch.PartySheetShow.player.character.mapper;
 
 import com.jakuch.PartySheetShow.open5e.dataParser.RaceTraitsParser;
-import com.jakuch.PartySheetShow.open5e.dataParser.model.Choice;
+import com.jakuch.PartySheetShow.open5e.dataParser.model.AbilityChoice;
 import com.jakuch.PartySheetShow.open5e.model.Open5eSkill;
 import com.jakuch.PartySheetShow.open5e.services.AbilityService;
 import com.jakuch.PartySheetShow.open5e.services.CharacterClassService;
@@ -87,8 +87,10 @@ public class CharacterMapper {
                     if (fixedBonus != null) {
                         ability.addValue(fixedBonus);
                     }
-                    List<Choice> choices = race.getAbilityBonuses().getChoices().stream().filter(choice -> choice.getChosenAbility().equals(ability.getName())).toList();
-                    choices.forEach(choice -> ability.addValue(choice.getAmount()));
+
+                    race.getAbilityBonuses().getChoices().stream()
+                            .filter(abilityChoice -> abilityChoice.getChosenAbility().equals(ability.getName()))
+                            .forEach(abilityChoice -> ability.addValue(abilityChoice.getAmount()));
                 });
             });
         }

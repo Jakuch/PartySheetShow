@@ -37,6 +37,11 @@ public class Open5eController {
         return raceService.getMappedRaceByKey(srdKey).orElse(null);
     }
 
+    @GetMapping("/all-traits")
+    public List<TraitsSupportClass> getAllTraits() {
+        return raceService.getAll().stream().map(r -> new TraitsSupportClass(r.getName(), r.getRaceTraits())).toList();
+    }
+
     @GetMapping("/all-subclasses")
     public List<Open5eClass> getSubclasses(@RequestParam String srdClassKey) {
         return characterClassService.getAllSubclassesForClass(srdClassKey);
@@ -54,6 +59,14 @@ public class Open5eController {
                 .collect(Collectors.toMap(Open5eData::getName, el -> new ClassFeaturesSupportClass(el.getFeatures())));
     }
 
+    @GetMapping("/features-with-data-table")
+    public List<Open5eFeature> getWithDataTable() {
+        return characterClassService.getAll().stream()
+                .flatMap(c -> c.getFeatures().stream())
+                .filter(feature -> !feature.getData().isEmpty())
+                .toList();
+    }
+
     @GetMapping("/abilities")
     public List<Open5eAbility> getAbilities() {
         return abilityService.getAll();
@@ -64,4 +77,6 @@ public class Open5eController {
 
     public record ClassFeaturesSupportClass(List<Open5eFeature> features) {
     }
+
+    public record TraitsSupportClass(String race, List<Open5eRaceTrait> traits) {};
 }
