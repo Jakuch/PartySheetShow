@@ -11,12 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CharacterClassForm {
-    //form fields
     private String key;
     private String name;
     private Level level;
     boolean isFirst;
-
-    //sources
-
 }

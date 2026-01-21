@@ -346,6 +346,30 @@
                                             <span th:case="*"></span>
                                         </div>
                                     </div>
+                                    <div class="row" th:each="customSkill : ${character.customSkills}">
+                                        <div class="col-7" th:text="${customSkill.name}">
+                                            name
+                                        </div>
+                                        <div class="col-1"
+                                             th:text="${customSkill.proficiency.shortName}">
+                                            profi
+                                        </div>
+                                        <div class="col-2" th:text="${customSkill.value}">
+                                            value
+                                        </div>
+                                        <div class="col-2"
+                                             th:switch="${customSkill.advantage}">
+                                            <span th:case="${T(com.jakuch.PartySheetShow.player.character.model.Advantage).ADVANTAGE}"
+                                                  class="badge rounded-circle text-bg-success p-2">
+                                                <span class="visually-hidden">A</span>
+                                            </span>
+                                            <span th:case="${T(com.jakuch.PartySheetShow.player.character.model.Advantage).DISADVANTAGE}"
+                                                  class="badge rounded-circle text-bg-danger p-2">
+                                                <span class="visually-hidden">D</span>
+                                            </span>
+                                            <span th:case="*"></span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">

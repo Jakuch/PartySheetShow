@@ -33,8 +33,15 @@ public class CacheConfig {
                         .build()
         );
 
+        var classesMainAll = new CaffeineCache(
+                "classesMainAll",
+                Caffeine.newBuilder()
+                        .expireAfterWrite(1, TimeUnit.HOURS)
+                        .maximumSize(100)
+                        .build()
+        );
         var manager = new SimpleCacheManager();
-        manager.setCaches(List.of(racesAll, classesAll));
+        manager.setCaches(List.of(racesAll, classesAll, classesMainAll));
         return manager;
     }
 }

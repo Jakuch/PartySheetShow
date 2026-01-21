@@ -1,9 +1,6 @@
 package com.jakuch.PartySheetShow.player.character.model;
 
-import com.jakuch.PartySheetShow.player.character.model.skill.Initiative;
-import com.jakuch.PartySheetShow.player.character.model.skill.PassiveSkill;
-import com.jakuch.PartySheetShow.player.character.model.skill.SavingThrow;
-import com.jakuch.PartySheetShow.player.character.model.skill.Skill;
+import com.jakuch.PartySheetShow.player.character.model.skill.*;
 import com.jakuch.PartySheetShow.security.model.AccessRules;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -26,6 +23,7 @@ public class Character {
     private Size size;
     private Initiative initiative;
     private List<Ability> abilities = new ArrayList<>();
+    private List<CustomSkill> customSkills = new ArrayList<>(); //TODO edit/add functionality on sheet
     private Level level;
     private int currentExperiencePoints;
     private List<SavingThrow> savingThrows = new ArrayList<>();

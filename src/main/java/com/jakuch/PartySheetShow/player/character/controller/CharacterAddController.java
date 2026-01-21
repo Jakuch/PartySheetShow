@@ -64,7 +64,7 @@ public class CharacterAddController {
         model.addAttribute("abilityNames", AbilityName.correctValues());
 
         try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            var futureClasses = executor.submit(() -> characterClassService.getAllClasses());
+            var futureClasses = executor.submit(() -> characterClassService.getAllMainClasses());
             var futureRaces = executor.submit(() -> raceService.getAll());
 
             model.addAttribute("classes", futureClasses.get());

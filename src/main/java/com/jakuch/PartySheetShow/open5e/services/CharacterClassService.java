@@ -36,6 +36,11 @@ public class CharacterClassService extends Open5eServiceBase<Open5eClass> {
         return getAll().stream().filter(characterClass -> characterClass.getSubclass() == null).collect(Collectors.toList());
     }
 
+    @Cacheable("classesMainAll")
+    public List<Open5eClass> getAllMainClasses() {
+        return getAll(Map.of("is_subclass",false));
+    }
+
     @Override
     public Optional<Open5eClass> getByKey(String key) {
         var optionalCharacterClass = super.getByKey(key);
