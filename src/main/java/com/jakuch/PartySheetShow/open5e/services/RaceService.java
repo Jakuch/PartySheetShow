@@ -6,7 +6,6 @@ import com.jakuch.PartySheetShow.open5e.client.Open5eClient;
 import com.jakuch.PartySheetShow.open5e.dataParser.RaceTraitsParser;
 import com.jakuch.PartySheetShow.open5e.dataParser.model.AbilityBonuses;
 import com.jakuch.PartySheetShow.open5e.model.Open5eRace;
-import com.jakuch.PartySheetShow.open5e.model.Open5eRaceTrait;
 import com.jakuch.PartySheetShow.player.character.model.Race;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;

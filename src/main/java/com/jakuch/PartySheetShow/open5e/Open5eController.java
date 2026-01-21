@@ -1,14 +1,17 @@
 package com.jakuch.PartySheetShow.open5e;
 
+import com.jakuch.PartySheetShow.open5e.dataParser.ProficienciesParser;
+import com.jakuch.PartySheetShow.open5e.dataParser.model.ClassProficiencies;
 import com.jakuch.PartySheetShow.open5e.model.*;
 import com.jakuch.PartySheetShow.open5e.services.AbilityService;
 import com.jakuch.PartySheetShow.open5e.services.CharacterClassService;
 import com.jakuch.PartySheetShow.open5e.services.RaceService;
-import com.jakuch.PartySheetShow.open5e.dataParser.model.ClassProficiencies;
 import com.jakuch.PartySheetShow.player.character.model.Race;
-import com.jakuch.PartySheetShow.open5e.dataParser.ProficienciesParser;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
@@ -56,7 +59,9 @@ public class Open5eController {
         return abilityService.getAll();
     }
 
-    public record ProficiencySupportClass(ClassProficiencies classProficiencies, String rawFeatureDescription) { }
+    public record ProficiencySupportClass(ClassProficiencies classProficiencies, String rawFeatureDescription) {
+    }
 
-    public record ClassFeaturesSupportClass(List<Open5eFeature> features) { }
+    public record ClassFeaturesSupportClass(List<Open5eFeature> features) {
+    }
 }

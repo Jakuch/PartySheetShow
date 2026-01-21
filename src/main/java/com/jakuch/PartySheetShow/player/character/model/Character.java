@@ -1,6 +1,5 @@
 package com.jakuch.PartySheetShow.player.character.model;
 
-import com.jakuch.PartySheetShow.open5e.model.Open5eClass;
 import com.jakuch.PartySheetShow.player.character.model.skill.Initiative;
 import com.jakuch.PartySheetShow.player.character.model.skill.PassiveSkill;
 import com.jakuch.PartySheetShow.player.character.model.skill.SavingThrow;
@@ -30,7 +29,7 @@ public class Character {
     private Level level;
     private int currentExperiencePoints;
     private List<SavingThrow> savingThrows = new ArrayList<>();
-    private List<Open5eClass> characterClasses = new ArrayList<>();
+    private List<CharacterClass> characterClasses = new ArrayList<>();
     private Race race;
     private List<PassiveSkill> passiveSenses = new ArrayList<>();
 

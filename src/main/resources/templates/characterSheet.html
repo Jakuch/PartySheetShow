@@ -228,10 +228,16 @@
                             <div class="row border border-2 rounded text-start">
                                 <div class="col-12 collapse show" id="saving-throws-collapse">
                                     <div class="row" th:each="savingThrow : ${character.savingThrows}">
-                                        <div class="col-7" th:text="${savingThrow.getDisplayName()}" style="padding-right: 0px !important">name</div>
-                                        <div class="col-1" th:text="${savingThrow.proficiency.getShortName()}" style="padding-left: 0px !important; padding-right: 0px !important">profi
+                                        <div class="col-7" th:text="${savingThrow.getDisplayName()}"
+                                             style="padding-right: 0px !important">name
                                         </div>
-                                        <div class="col-2" th:text="${savingThrow.getTotalValue(character.level)}" style="padding-left: 0px !important; padding-right: 0px !important">value</div>
+                                        <div class="col-1" th:text="${savingThrow.proficiency.getShortName()}"
+                                             style="padding-left: 0px !important; padding-right: 0px !important">profi
+                                        </div>
+                                        <div class="col-2 text-center"
+                                             th:text="${savingThrow.getTotalValue(character.level)}"
+                                             style="padding-left: 0px !important; padding-right: 0px !important">value
+                                        </div>
                                         <div class="col-2"
                                              th:switch="${savingThrow.getAdvantage()}">
                                             <span th:case="${T(com.jakuch.PartySheetShow.player.character.model.Advantage).ADVANTAGE}"
@@ -255,9 +261,15 @@
                             <div class="row border border-2 rounded text-start">
                                 <div class="col-12" th:each="passiveSense: ${character.passiveSenses}">
                                     <div class="row text-center align-items-center">
-                                        <div class="col-6" th:text="${passiveSense.skillName.getDisplayName()}">passive</div>
-                                        <div class="col-2" th:text="${passiveSense.proficiency.getShortName()}">proficiency</div>
-                                        <div class="col-2" th:text="${passiveSense.getTotalValue(character.level)}">value</div>
+                                        <div class="col-6" th:text="${passiveSense.skillName.getDisplayName()}">
+                                            passive
+                                        </div>
+                                        <div class="col-2" th:text="${passiveSense.proficiency.getShortName()}">
+                                            proficiency
+                                        </div>
+                                        <div class="col-2" th:text="${passiveSense.getTotalValue(character.level)}">
+                                            value
+                                        </div>
                                         <div class="col-2"
                                              th:switch="${passiveSense.advantage}">
                                             <span th:case="${T(com.jakuch.PartySheetShow.player.character.model.Advantage).ADVANTAGE}"
@@ -272,7 +284,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-12" th:each="trait: ${character.race.traits}" th:if="${trait.key.srdName} == 'Darkvision'">
+                                <div class="col-12" th:each="trait: ${character.race.traits}"
+                                     th:if="${trait.key.srdName} == 'Darkvision'">
                                     <div class="row text-center align-items-center">
                                         <div class="col-6" th:text="${trait.key.srdName}">darkvision</div>
                                         <div class="col-6" th:text="${trait.value}">30</div>
@@ -356,21 +369,27 @@
                                     <div class="row" th:unless="${#lists.isEmpty(charClass.classProficiencies.armor)}">
                                         <div class="border-bottom">Armors</div>
                                         <ul class="col-12 mb-3 list-unstyled">
-                                            <li th:each="armor : ${charClass.classProficiencies.armor}" th:text="${armor}">Armor</li>
+                                            <li th:each="armor : ${charClass.classProficiencies.armor}"
+                                                th:text="${armor}">Armor
+                                            </li>
                                         </ul>
                                     </div>
                                     <div class="row"
                                          th:unless="${#lists.isEmpty(charClass.classProficiencies.weapons)}">
                                         <div class="border-bottom border-top">Weapons</div>
                                         <ul class="col-12 mb-3 list-unstyled">
-                                            <li th:each="weapon : ${charClass.classProficiencies.weapons}" th:text="${weapon}">Weapon</li>
+                                            <li th:each="weapon : ${charClass.classProficiencies.weapons}"
+                                                th:text="${weapon}">Weapon
+                                            </li>
                                         </ul>
                                     </div>
                                     <div class="row"
                                          th:unless="${#lists.isEmpty(charClass.classProficiencies.tools)}">
                                         <div class="border-bottom">Tools</div>
                                         <ul class="col-12 mb-3 list-unstyled">
-                                            <li th:each="tool : ${charClass.classProficiencies.tools}" th:text="${tool}">Tools</li>
+                                            <li th:each="tool : ${charClass.classProficiencies.tools}"
+                                                th:text="${tool}">Tools
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
@@ -447,7 +466,8 @@
                                         <div class="col-12">Initiative Bonus</div>
                                     </div>
                                     <div class="d-inline-flex">
-                                        <div class="col-10" th:text="${character.initiative.getTotalValue(character.level)}">
+                                        <div class="col-10"
+                                             th:text="${character.initiative.getTotalValue(character.level)}">
                                             initiative
                                         </div>
                                         <div class="col-2"
@@ -497,9 +517,11 @@
                             </div>
                             <div class="row">
                                 <div class="border-top">Hit Dices</div>
-                                <div class="d-inline-flex border border-2 rounded" th:each="diceEntry : ${character.health.hitDices.entrySet()}" th:if="${diceEntry.value > 0}">
-                                        <div class="col" th:text="${diceEntry.value}"></div>
-                                        <div class="col" th:text="${diceEntry.key.name}"></div>
+                                <div class="d-inline-flex border border-2 rounded"
+                                     th:each="diceEntry : ${character.health.hitDices.entrySet()}"
+                                     th:if="${diceEntry.value > 0}">
+                                    <div class="col" th:text="${diceEntry.value}"></div>
+                                    <div class="col" th:text="${diceEntry.key.name}"></div>
                                 </div>
                             </div>
                         </div>

@@ -12,16 +12,16 @@ public record AccessRules(
 ) {
 
     public boolean canView(AppUser user) {
-        if(isOwner(user)) return true;
+        if (isOwner(user)) return true;
         return viewerIds().contains(user.getId());
     }
 
     public boolean canEdit(AppUser user) {
-        if(isOwner(user)) return true;
+        if (isOwner(user)) return true;
         return editorIds().contains(user.getId());
     }
 
     public boolean isOwner(AppUser user) {
-        return user != null && ownerId!= null && ownerId.equals(user.getId());
+        return user != null && ownerId != null && ownerId.equals(user.getId());
     }
 }

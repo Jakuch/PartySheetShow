@@ -16,7 +16,7 @@ public enum Proficiency {
     }
 
     public static int calculateProficiencyBonus(Proficiency type, Level level) {
-        if(type == null) {
+        if (type == null) {
             type = Proficiency.NONE;
         }
 

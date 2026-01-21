@@ -10,4 +10,5 @@ public record Race(
         String srdKey,
         String name,
         Map<RaceTraitsParser.RaceTraitsKey, Object> traits
-) {}
+) {
+}

@@ -1,9 +1,6 @@
 package com.jakuch.PartySheetShow.open5e.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.jakuch.PartySheetShow.open5e.model.Open5eData;
-import com.jakuch.PartySheetShow.player.character.model.FeatureDataTable;
-import com.jakuch.PartySheetShow.player.character.model.FeatureGainedAt;
 import lombok.Data;
 
 import java.util.Comparator;
@@ -14,19 +11,19 @@ import java.util.stream.Collectors;
 public class Open5eFeature extends Open5eData {
 
     @JsonProperty("feature_type")
-    private String type; //TODO for now String, perhaps change it to enum since it could be easier to verify type but thats for later
+    private String type;
 
     @JsonProperty("gained_at")
-    private List<FeatureGainedAt> gainedAt;
+    private List<Open5eFeatureGainedAt> gainedAt;
 
     @JsonProperty("data_for_class_table")
-    private List<FeatureDataTable> data;
+    private List<Open5eFeatureDataTable> data;
 
     private String classSrdKey;
 
     public List<Integer> getGainedAtLevels() {
-        gainedAt.sort(Comparator.comparingInt(FeatureGainedAt::getLevel));
-        return gainedAt.stream().map(FeatureGainedAt::getLevel).toList();
+        gainedAt.sort(Comparator.comparingInt(Open5eFeatureGainedAt::getLevel));
+        return gainedAt.stream().map(Open5eFeatureGainedAt::getLevel).toList();
     }
 
     public int getLowestGainedAtLevel() {

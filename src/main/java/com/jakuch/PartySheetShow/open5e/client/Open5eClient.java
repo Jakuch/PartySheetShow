@@ -1,21 +1,14 @@
 package com.jakuch.PartySheetShow.open5e.client;
 
 import com.jakuch.PartySheetShow.open5e.Open5eProperties;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.util.UriBuilder;
 
-import java.io.Serializable;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Slf4j
 @Service
@@ -40,7 +33,7 @@ public class Open5eClient {
 
                     baseQueryParams.forEach(uriBuilder::queryParam);
                     var uri = uriBuilder.build();
-                    log.info("Sending request with uri: "+ uri);
+                    log.info("Sending request with uri: " + uri);
                     return uri;
                 })
                 .retrieve()
@@ -52,7 +45,7 @@ public class Open5eClient {
         if (!uri.isAbsolute()) {
             throw new IllegalArgumentException("Expected absolute URL, got: " + url);
         }
-        log.info("Sending request with uri: "+ uri);
+        log.info("Sending request with uri: " + uri);
 
         return open5eRestClient.get()
                 .uri(uri)
@@ -61,7 +54,7 @@ public class Open5eClient {
     }
 
     public <T> T getSingleRecord(String path, Class<T> type) {
-        log.info("Fetching single record from path: "+ path);
+        log.info("Fetching single record from path: " + path);
         return open5eRestClient.get()
                 .uri(path)
                 .retrieve()
@@ -71,7 +64,7 @@ public class Open5eClient {
     private HashMap<String, Object> getBaseQueryParams() {
         var baseQueryParams = new HashMap<String, Object>();
         baseQueryParams.put("limit", open5eProperties.getPagination());
-        if(open5eProperties.isUseDefaultGamesystem()) {
+        if (open5eProperties.isUseDefaultGamesystem()) {
             baseQueryParams.put("document__gamesystem__key", open5eProperties.getDefaultGamesystem());
         }
         return baseQueryParams;

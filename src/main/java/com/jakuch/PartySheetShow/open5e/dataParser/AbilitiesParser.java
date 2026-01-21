@@ -1,7 +1,7 @@
 package com.jakuch.PartySheetShow.open5e.dataParser;
 
 import com.jakuch.PartySheetShow.open5e.dataParser.model.AbilityBonuses;
-import com.jakuch.PartySheetShow.open5e.dataParser.model.choice.*;
+import com.jakuch.PartySheetShow.open5e.dataParser.model.Choice;
 import com.jakuch.PartySheetShow.player.character.model.AbilityName;
 import org.springframework.stereotype.Component;
 
@@ -62,7 +62,7 @@ public class AbilitiesParser {
             var a = AbilityName.findByNameOrSrdKey(filterAbilityName(mOr.group(1)));
             var b = AbilityName.findByNameOrSrdKey(filterAbilityName(mOr.group(2)));
             int amount = Integer.parseInt(mOr.group(3));
-            choices.add(new ChooseOneOf(a, b, amount));
+            choices.add(new Choice(AbilityName.NONE, amount, List.of(a, b)));
             text = removeMatch(text, mOr);
         }
 
@@ -71,16 +71,20 @@ public class AbilitiesParser {
             var a = AbilityName.findByNameOrSrdKey(filterAbilityName(mEither.group(1)));
             var b = AbilityName.findByNameOrSrdKey(filterAbilityName(mEither.group(2)));
             int amount = Integer.parseInt(mEither.group(3));
-            choices.add(new ChooseFrom(1, amount, List.of(a, b)));
+            choices.add(new Choice(AbilityName.NONE, amount, List.of(a, b)));
             text = removeMatch(text, mEither);
         }
 
         var mExcept = CHOOSE_ANY_EXCEPT.matcher(text);
         if (mExcept.find()) {
             int count = parseNumber(mExcept.group(1));
-            var excluded = AbilityName.findByNameOrSrdKey(filterAbilityName(mExcept.group(2)));
+            var options = new ArrayList<>(AbilityName.correctValues());
+            options.remove(AbilityName.findByNameOrSrdKey(filterAbilityName(mExcept.group(2))));
             int amount = Integer.parseInt(mExcept.group(3));
-            choices.add(new ChooseAnyExcept(excluded, count, amount));
+
+            for (int i = 0; i < count; i++) {
+                choices.add(new Choice(AbilityName.NONE, amount, options));
+            }
             text = removeMatch(text, mExcept);
         }
 
@@ -96,11 +100,16 @@ public class AbilitiesParser {
             if (other) {
                 var mFixed = FIXED.matcher(text);
                 if (mFixed.find()) {
-                    var abilityName = AbilityName.findByNameOrSrdKey(filterAbilityName(mFixed.group(1)));
-                    choices.add(new ChooseAnyExcept(abilityName, count, amount));
+                    var options = new ArrayList<>(AbilityName.correctValues());
+                    options.remove(AbilityName.findByNameOrSrdKey(filterAbilityName(mFixed.group(1))));
+                    for (int i = 0; i < count; i++) {
+                        choices.add(new Choice(AbilityName.NONE, amount, options));
+                    }
                 }
             } else {
-                choices.add(new ChooseAny(count, amount, different));
+                for (int i = 0; i < count; i++) {
+                    choices.add(new Choice(AbilityName.NONE, amount, AbilityName.correctValues()));
+                }
             }
             text = removeMatch(text, mChooseAny);
         }

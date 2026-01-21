@@ -1,10 +1,7 @@
 package com.jakuch.PartySheetShow.player.character.mapper;
 
-import com.jakuch.PartySheetShow.open5e.dataParser.ProficienciesParser;
 import com.jakuch.PartySheetShow.open5e.dataParser.RaceTraitsParser;
-import com.jakuch.PartySheetShow.open5e.dataParser.model.ClassProficiencies;
-import com.jakuch.PartySheetShow.open5e.model.Open5eClass;
-import com.jakuch.PartySheetShow.open5e.model.Open5eData;
+import com.jakuch.PartySheetShow.open5e.dataParser.model.Choice;
 import com.jakuch.PartySheetShow.open5e.model.Open5eSkill;
 import com.jakuch.PartySheetShow.open5e.services.AbilityService;
 import com.jakuch.PartySheetShow.open5e.services.CharacterClassService;
@@ -18,7 +15,10 @@ import com.jakuch.PartySheetShow.player.dice.DiceType;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -28,7 +28,6 @@ public class CharacterMapper {
     private CharacterClassService characterClassService;
     private RaceService raceService;
     private AbilityService abilityService;
-    private ProficienciesParser proficienciesParser;
 
     private static final int PASSIVE_SENSES_BASE_VALUE = 10;
 
@@ -46,7 +45,7 @@ public class CharacterMapper {
                         .collect(Collectors.toMap(Ability::getName, Ability::getValue)))
                 .classes(character.getCharacterClasses()
                         .stream()
-                        .collect(Collectors.toMap(Open5eData::getSrdKey, characterClass -> CharacterClassForm.builder()
+                        .collect(Collectors.toMap(CharacterClass::getSrdKey, characterClass -> CharacterClassForm.builder()
                                 .key(characterClass.getSrdKey())
                                 .name(characterClass.getName())
                                 .level(characterClass.getLevel())
@@ -68,14 +67,11 @@ public class CharacterMapper {
 
         var formClasses = characterForm.getClasses();
         if (!formClasses.isEmpty()) {
-            var classes = formClasses.keySet()
-                    .stream()
-                    .map(k -> characterClassService.getByKey(k))
-                    .flatMap(Optional::stream)
-                    .toList();
-
-            var firstClass = classes.getFirst();
-            firstClass.setClassProficiencies(mapToClassProficiencies(firstClass));;
+            var classes = mapClasses(formClasses);
+            var firstClass = classes.stream()
+                    .filter(CharacterClass::isFirst)
+                    .findFirst()
+                    .get();
 
             character.setSavingThrows(mapSavingThrows(character.getAbilities(), firstClass));
             character.getCharacterClasses().addAll(classes);
@@ -88,9 +84,11 @@ public class CharacterMapper {
                 character.setRace(r);
                 character.getAbilities().forEach(ability -> {
                     var fixedBonus = race.getAbilityBonuses().getFixed().get(ability.getName());
-                    ability.addValue(fixedBonus);
-                    var choiceBonus = race.getAbilityBonusChoices().stream().filter(abilityName -> abilityName.equals(ability.getName())).count();
-                    ability.addValue((int) choiceBonus);
+                    if (fixedBonus != null) {
+                        ability.addValue(fixedBonus);
+                    }
+                    List<Choice> choices = race.getAbilityBonuses().getChoices().stream().filter(choice -> choice.getChosenAbility().equals(ability.getName())).toList();
+                    choices.forEach(choice -> ability.addValue(choice.getAmount()));
                 });
             });
         }
@@ -175,11 +173,7 @@ public class CharacterMapper {
         return initiative;
     }
 
-    private ClassProficiencies mapToClassProficiencies(Open5eClass open5eClass) {
-        return proficienciesParser.mapToClassProficiencies(open5eClass.getClassProficienciesFeature().getDescription());
-    }
-
-    private Health mapHealthAndCalculateHitDices(CharacterForm characterForm, List<Open5eClass> classes) {
+    private Health mapHealthAndCalculateHitDices(CharacterForm characterForm, List<CharacterClass> classes) {
         var hitDices = calculateHitDices(classes);
 
         return Health.builder()
@@ -190,13 +184,29 @@ public class CharacterMapper {
                 .build();
     }
 
-    private List<SavingThrow> mapSavingThrows(List<Ability> abilities, Open5eClass open5eClass) {
+    private List<CharacterClass> mapClasses(Map<String, CharacterClassForm> formClasses) {
+        return formClasses.keySet()
+                .stream()
+                .map(k -> {
+                    var mappedClass = characterClassService.getMappedByKey(k);
+                    mappedClass.ifPresent(characterClass -> {
+                        var formClass = formClasses.get(k);
+                        characterClass.setFirst(formClass.isFirst());
+                        characterClass.setLevel(formClass.getLevel());
+                    });
+                    return mappedClass;
+                })
+                .flatMap(Optional::stream)
+                .toList();
+    }
+
+    private List<SavingThrow> mapSavingThrows(List<Ability> abilities, CharacterClass characterClass) {
         return abilities.stream().map(ability -> {
             var savingThrow = new SavingThrow();
             savingThrow.setAbilityName(ability.getName());
             savingThrow.setValue(ability.getBonus());
 
-            open5eClass.getClassProficiencies().savingThrows().forEach(st -> {
+            characterClass.getClassProficiencies().savingThrows().forEach(st -> {
                 if (st.getSrdKey().equalsIgnoreCase(ability.getName().getSrdKey())) {
                     savingThrow.setProficiency(Proficiency.FULL);
                 }
@@ -213,7 +223,7 @@ public class CharacterMapper {
         });
     }
 
-    private Health updateHealthAndHitDices(Health health, CharacterForm characterForm, List<Open5eClass> classes) {
+    private Health updateHealthAndHitDices(Health health, CharacterForm characterForm, List<CharacterClass> classes) {
         health.setMax(characterForm.getMaxHealth());
         health.setTemporary(characterForm.getTemporaryHealth());
 //        health.setMax(health.getMax()); TODO some level up functionality would be needed but thats for later
@@ -223,8 +233,8 @@ public class CharacterMapper {
         return health;
     }
 
-    private Map<DiceType, Integer> calculateHitDices(List<Open5eClass> classes) {
-        return classes.stream().collect(Collectors.toMap(Open5eClass::getHitDice, characterClass -> characterClass.getLevel().getNumericValue()));
+    private Map<DiceType, Integer> calculateHitDices(List<CharacterClass> classes) {
+        return classes.stream().collect(Collectors.toMap(CharacterClass::getHitDice, characterClass -> characterClass.getLevel().getNumericValue()));
     }
 
 

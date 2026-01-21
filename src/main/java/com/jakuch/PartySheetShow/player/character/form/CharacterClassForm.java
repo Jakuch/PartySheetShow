@@ -14,7 +14,8 @@ public class CharacterClassForm {
     //form fields
     private String key;
     private String name;
-    Level level;
+    private Level level;
+    boolean isFirst;
 
     //sources
 

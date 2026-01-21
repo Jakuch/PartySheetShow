@@ -12,7 +12,7 @@ import static com.jakuch.PartySheetShow.open5e.Open5eTypeReferences.SPELL;
 public class SpellsService extends Open5eServiceBase<Spell> {
 
     public SpellsService(Open5eClient open5eClient, Open5eProperties open5eProperties) {
-        super(open5eClient, open5eProperties,"/spells/", SPELL, Spell.class);
+        super(open5eClient, open5eProperties, "/spells/", SPELL, Spell.class);
     }
 
 }

@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.MongoTemplate
 @EnableConfigurationProperties(MongoProperties::class)
 @AllArgsConstructor
 open class TestsConfig(
-       private val mongoProperties: MongoProperties
+        private val mongoProperties: MongoProperties
 ) {
 
     @Bean

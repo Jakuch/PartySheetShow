@@ -15,4 +15,5 @@ public record ClassProficiencies(
         List<AbilityName> savingThrows,
         List<SkillName> skillProficiencies,
         int skillProficienciesChoseCount
-) {}
+) {
+}

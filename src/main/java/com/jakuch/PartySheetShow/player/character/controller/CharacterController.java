@@ -1,10 +1,10 @@
 package com.jakuch.PartySheetShow.player.character.controller;
 
 import com.jakuch.PartySheetShow.player.character.form.CharacterForm;
+import com.jakuch.PartySheetShow.player.character.mapper.CharacterMapper;
 import com.jakuch.PartySheetShow.player.character.model.AbilityName;
 import com.jakuch.PartySheetShow.player.character.model.Level;
 import com.jakuch.PartySheetShow.player.character.model.skill.SkillName;
-import com.jakuch.PartySheetShow.player.character.mapper.CharacterMapper;
 import com.jakuch.PartySheetShow.player.character.service.CharacterService;
 import com.jakuch.PartySheetShow.security.service.AppUserService;
 import lombok.AllArgsConstructor;
@@ -40,7 +40,7 @@ public class CharacterController {
 
     @PostMapping("/{id}")
     public String updateCharacter(@PathVariable String id, @ModelAttribute("editForm") CharacterForm characterForm, BindingResult bindingResult, Model model) {
-        if(bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             populateModel(id, "edit", model);
             return "characterSheet";
         }

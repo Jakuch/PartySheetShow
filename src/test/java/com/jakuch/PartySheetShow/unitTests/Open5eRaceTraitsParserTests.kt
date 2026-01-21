@@ -5,9 +5,8 @@ import com.jakuch.PartySheetShow.open5e.dataParser.AbilitiesParser
 import com.jakuch.PartySheetShow.open5e.dataParser.RaceTraitsParser
 import com.jakuch.PartySheetShow.open5e.dataParser.RaceTraitsParser.RaceTraitsKey
 import com.jakuch.PartySheetShow.open5e.dataParser.model.AbilityBonuses
-import com.jakuch.PartySheetShow.open5e.dataParser.model.choice.ChooseAny
-import com.jakuch.PartySheetShow.player.character.model.AbilityName
 import com.jakuch.PartySheetShow.open5e.model.Open5eRace
+import com.jakuch.PartySheetShow.player.character.model.AbilityName
 import com.jakuch.PartySheetShow.player.character.model.Size
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder

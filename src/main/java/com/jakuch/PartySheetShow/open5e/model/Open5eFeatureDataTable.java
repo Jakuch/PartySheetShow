@@ -1,10 +1,10 @@
-package com.jakuch.PartySheetShow.player.character.model;
+package com.jakuch.PartySheetShow.open5e.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class FeatureDataTable {
+public class Open5eFeatureDataTable {
 
     private int level;
 

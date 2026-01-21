@@ -35,7 +35,7 @@ public class RaceTraitsParser {
                 .ifPresent(t -> {
                     traitsMap.put(RaceTraitsKey.DARKVISION, parseDarkvision(t));
                     traitsFromRace.remove(t);
-                } );
+                });
 
         traitsMap.put(RaceTraitsKey.SPECIFIC, traitsFromRace.stream().collect(Collectors.toMap(Open5eData::getName, Open5eData::getDescription)));
 
@@ -68,7 +68,7 @@ public class RaceTraitsParser {
         var size = Arrays.stream(ParserHelper.removeSpecialCharacters(trait.getDescription())
                         .split(" "))
                 .map(String::toUpperCase)
-                .filter(upperCase ->  Size.asStringList().contains(upperCase))
+                .filter(upperCase -> Size.asStringList().contains(upperCase))
                 .findFirst()
                 .orElse(Size.MEDIUM.name());
         return Size.valueOf(size);

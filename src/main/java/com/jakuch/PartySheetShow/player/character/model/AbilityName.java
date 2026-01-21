@@ -36,7 +36,7 @@ public enum AbilityName {
 
     public static AbilityName findByNameOrSrdKey(String nameOrKey) {
         var ability = findByName(nameOrKey);
-        if(NONE.equals(ability)) {
+        if (NONE.equals(ability)) {
             ability = findBySrdKey(nameOrKey);
         }
         return ability;

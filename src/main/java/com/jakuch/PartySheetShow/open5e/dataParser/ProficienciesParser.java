@@ -1,7 +1,7 @@
 package com.jakuch.PartySheetShow.open5e.dataParser;
 
-import com.jakuch.PartySheetShow.player.character.model.AbilityName;
 import com.jakuch.PartySheetShow.open5e.dataParser.model.ClassProficiencies;
+import com.jakuch.PartySheetShow.player.character.model.AbilityName;
 import com.jakuch.PartySheetShow.player.character.model.skill.SkillName;
 import org.springframework.stereotype.Component;
 
@@ -54,7 +54,7 @@ public class ProficienciesParser {
     private List<SkillName> mapSkillProficiencies(String section) {
         var matcher = SKILL_LIST_PATTERN.matcher(section);
 
-        if(matcher.find()) {
+        if (matcher.find()) {
             var skills = matcher.group(1)
                     .replace("*", "")
                     .replace(" and ", ", ")

@@ -45,7 +45,7 @@ public enum SkillName {
 
     public static Optional<SkillName> fromNameOrSrdKey(String keyOrName) {
         var skillName = fromSrdKey(keyOrName);
-        if(skillName.isPresent()) {
+        if (skillName.isPresent()) {
             return skillName;
         }
         return fromName(keyOrName);
@@ -56,10 +56,10 @@ public enum SkillName {
     }
 
     public static Optional<SkillName> fromName(String name) {
-        if(name.equalsIgnoreCase("Animal")) {
+        if (name.equalsIgnoreCase("Animal")) {
             return Optional.of(SkillName.ANIMAL_HANDLING);
         }
-        if(name.equalsIgnoreCase("Sleight")) {
+        if (name.equalsIgnoreCase("Sleight")) {
             return Optional.of(SkillName.SLEIGHT_OF_HAND);
         }
 

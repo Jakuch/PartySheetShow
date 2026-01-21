@@ -82,12 +82,13 @@
             <div class="row">
                 <div class="col-12 mb-2">
                     <div>Select Race abilities:</div>
-                    <div th:each="choice : *{race.abilityBonuses.choices}">
+                    <div th:each="choice, status : *{race.abilityBonuses.choices}">
                         <ul class="row list-unstyled">
-                            <li class="col-2" th:each="i : ${#numbers.sequence(0, choice.count - 1)}">
-                                <select class="form-control" th:field="*{race.abilityBonusChoices}">
+                            <li class="col-2">
+                                <select class="form-control"
+                                        th:field="*{race.abilityBonuses.choices[__${status.index}__].chosenAbility}">
                                     <option value="">NONE</option>
-                                    <option th:each="ability : *{race.abilityNamesSelection}"
+                                    <option th:each="ability : *{race.abilityBonuses.choices[__${status.index}__].options}"
                                             th:value="${ability}"
                                             th:text="${ability.name}">
                                     </option>
@@ -139,21 +140,26 @@
             <div class="row">
                 <div class="col-12" th:each="classEntry: *{classes}">
                     <div class="row">
-                    <div class="col-1">
-                        <div class="d-inline-flex">
-                            <div>Select&nbsp;</div><div th:text="${classEntry.value.name}">Class</div><div>&nbsp;level:</div>
+                        <div class="col-1">
+                            <div class="d-inline-flex">
+                                <div>Select&nbsp;</div>
+                                <div th:text="${classEntry.value.name}">Class</div>
+                                <div>&nbsp;level:</div>
+                            </div>
+                            <select id="class-level" class="form-control mb-2" type="text"
+                                    th:field="*{classes[__${classEntry.key}__].level}">
+                                <option th:each="lvl : ${levels}"
+                                        th:value="${lvl}"
+                                        th:text="${lvl.numericValue}">
+                            </select>
                         </div>
-                        <select id="class-level" class="form-control mb-2" type="text" th:field="*{classes[__${classEntry.key}__].level}">
-                            <option th:each="lvl : ${levels}"
-                                    th:value="${lvl}"
-                                    th:text="${lvl.numericValue}">
-                        </select>
-                    </div>
                     </div>
                     <div class="d-inline-flex justify-content-center align-items-center">
                         <button type="button" data-bs-toggle="collapse" data-bs-target="#class-traits-collapse"
                                 class="btn badge text-bg-success rounded-pill me-1 mb-2 d-inline-flex">
-                            <div>Show&nbsp;</div><div th:text="${classEntry.value.name}">class</div><div>&nbsp;traits</div>
+                            <div>Show&nbsp;</div>
+                            <div th:text="${classEntry.value.name}">class</div>
+                            <div>&nbsp;traits</div>
                         </button>
                     </div>
                     <ul class="collapse hide" id="class-traits-collapse" th:each="feature : ${selectedClassesFeatures}">
