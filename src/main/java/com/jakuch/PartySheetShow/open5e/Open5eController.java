@@ -1,11 +1,10 @@
 package com.jakuch.PartySheetShow.open5e;
 
-import com.jakuch.PartySheetShow.open5e.dataParser.ProficienciesParser;
+import com.jakuch.PartySheetShow.open5e.dataParser.ClassProficienciesParser;
+import com.jakuch.PartySheetShow.open5e.dataParser.RaceTraitsParser;
 import com.jakuch.PartySheetShow.open5e.dataParser.model.ClassProficiencies;
 import com.jakuch.PartySheetShow.open5e.model.*;
-import com.jakuch.PartySheetShow.open5e.services.AbilityService;
-import com.jakuch.PartySheetShow.open5e.services.CharacterClassService;
-import com.jakuch.PartySheetShow.open5e.services.RaceService;
+import com.jakuch.PartySheetShow.open5e.services.*;
 import com.jakuch.PartySheetShow.player.character.model.Race;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -24,8 +24,25 @@ public class Open5eController {
 
     private RaceService raceService;
     private CharacterClassService characterClassService;
-    private ProficienciesParser proficienciesParser;
+    private ClassProficienciesParser classProficienciesParser;
     private AbilityService abilityService;
+    private RaceTraitsParser raceTraitsParser;
+    private ItemService itemService;
+
+    @GetMapping("/item-sets")
+    public Map<String, ItemSetsService.ItemSetType> getItemSets() {
+        return itemService.getAllSets().stream().collect(Collectors.toMap(Open5eData::getSrdKey, Open5eItemSet::getType));
+    }
+
+    @GetMapping("/tools")
+    public Optional<Open5eItemSet> getOnlyTools() {
+        return itemService.getSet(ItemSetsService.ItemSetType.ARTISANS_TOOLS);
+    }
+
+    @GetMapping("/instruments")
+    public Optional<Open5eItemSet> getOnlyInstruments() {
+        return itemService.getSet(ItemSetsService.ItemSetType.MUSICAL_INSTRUMENTS);
+    }
 
     @GetMapping("/single-race")
     public Open5eRace getRace(@RequestParam String srdKey) {
@@ -42,6 +59,16 @@ public class Open5eController {
         return raceService.getAll().stream().map(r -> new TraitsSupportClass(r.getName(), r.getRaceTraits())).toList();
     }
 
+    @GetMapping("/all-traits-mapped")
+    public List<Map<RaceTraitsParser.RaceTraitsKey, Object>> mappedTraits() {
+        return raceService.getAll().stream().map(r -> raceTraitsParser.parseRaceTraits(r)).toList();
+    }
+
+    @GetMapping("/all-traits-desc")
+    public List<String> getAllTraitsDesc() {
+        return raceService.getAll().stream().flatMap(r -> r.getRaceTraits().stream()).map(Open5eData::getDescription).toList();
+    }
+
     @GetMapping("/all-subclasses")
     public List<Open5eClass> getSubclasses(@RequestParam String srdClassKey) {
         return characterClassService.getAllSubclassesForClass(srdClassKey);
@@ -50,7 +77,12 @@ public class Open5eController {
     @GetMapping("/class-proficiencies")
     public Map<String, ProficiencySupportClass> getClassProficiencies() {
         return characterClassService.getAllClasses().stream()
-                .collect(Collectors.toMap(Open5eData::getName, el -> new ProficiencySupportClass(proficienciesParser.mapToClassProficiencies(el.getClassProficienciesFeature().getDescription()), el.getClassProficienciesFeature().getDescription())));
+                .collect(Collectors.toMap(Open5eData::getName, el -> new ProficiencySupportClass(classProficienciesParser.mapToClassProficiencies(el.getClassProficienciesFeature().getDescription()), el.getClassProficienciesFeature().getDescription())));
+    }
+
+    @GetMapping("/class-profiraw")
+    public List<String> getRawprofi() {
+        return characterClassService.getAllClasses().stream().map(el -> el.getClassProficienciesFeature().getDescription()).toList();
     }
 
     @GetMapping("/class-features")

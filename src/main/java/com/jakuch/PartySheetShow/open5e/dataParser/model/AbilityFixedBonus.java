@@ -4,12 +4,9 @@ import com.jakuch.PartySheetShow.player.character.model.AbilityName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
-public class AbilityChoice implements Choice {
-    private AbilityName chosenAbility;
-    private int amount;
-    private List<AbilityName> options;
+public class AbilityFixedBonus implements FixedBonus {
+    private AbilityName abilityName;
+    int amount;
 }

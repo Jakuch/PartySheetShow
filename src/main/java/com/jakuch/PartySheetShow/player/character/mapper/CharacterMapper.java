@@ -24,12 +24,11 @@ import java.util.stream.Collectors;
 @Component
 @AllArgsConstructor
 public class CharacterMapper {
+    private static final int PASSIVE_SENSES_BASE_VALUE = 10;
 
     private CharacterClassService characterClassService;
     private RaceService raceService;
     private AbilityService abilityService;
-
-    private static final int PASSIVE_SENSES_BASE_VALUE = 10;
 
     public CharacterForm toForm(Character character) {
         return CharacterForm.builder()

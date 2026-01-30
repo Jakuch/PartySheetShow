@@ -40,6 +40,7 @@ public class CacheConfig {
                         .maximumSize(100)
                         .build()
         );
+
         var manager = new SimpleCacheManager();
         manager.setCaches(List.of(racesAll, classesAll, classesMainAll));
         return manager;

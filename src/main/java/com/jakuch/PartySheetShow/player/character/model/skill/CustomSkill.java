@@ -1,9 +1,14 @@
 package com.jakuch.PartySheetShow.player.character.model.skill;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 
 @Data
-public class CustomSkill extends BaseSkill{
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+public class CustomSkill extends BaseSkill {
 
     private String name;
 

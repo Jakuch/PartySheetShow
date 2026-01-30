@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.jakuch.PartySheetShow.open5e.dataParser.ParserHelper.WORD_NUMBERS;
+import static com.jakuch.PartySheetShow.open5e.dataParser.ParserHelper.NUMBER_TOKEN;
 
 @Component
 public class AbilitiesParser {
@@ -27,11 +27,11 @@ public class AbilitiesParser {
     );
 
     private static final Pattern CHOOSE_ANY = Pattern.compile(
-            "(?i)(one|two|three|four|five|six|\\d+)\\s+(?:different\\s+)?(?:other\\s+)?ability\\s+scores?\\s+of\\s+your\\s+choice\\s+increases?\\s+by\\s+(\\d+)"
+            "(?i)" + NUMBER_TOKEN + "\\s+(?:different\\s+)?(?:other\\s+)?ability\\s+scores?\\s+of\\s+your\\s+choice\\s+increases?\\s+by\\s+(\\d+)"
     );
 
     private static final Pattern CHOOSE_ANY_EXCEPT = Pattern.compile(
-            "(?i)(one|two|three|four|five|six|\\d+)\\s+ability\\s+scores?\\s+of\\s+your\\s+choice,\\s+other\\s+than\\s+([A-Za-z]+),\\s+increases?\\s+by\\s+(\\d+)"
+            "(?i)" + NUMBER_TOKEN + "\\s+ability\\s+scores?\\s+of\\s+your\\s+choice,\\s+other\\s+than\\s+([A-Za-z]+),\\s+increases?\\s+by\\s+(\\d+)"
     );
 
     private static final Pattern CHOOSE_ONE_OF = Pattern.compile(
@@ -77,7 +77,7 @@ public class AbilitiesParser {
 
         var mExcept = CHOOSE_ANY_EXCEPT.matcher(text);
         if (mExcept.find()) {
-            int count = parseNumber(mExcept.group(1));
+            int count = ParserHelper.parseNumber(mExcept.group(1));
             var options = new ArrayList<>(AbilityName.correctValues());
             options.remove(AbilityName.findByNameOrSrdKey(filterAbilityName(mExcept.group(2))));
             int amount = Integer.parseInt(mExcept.group(3));
@@ -90,7 +90,7 @@ public class AbilitiesParser {
 
         var mChooseAny = CHOOSE_ANY.matcher(text);
         if (mChooseAny.find()) {
-            int count = parseNumber(mChooseAny.group(1));
+            int count = ParserHelper.parseNumber(mChooseAny.group(1));
             int amount = Integer.parseInt(mChooseAny.group(2));
             boolean different = text.toLowerCase().contains("different ability scores");
             boolean other = false;
@@ -136,12 +136,5 @@ public class AbilitiesParser {
         int start = matcher.start();
         int end = matcher.end();
         return (text.substring(0, start) + " " + text.substring(end)).replaceAll("\\s+", " ").trim();
-    }
-
-    private int parseNumber(String number) {
-        if (number.chars().allMatch(Character::isDigit)) {
-            return Integer.parseInt(number);
-        }
-        return WORD_NUMBERS.getOrDefault(number.toLowerCase(), 0);
     }
 }

@@ -2,6 +2,7 @@ package com.jakuch.PartySheetShow.unitTests
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jakuch.PartySheetShow.open5e.dataParser.AbilitiesParser
+import com.jakuch.PartySheetShow.open5e.dataParser.RaceProficienciesParser
 import com.jakuch.PartySheetShow.open5e.dataParser.RaceTraitsParser
 import com.jakuch.PartySheetShow.open5e.dataParser.RaceTraitsParser.RaceTraitsKey
 import com.jakuch.PartySheetShow.open5e.dataParser.model.AbilityBonuses
@@ -20,7 +21,7 @@ import java.util.stream.Stream
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class Open5eRaceTraitsParserTests {
 
-    private var raceTraitsParser: RaceTraitsParser = RaceTraitsParser(AbilitiesParser())
+    private var raceTraitsParser: RaceTraitsParser = RaceTraitsParser(AbilitiesParser(), RaceProficienciesParser())
     private var objectMapper: ObjectMapper = ObjectMapper()
 
     companion object {

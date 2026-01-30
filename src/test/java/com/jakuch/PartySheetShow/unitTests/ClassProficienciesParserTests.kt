@@ -1,6 +1,6 @@
 package com.jakuch.PartySheetShow.unitTests
 
-import com.jakuch.PartySheetShow.open5e.dataParser.ProficienciesParser
+import com.jakuch.PartySheetShow.open5e.dataParser.ClassProficienciesParser
 import com.jakuch.PartySheetShow.open5e.dataParser.model.ClassProficiencies
 import com.jakuch.PartySheetShow.player.character.model.AbilityName
 import com.jakuch.PartySheetShow.player.character.model.skill.SkillName
@@ -16,7 +16,7 @@ import java.util.stream.Stream
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ClassProficienciesParserTests {
 
-    private var proficienciesParser: ProficienciesParser = ProficienciesParser()
+    private var classProficienciesParser: ClassProficienciesParser = ClassProficienciesParser()
 
     companion object {
         @JvmStatic
@@ -64,7 +64,7 @@ class ClassProficienciesParserTests {
     @MethodSource("classProficienciesTestCases")
     fun `should parse class proficiencies`(givenRawDescription: String, expectedClassProficiencies: ClassProficiencies) {
         // given when
-        val mappedClassProficiencies = proficienciesParser.mapToClassProficiencies(givenRawDescription)
+        val mappedClassProficiencies = classProficienciesParser.mapToClassProficiencies(givenRawDescription)
 
         // then
         assertSoftly(mappedClassProficiencies) {

@@ -66,6 +66,7 @@ public class Open5eClient {
         baseQueryParams.put("limit", open5eProperties.getPagination());
         if (open5eProperties.isUseDefaultGamesystem()) {
             baseQueryParams.put("document__gamesystem__key", open5eProperties.getDefaultGamesystem());
+            baseQueryParams.put("document__gamesystem__key__iexact", open5eProperties.getDefaultGamesystem());
         }
         return baseQueryParams;
     }

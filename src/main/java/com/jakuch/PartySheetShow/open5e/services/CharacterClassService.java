@@ -3,17 +3,19 @@ package com.jakuch.PartySheetShow.open5e.services;
 import com.jakuch.PartySheetShow.open5e.Open5eProperties;
 import com.jakuch.PartySheetShow.open5e.Open5eServiceBase;
 import com.jakuch.PartySheetShow.open5e.client.Open5eClient;
-import com.jakuch.PartySheetShow.open5e.dataParser.ProficienciesParser;
+import com.jakuch.PartySheetShow.open5e.dataParser.ClassProficienciesParser;
 import com.jakuch.PartySheetShow.open5e.dataParser.model.ClassProficiencies;
 import com.jakuch.PartySheetShow.open5e.model.Open5eClass;
+import com.jakuch.PartySheetShow.open5e.model.Open5eFeature;
 import com.jakuch.PartySheetShow.open5e.model.Open5eFeatureDataTable;
-import com.jakuch.PartySheetShow.player.character.model.*;
+import com.jakuch.PartySheetShow.player.character.model.CharacterClass;
+import com.jakuch.PartySheetShow.player.character.model.Feature;
+import com.jakuch.PartySheetShow.player.character.model.FeatureType;
+import com.jakuch.PartySheetShow.player.character.model.Level;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.jakuch.PartySheetShow.open5e.Open5eTypeReferences.CHARACTER_CLASS;
@@ -21,11 +23,11 @@ import static com.jakuch.PartySheetShow.open5e.Open5eTypeReferences.CHARACTER_CL
 @Service
 public class CharacterClassService extends Open5eServiceBase<Open5eClass> {
 
-    private ProficienciesParser proficienciesParser;
+    private final ClassProficienciesParser classProficienciesParser;
 
-    public CharacterClassService(Open5eClient open5eClient, Open5eProperties open5eProperties, ProficienciesParser proficienciesParser) {
+    public CharacterClassService(Open5eClient open5eClient, Open5eProperties open5eProperties, ClassProficienciesParser classProficienciesParser) {
         super(open5eClient, open5eProperties, "/classes/", CHARACTER_CLASS, Open5eClass.class);
-        this.proficienciesParser = proficienciesParser;
+        this.classProficienciesParser = classProficienciesParser;
     }
 
     @Cacheable("classesAll")
@@ -36,7 +38,7 @@ public class CharacterClassService extends Open5eServiceBase<Open5eClass> {
 
     @Cacheable("classesMainAll")
     public List<Open5eClass> getAllMainClasses() {
-        return getAll(Map.of("is_subclass",false));
+        return getAll(Map.of("is_subclass", false));
     }
 
     @Override
@@ -67,28 +69,46 @@ public class CharacterClassService extends Open5eServiceBase<Open5eClass> {
     }
 
     private List<Feature> mapFeatures(Open5eClass open5eClass) {
-        return open5eClass.getFeatures().stream()
-                .flatMap(feature -> feature
-                        .getGainedAtLevels().stream()
-                        .map(lvl ->
-                                Feature.builder()
-                                        .srdKey(feature.getSrdKey())
-                                        .classSrdKey(feature.getClassSrdKey())
-                                        .type(FeatureType.valueOf(feature.getType()))
-                                        .name(feature.getName())
-                                        .description(feature.getDescription())
-                                        .gainedAtLevel(Level.findByNumericValue(lvl))
-                                        .improvedWithLevel(mapImprovedWithLevel(feature.getData()))
-                                        .build()))
+        return open5eClass.getFeatures().stream().flatMap(open5eFeature -> {
+                    var featureList = new ArrayList<Feature>();
+
+                    if (open5eFeature.getGainedAtLevels().isEmpty()) {
+                        featureList.add(mapFeature(open5eFeature, Level.FIRST));
+                    } else {
+                        featureList.addAll(open5eFeature.getGainedAtLevels().stream()
+                                .map(lvl -> mapFeature(open5eFeature, Level.findByNumericValue(lvl)))
+                                .toList());
+                    }
+                    return featureList.stream();
+                })
                 .toList();
     }
 
-    private Map<Level, String> mapImprovedWithLevel(List<Open5eFeatureDataTable> dataTable) {
+    private Feature mapFeature(Open5eFeature open5eFeature, Level level) {
+        return Feature.builder()
+                .srdKey(open5eFeature.getSrdKey())
+                .classSrdKey(open5eFeature.getClassSrdKey())
+                .type(FeatureType.valueOf(open5eFeature.getType()))
+                .name(open5eFeature.getName())
+                .description(open5eFeature.getDescription())
+                .gainedAtLevel(level)
+                .improvedWithLevel(mapImprovedWithLevel(open5eFeature.getData()))
+                .build();
+    }
+
+    private Map<Level, List<String>> mapImprovedWithLevel(List<Open5eFeatureDataTable> dataTable) {
         return dataTable.stream()
-                .collect(Collectors.toMap(tab -> Level.findByNumericValue(tab.getLevel()), Open5eFeatureDataTable::getValue));
+                .collect(Collectors.groupingBy(
+                        data -> Level.findByNumericValue(data.getLevel()),
+                        HashMap::new,
+                        Collectors.mapping(
+                                Open5eFeatureDataTable::getValue,
+                                Collectors.toList()
+                        )
+                ));
     }
 
     private ClassProficiencies mapClassProficiencies(Open5eClass open5eClass) {
-        return proficienciesParser.mapToClassProficiencies(open5eClass.getClassProficienciesFeature().getDescription());
+        return classProficienciesParser.mapToClassProficiencies(open5eClass.getClassProficienciesFeature().getDescription());
     }
 }

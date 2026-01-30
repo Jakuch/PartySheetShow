@@ -7,6 +7,15 @@ public class ParserHelper {
             "one", 1, "two", 2, "three", 3, "four", 4, "five", 5, "six", 6
     );
 
+    public static final String NUMBER_TOKEN = "(one|two|three|four|five|six|\\d+)";
+
+    public static int parseNumber(String number) {
+        if (number.chars().allMatch(Character::isDigit)) {
+            return Integer.parseInt(number);
+        }
+        return WORD_NUMBERS.getOrDefault(number.toLowerCase(), 0);
+    }
+
     public static String removeSpecialCharacters(String string) {
         return string.replaceAll("[^a-zA-Z0-9]+", " ");
     }

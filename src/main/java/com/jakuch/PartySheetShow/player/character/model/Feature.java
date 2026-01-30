@@ -4,6 +4,8 @@ import com.jakuch.PartySheetShow.open5e.dataParser.ParserHelper;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -15,17 +17,21 @@ public class Feature {
     private String name;
     private String description;
     private Level gainedAtLevel;
-    private Map<Level, String> improvedWithLevel;
+    private Map<Level, List<String>> improvedWithLevel;
 
     public String getDisplayGainedAt() {
         return gainedAtLevel != null ? "Gained at level: " + gainedAtLevel.getNumericValue() : "";
     }
 
-    public String getStringValueByLevel(Level level) {
+    public List<String> getStringValueListByLevel(Level level) {
         return improvedWithLevel.get(level);
     }
 
-    public Integer getIntValueByLevel(Level level) {
-        return ParserHelper.safeParseInt(improvedWithLevel.get(level));
+    public List<Integer> getIntValueListByLevel(Level level) {
+        return improvedWithLevel.get(level).stream().map(ParserHelper::safeParseInt).toList();
+    }
+
+    public Integer getLowestValue(Level level) {
+        return getIntValueListByLevel(level).stream().min(Comparator.comparingInt(Integer::intValue)).orElse(0);
     }
 }

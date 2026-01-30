@@ -5,10 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Open5eRaceTrait extends Open5eData {
-
-    private String type;
-
+@EqualsAndHashCode(callSuper = true)
+public class Open5eItem extends Open5eData {
 }

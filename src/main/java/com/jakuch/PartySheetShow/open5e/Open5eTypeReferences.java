@@ -1,10 +1,7 @@
 package com.jakuch.PartySheetShow.open5e;
 
 import com.jakuch.PartySheetShow.open5e.client.Open5eResponse;
-import com.jakuch.PartySheetShow.open5e.model.Open5eAbility;
-import com.jakuch.PartySheetShow.open5e.model.Open5eClass;
-import com.jakuch.PartySheetShow.open5e.model.Open5eRace;
-import com.jakuch.PartySheetShow.player.character.model.Spell;
+import com.jakuch.PartySheetShow.open5e.model.*;
 import org.springframework.core.ParameterizedTypeReference;
 
 public class Open5eTypeReferences {
@@ -15,7 +12,11 @@ public class Open5eTypeReferences {
     };
     public final static ParameterizedTypeReference<Open5eResponse<Open5eAbility>> ABILITY = new ParameterizedTypeReference<>() {
     };
-    public final static ParameterizedTypeReference<Open5eResponse<Spell>> SPELL = new ParameterizedTypeReference<>() {
+    public final static ParameterizedTypeReference<Open5eResponse<Open5eSpell>> SPELL = new ParameterizedTypeReference<>() {
+    };
+    public final static ParameterizedTypeReference<Open5eResponse<Open5eItem>> ITEM = new ParameterizedTypeReference<>() {
+    };
+    public final static ParameterizedTypeReference<Open5eResponse<Open5eItemSet>> ITEM_SET = new ParameterizedTypeReference<>() {
     };
 
 }

@@ -2,18 +2,17 @@ package com.jakuch.PartySheetShow.player.character.model.skill;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class Skill extends BaseSkill {
+public class Tool extends BaseSkill {
 
-    private SkillName skillName;
+    private ToolName toolName;
 
     @Override
     public String getDisplayName() {
-        return skillName.getDisplayName();
+        return toolName.name();
     }
 }

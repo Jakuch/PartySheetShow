@@ -2,12 +2,17 @@ package com.jakuch.PartySheetShow.open5e.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class Open5eFeature extends Open5eData {
 
     @JsonProperty("feature_type")

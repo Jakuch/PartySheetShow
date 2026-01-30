@@ -1,4 +1,5 @@
 package com.jakuch.PartySheetShow.open5e.dataParser.model;
 
-public interface FixedBonus {
+public class WeaponFixedBonus implements FixedBonus{
+
 }

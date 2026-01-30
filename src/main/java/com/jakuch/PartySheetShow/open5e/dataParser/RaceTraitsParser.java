@@ -10,13 +10,18 @@ import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 @AllArgsConstructor
 public class RaceTraitsParser {
+    private static final Pattern ADV_PATTERN = Pattern.compile("\\b(advantage\\w*)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern RESISTANCE_PATTERN = Pattern.compile("\\b(resistan\\w*)\\b", Pattern.CASE_INSENSITIVE);
 
-    private AbilitiesParser abilityIncreaseParser;
+    private final AbilitiesParser abilityIncreaseParser;
+    private final RaceProficienciesParser raceProficienciesParser;
 
     public Map<RaceTraitsKey, Object> parseRaceTraits(Open5eRace open5eRace) {
         var traitsMap = new HashMap<RaceTraitsKey, Object>();
@@ -37,18 +42,47 @@ public class RaceTraitsParser {
                     traitsFromRace.remove(t);
                 });
 
-        //TODO
-        //parse whats left and find any text containing proficiency / advantage
+        var proficiencyTraits = traitsFromRace.stream().filter(raceProficienciesParser::isProficiency).toList();
+        var proficiencyList = raceProficienciesParser.mapToProficiencyBonuses(traitsFromRace);
+        traitsMap.put(RaceTraitsKey.PROFICIENCY, proficiencyList);
+        traitsFromRace.removeAll(proficiencyTraits);
+
+        var advantageAndResistance = Stream.concat(
+                        traitsFromRace.stream().filter(this::containsAdvantage),
+                        traitsFromRace.stream().filter(this::containsResistance))
+                .distinct()
+                .toList();
+
+        traitsMap.put(RaceTraitsKey.ADVANTAGE_AND_RESISTANCE, advantageAndResistance);
+        traitsFromRace.removeAll(advantageAndResistance);
 
         traitsMap.put(RaceTraitsKey.SPECIFIC, traitsFromRace.stream().collect(Collectors.toMap(Open5eData::getName, Open5eData::getDescription)));
 
         return traitsMap;
     }
 
+    private boolean containsResistance(Open5eRaceTrait trait) {
+        var description = ParserHelper.removeSpecialCharacters(trait.getDescription());
+        return containsResistance(description);
+    }
+
+    private boolean containsResistance(String description) {
+        return description != null && RESISTANCE_PATTERN.matcher(description).find();
+    }
+
+    private boolean containsAdvantage(Open5eRaceTrait trait) {
+        var description = ParserHelper.removeSpecialCharacters(trait.getDescription());
+        return containsAdvantage(description);
+    }
+
+    private boolean containsAdvantage(String description) {
+        return description != null && ADV_PATTERN.matcher(description).find();
+    }
+
     private int parseDarkvision(Open5eRaceTrait trait) {
         return ParserHelper.safeParseInt(ParserHelper.removeSpecialCharacters(trait.getDescription())
                 .replaceAll("[^-?0-9]+", " ")
-                .trim(), 60);
+                .trim(), 0);
     }
 
     private int parseDarkvision(Open5eRace open5eRace) {
@@ -101,6 +135,8 @@ public class RaceTraitsParser {
         SPEED("Speed"),
         SIZE("Size"),
         DARKVISION("Darkvision"),
+        ADVANTAGE_AND_RESISTANCE("Advantage and Resistance"),
+        PROFICIENCY("Proficiency"),
         SPECIFIC("Specific");
 
         private final String srdName;

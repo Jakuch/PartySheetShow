@@ -1,4 +1,4 @@
-package com.jakuch.PartySheetShow.player.character.model;
+package com.jakuch.PartySheetShow.open5e.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jakuch.PartySheetShow.open5e.model.Open5eData;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class Spell extends Open5eData {
+public class Open5eSpell extends Open5eData {
 
     private String level;
 

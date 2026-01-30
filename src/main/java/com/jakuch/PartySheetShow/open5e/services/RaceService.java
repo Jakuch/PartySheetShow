@@ -19,10 +19,12 @@ import static com.jakuch.PartySheetShow.open5e.Open5eTypeReferences.RACE;
 public class RaceService extends Open5eServiceBase<Open5eRace> {
 
     private final RaceTraitsParser raceTraitsParser;
+    private final ItemService itemService;
 
-    public RaceService(Open5eClient open5eClient, Open5eProperties open5eProperties, RaceTraitsParser raceTraitsParser) {
+    public RaceService(Open5eClient open5eClient, Open5eProperties open5eProperties, RaceTraitsParser raceTraitsParser, ItemService itemService) {
         super(open5eClient, open5eProperties, "/species/", RACE, Open5eRace.class);
         this.raceTraitsParser = raceTraitsParser;
+        this.itemService = itemService;
     }
 
     @Override

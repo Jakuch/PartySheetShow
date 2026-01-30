@@ -163,7 +163,7 @@
                                 <select th:if="${mode == 'edit'}" class="form-control text-center" type="text"
                                         th:field="*{classes[__${characterClass.srdKey}__].level}">
                                     <option th:each="lvl : ${levels}"
-                                            th:value="${lvl.getNumericValue()}"
+                                            th:value="${lvl}"
                                             th:text="${lvl.getNumericValue()}">
                                 </select>
                             </div>
@@ -368,6 +368,41 @@
                                                 <span class="visually-hidden">D</span>
                                             </span>
                                             <span th:case="*"></span>
+                                        </div>
+                                    </div>
+                                    <div th:if="${mode == 'edit'}">
+                                        <div class="text-center border-top">Add custom skill</div>
+                                        <div class="row d-inline-flex">
+                                            <div class="col-12">
+                                                 <div class="row">
+                                                     <div class="col-6">
+                                                         <label>Name</label>
+                                                         <input class="form-control">
+                                                     </div>
+                                                     <div class="col-6">
+                                                         <label>Value</label>
+                                                         <input class="form-control">
+                                                     </div>
+                                                 </div>
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <label>Proficiency</label>
+                                                        <select class="form-control mb-2">
+                                                            <option th:each="prf : ${proficiencies}"
+                                                                    th:value="${prf}"
+                                                                    th:text="${prf.name}">
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <label>Advantage</label>
+                                                        <select class="form-control mb-2">
+                                                            <option th:each="adv : ${advantages}"
+                                                                    th:value="${adv}"
+                                                                    th:text="${adv.name}">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -723,23 +758,47 @@
                  style="max-width: 23vw" th:id="${'collapse-' + charClass.srdKey}">
                 <div th:text="${charClass.name}" class="text-center text-success">name</div>
                 <ul th:each="feature: ${charClass.getClassLevelFeatures()}" class="list-unstyled mb-2 ms-2">
-                    <li th:text="${feature.name}" class="border-bottom">feature.name</li>
-                    <li th:text="${feature.getDisplayGainedAt()}">gainedAt</li>
-                    <li th:text="${feature.description}">feature.description</li>
+                    <div th:if="${feature.gainedAtLevel.getNumericValue()} <= ${charClass.level.getNumericValue()}">
+                        <li th:text="${feature.name}" class="border-bottom">feature.name</li>
+                        <li th:text="${feature.getDisplayGainedAt()}">gainedAt</li>
+                        <li th:text="${feature.description}">feature.description</li>
+                    </div>
+                </ul>
+                <div class="btn btn-success border-0 btn-toggle w-100"
+                     type="button"
+                     th:attr="data-bs-target=${'#show-all-collapse-' + charClass.srdKey}, aria-controls=${'show-all-collapse-' + charClass.srdKey}"
+                     data-bs-toggle="collapse"
+                     aria-expanded="false">Show all
+                </div>
+                <ul th:each="feature: ${charClass.getClassLevelFeatures()}" class="list-unstyled mb-2 ms-2">
+                    <div class="collapse" th:id="${'show-all-collapse-' + charClass.srdKey}"
+                         th:if="${feature.gainedAtLevel.getNumericValue()} > ${charClass.level.getNumericValue()}">
+                        <li th:text="${feature.name}" class="border-bottom">feature.name</li>
+                        <li th:text="${feature.getDisplayGainedAt()}">gainedAt</li>
+                        <li th:text="${feature.description}">feature.description</li>
+                    </div>
                 </ul>
             </div>
             <div class="bg-dark text-light text-start  mt-2 border border-4 border-dark rounded collapse multi-collapse collapse-horizontal hide float-start overflow-auto"
                  style="max-width: 23vw" id="desc-collapse-race">
                 <div th:text="${character.race.name}" class="text-center text-success">name</div>
                 <ul th:each="trait: ${character.race.traits}" class="list-unstyled mb-2 ms-2">
-                    <li th:if="${trait.key.srdName} != 'Specific'" th:text="${trait.key}" class="border-bottom">key</li>
-                    <li th:if="${trait.key.srdName} != 'Specific'" th:text="${trait.value}">value</li>
-                    <li th:if="${trait.key.srdName} == 'Specific'" th:text="${trait.key}" class="border-bottom">specific</li>
-                    <ul th:if="${trait.key.srdName} == 'Specific'" th:each="entry : ${trait.value}" class="list-unstyled">
-                        <li><div class="col-4 border-bottom" th:text="${entry.key}">key</div></li>
-                        <li class="mb-2" th:text="${entry.value}">value</li>
-                    </ul>
-
+                    <div th:if="${trait.key.srdName} != 'Specific'">
+                        <li th:text="${trait.key}" class="border-bottom">key</li>
+                        <li th:text="${trait.value}">value</li>
+                    </div>
+                    <div th:if="${trait.key.srdName} == 'Specific'">
+                        <li th:text="${trait.key}" class="border-bottom">
+                            specific
+                        </li>
+                        <ul th:each="entry : ${trait.value}"
+                            class="list-unstyled">
+                            <li>
+                                <div class="col-4 border-bottom" th:text="${entry.key}">key</div>
+                            </li>
+                            <li class="mb-2" th:text="${entry.value}">value</li>
+                        </ul>
+                    </div>
                 </ul>
             </div>
             <div class="row bg-dark text-light text-start text-wrap mt-2 border border-4 border-dark rounded collapse multi-collapse collapse-horizontal hide float-start overflow-auto"

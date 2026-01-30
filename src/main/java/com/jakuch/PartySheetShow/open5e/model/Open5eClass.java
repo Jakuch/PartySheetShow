@@ -4,12 +4,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jakuch.PartySheetShow.player.character.model.FeatureType;
 import com.jakuch.PartySheetShow.player.dice.DiceType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.Comparator;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @NoArgsConstructor
 public class Open5eClass extends Open5eData {
 

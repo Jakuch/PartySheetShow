@@ -3,7 +3,9 @@ package com.jakuch.PartySheetShow.player.character.controller;
 import com.jakuch.PartySheetShow.player.character.form.CharacterForm;
 import com.jakuch.PartySheetShow.player.character.mapper.CharacterMapper;
 import com.jakuch.PartySheetShow.player.character.model.AbilityName;
+import com.jakuch.PartySheetShow.player.character.model.Advantage;
 import com.jakuch.PartySheetShow.player.character.model.Level;
+import com.jakuch.PartySheetShow.player.character.model.Proficiency;
 import com.jakuch.PartySheetShow.player.character.model.skill.SkillName;
 import com.jakuch.PartySheetShow.player.character.service.CharacterService;
 import com.jakuch.PartySheetShow.security.service.AppUserService;
@@ -60,6 +62,8 @@ public class CharacterController {
         model.addAttribute("levels", Level.values());
         model.addAttribute("abilityNames", AbilityName.correctValues());
         model.addAttribute("skillNames", SkillName.values());
+        model.addAttribute("proficiencies", Proficiency.values());
+        model.addAttribute("advantages", Advantage.values());
     }
 
     @PostMapping("/{id}/delete")
