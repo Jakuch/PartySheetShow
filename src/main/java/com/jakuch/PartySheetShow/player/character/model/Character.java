@@ -24,6 +24,7 @@ public class Character {
     private Initiative initiative;
     private List<Ability> abilities = new ArrayList<>();
     private List<CustomSkill> customSkills = new ArrayList<>(); //TODO edit/add functionality on sheet
+    private List<Tool> toolProficiencies = new ArrayList<>();
     private Level level;
     private int currentExperiencePoints;
     private List<SavingThrow> savingThrows = new ArrayList<>();
@@ -39,12 +40,20 @@ public class Character {
     }
 
     public Skill getSkill(String srdKey) {
-        return this.abilities.stream().flatMap(ability -> ability.getSkills().stream().filter(skill -> srdKey.equalsIgnoreCase(skill.getSkillName().getSrdKey()))).findFirst()
+        return this.abilities.stream().flatMap(ability -> ability.getSkills().stream().filter(skill -> srdKey.equalsIgnoreCase(skill.getName().getSrdKey()))).findFirst()
                 .orElseThrow(() -> new NoSuchElementException("Missing skill"));
     }
 
+    public List<Skill> getSkills() {
+        return abilities.stream().flatMap(ability -> ability.getSkills().stream()).toList();
+    }
+
+    public void addCustomSkill(CustomSkill customSkill) {
+        this.customSkills.add(customSkill);
+    }
+
     public String getSkillDisplayName(String srdKey) {
-        return getSkill(srdKey).getSkillName().getDisplayName();
+        return getSkill(srdKey).getName().getDisplayName();
     }
 
     public String getSkillProficiencyShortName(String srdKey) {
@@ -53,5 +62,15 @@ public class Character {
 
     public Advantage getSkillAdvantage(String srdKey) {
         return getSkill(srdKey).getAdvantage();
+    }
+
+    public void addTool(String srdKey) {
+        ToolName.fromSrdKey(srdKey).ifPresent(toolName -> {
+            var tool = new Tool();
+            tool.setName(toolName);
+            tool.setProficient();
+
+            this.getToolProficiencies().add(tool);
+        });
     }
 }

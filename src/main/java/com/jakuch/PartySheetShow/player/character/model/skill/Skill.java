@@ -2,7 +2,6 @@ package com.jakuch.PartySheetShow.player.character.model.skill;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
@@ -10,10 +9,10 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public class Skill extends BaseSkill {
 
-    private SkillName skillName;
+    private SkillName name;
 
     @Override
     public String getDisplayName() {
-        return skillName.getDisplayName();
+        return name.getDisplayName();
     }
 }

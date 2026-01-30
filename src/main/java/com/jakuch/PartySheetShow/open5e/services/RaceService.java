@@ -11,6 +11,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.jakuch.PartySheetShow.open5e.Open5eTypeReferences.RACE;
@@ -19,12 +20,10 @@ import static com.jakuch.PartySheetShow.open5e.Open5eTypeReferences.RACE;
 public class RaceService extends Open5eServiceBase<Open5eRace> {
 
     private final RaceTraitsParser raceTraitsParser;
-    private final ItemService itemService;
 
-    public RaceService(Open5eClient open5eClient, Open5eProperties open5eProperties, RaceTraitsParser raceTraitsParser, ItemService itemService) {
+    public RaceService(Open5eClient open5eClient, Open5eProperties open5eProperties, RaceTraitsParser raceTraitsParser) {
         super(open5eClient, open5eProperties, "/species/", RACE, Open5eRace.class);
         this.raceTraitsParser = raceTraitsParser;
-        this.itemService = itemService;
     }
 
     @Override
@@ -42,7 +41,7 @@ public class RaceService extends Open5eServiceBase<Open5eRace> {
                         .build());
     }
 
-    public AbilityBonuses getAbilityBonuses(Open5eRace race) {
-        return raceTraitsParser.parseAbilityIncrease(race);
+    public Map<RaceTraitsParser.RaceTraitsKey, Object> getParsedTraits(Open5eRace race) {
+        return raceTraitsParser.parseRaceTraits(race);
     }
 }

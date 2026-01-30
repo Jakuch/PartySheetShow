@@ -60,6 +60,10 @@ public class CharacterClassService extends Open5eServiceBase<Open5eClass> {
 
     }
 
+    public ClassProficiencies getClassProficiencies(Open5eClass open5eClass) {
+        return mapClassProficiencies(open5eClass);
+    }
+
     public List<Open5eClass> getAllSubclassesForClass(String srdClassKey) {
         return getAll(Map.of("subclass_of", srdClassKey));
     }

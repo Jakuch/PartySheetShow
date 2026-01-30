@@ -21,4 +21,12 @@ public abstract class BaseSkill {
     public int calculateProficiencyBonus(Level level) {
         return Proficiency.calculateProficiencyBonus(this.proficiency, level);
     }
+
+    public void setProficient() {
+        this.proficiency = Proficiency.FULL;
+    }
+
+    public void setExpert() {
+        this.proficiency = Proficiency.EXPERTISE;
+    }
 }

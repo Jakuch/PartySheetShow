@@ -2,6 +2,9 @@ package com.jakuch.PartySheetShow.player.character.mapper;
 
 import com.jakuch.PartySheetShow.open5e.dataParser.RaceTraitsParser;
 import com.jakuch.PartySheetShow.open5e.dataParser.model.AbilityChoice;
+import com.jakuch.PartySheetShow.open5e.dataParser.model.SkillChoice;
+import com.jakuch.PartySheetShow.open5e.dataParser.model.SkillOrToolChoice;
+import com.jakuch.PartySheetShow.open5e.dataParser.model.ToolChoice;
 import com.jakuch.PartySheetShow.open5e.model.Open5eSkill;
 import com.jakuch.PartySheetShow.open5e.services.AbilityService;
 import com.jakuch.PartySheetShow.open5e.services.CharacterClassService;
@@ -72,28 +75,69 @@ public class CharacterMapper {
                     .findFirst()
                     .get();
 
+            var classProficiencies = firstClass.getClassProficiencies();
+            classProficiencies.skillChoices().forEach(skillChoice -> character.getSkill(skillChoice.getChoice().getSrdKey()).setProficient());
+            classProficiencies.toolChoices().forEach(toolChoice -> character.addTool(toolChoice.getChoice().getSrdKey()));
+
             character.setSavingThrows(mapSavingThrows(character.getAbilities(), firstClass));
             character.getCharacterClasses().addAll(classes);
             character.setHealth(mapHealthAndCalculateHitDices(characterForm, classes));
         }
 
-        var race = characterForm.getRace();
-        if (race != null) {
-            raceService.getMappedRaceByKey(race.getKey()).ifPresent(r -> {
+        var raceForm = characterForm.getRace();
+        if (raceForm != null) {
+            raceService.getMappedRaceByKey(raceForm.getKey()).ifPresent(r -> {
                 character.setRace(r);
                 character.getAbilities().forEach(ability -> {
-                    var fixedBonus = race.getAbilityBonuses().getFixed().get(ability.getName());
+                    var fixedBonus = raceForm.getAbilityBonuses().getFixed().get(ability.getName());
                     if (fixedBonus != null) {
                         ability.addValue(fixedBonus);
                     }
 
-                    race.getAbilityBonuses().getChoices().stream()
+                    raceForm.getAbilityBonuses().getChoices().stream()
                             .filter(abilityChoice -> abilityChoice.getChosenAbility().equals(ability.getName()))
                             .forEach(abilityChoice -> ability.addValue(abilityChoice.getAmount()));
                 });
+                raceForm.getProficiencies().getChoices().forEach(choice -> {
+                    switch (choice) {
+                        case AbilityChoice abilityChoice -> {}
+                        case SkillChoice skillChoice ->
+                                character.getSkills().forEach(skill -> {
+                                        if(skill.getName().equals(skillChoice.getChoice())) {
+                                            skill.setProficient();
+                                        }
+                                });
+                        case ToolChoice toolChoice -> {
+                            var tool = new Tool();
+                            tool.setName(toolChoice.getChoice());
+                            tool.setProficient();
+
+                            character.getToolProficiencies().add(tool);
+                        }
+                        case SkillOrToolChoice skillOrToolChoice ->
+                            character.getSkills().forEach(skill -> {
+                                var toolsSkills = skillOrToolChoice.getChoice();
+                                SkillName.fromSrdKey(toolsSkills.getSrdKey()).ifPresent(skillName -> {
+                                   if(skill.getName().equals(skillName)) {
+                                       skill.setProficient();
+                                   }
+                                });
+                                ToolName.fromSrdKey(toolsSkills.getSrdKey()).ifPresent(toolName -> {
+                                    var tool = new Tool();
+                                    tool.setName(toolName);
+                                    tool.setProficient();
+
+                                    character.getToolProficiencies().add(tool);
+                                });
+
+
+                            });
+                        default -> throw new IllegalStateException("Unexpected value: " + choice);
+                    }
+                });
             });
         }
-        character.setWalkingSpeed((Integer) character.getRace().traits().get(RaceTraitsParser.RaceTraitsKey.SPEED) + characterForm.getWalkingSpeed()); //TODO for now like this it should be taken from race later (its in traits)
+        character.setWalkingSpeed((Integer) character.getRace().traits().get(RaceTraitsParser.RaceTraitsKey.SPEED) + characterForm.getWalkingSpeed()); //TODO for now like this it should be taken from raceForm later (its in traits)
 
         return character;
     }
@@ -146,7 +190,7 @@ public class CharacterMapper {
     private List<Skill> mapSkills(List<Open5eSkill> skills) {
         return skills.stream().map(open5eSkill -> {
             var skill = new Skill();
-            skill.setSkillName(SkillName.fromNameOrSrdKey(open5eSkill.getSrdKey()).orElse(null));
+            skill.setName(SkillName.fromNameOrSrdKey(open5eSkill.getSrdKey()).orElse(null));
 
             return skill;
         }).toList();
@@ -162,7 +206,7 @@ public class CharacterMapper {
 
     private PassiveSkill mapToPassiveSkill(Skill skill) {
         var passiveSkill = new PassiveSkill();
-        passiveSkill.setSkillName(skill.getSkillName());
+        passiveSkill.setName(skill.getName());
         passiveSkill.setValue(PASSIVE_SENSES_BASE_VALUE + skill.getValue());
         passiveSkill.setProficiency(skill.getProficiency());
         return passiveSkill;
@@ -194,6 +238,7 @@ public class CharacterMapper {
                         var formClass = formClasses.get(k);
                         characterClass.setFirst(formClass.isFirst());
                         characterClass.setLevel(formClass.getLevel());
+                        characterClass.setClassProficiencies(formClass.getClassProficiencies());
                     });
                     return mappedClass;
                 })

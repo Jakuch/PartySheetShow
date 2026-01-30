@@ -1,7 +1,9 @@
 package com.jakuch.PartySheetShow.player.character.service;
 
+import com.jakuch.PartySheetShow.open5e.dataParser.RaceTraitsParser;
 import com.jakuch.PartySheetShow.open5e.model.Open5eClass;
 import com.jakuch.PartySheetShow.open5e.model.Open5eRace;
+import com.jakuch.PartySheetShow.open5e.services.CharacterClassService;
 import com.jakuch.PartySheetShow.open5e.services.RaceService;
 import com.jakuch.PartySheetShow.player.character.form.CharacterClassForm;
 import com.jakuch.PartySheetShow.player.character.form.CharacterForm;
@@ -17,6 +19,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -27,6 +30,7 @@ public class CharacterService {
     private CharacterMapper characterMapper;
     private AppUserService appUserService;
     private RaceService raceService;
+    private CharacterClassService characterClassService;
 
     public List<Character> findAllForUser(AppUser appUser) {
         if (appUser.getRoles().contains(AppUserRole.ROLE_ADMIN)) {
@@ -72,19 +76,18 @@ public class CharacterService {
                         .key(c.getSrdKey())
                         .name(c.getName())
                         .isFirst(characterForm.getClasses().isEmpty())
+                                .classProficiencies(characterClassService.getClassProficiencies(c))
                         .build()));
     }
 
     public void addRaceToForm(CharacterForm characterForm, List<Open5eRace> open5eRaces) {
         var race = open5eRaces.stream().filter(r -> characterForm.getChosenRaceKey().equals(r.getSrdKey())).findFirst();
-        race.ifPresent(r -> {
-            var abilityBonuses = raceService.getAbilityBonuses(r);
+        race.ifPresent(r ->
             characterForm.setRace(CharacterRaceForm.builder()
                     .key(r.getSrdKey())
                     .name(r.getName())
-                    .abilityBonuses(abilityBonuses)
-                    .build());
-        });
+                    .traits(raceService.getParsedTraits(r))
+                    .build()));
     }
 
     public void deleteClassFromForm(CharacterForm characterForm, String classKey) {

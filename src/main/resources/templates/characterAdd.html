@@ -81,21 +81,32 @@
         <div class="col-12" th:if="*{race}">
             <div class="row">
                 <div class="col-12 mb-2">
-                    <div>Select Race abilities:</div>
-                    <div th:each="choice, status : *{race.abilityBonuses.choices}">
-                        <ul class="row list-unstyled">
-                            <li class="col-2">
-                                <select class="form-control"
-                                        th:field="*{race.abilityBonuses.choices[__${status.index}__].chosenAbility}">
-                                    <option value="">NONE</option>
-                                    <option th:each="ability : *{race.abilityBonuses.choices[__${status.index}__].options}"
-                                            th:value="${ability}"
-                                            th:text="${ability.name}">
-                                    </option>
-                                </select>
-                            </li>
-                        </ul>
-                    </div>
+                    <div class="mb-2">Select Race bonus abilities:</div>
+                    <ul class="row list-unstyled">
+                        <li class="col-2" th:each="choice, status : *{race.abilityBonuses.choices}">
+                            <select class="form-control"
+                                    th:field="*{race.abilityBonuses.choices[__${status.index}__].chosenAbility}">
+                                <option value="">NONE</option>
+                                <option th:each="ability : *{race.abilityBonuses.choices[__${status.index}__].getOptions()}"
+                                        th:value="${ability}"
+                                        th:text="${ability.name}">
+                                </option>
+                            </select>
+                        </li>
+                    </ul>
+                    <div class="mb-2">Select Race bonus proficiencies:</div>
+                    <ul class="row list-unstyled">
+                        <li class="col-2" th:each="choice, status : *{race.proficiencies.choices}">
+                            <select class="form-control"
+                                    th:field="*{race.proficiencies.choices[__${status.index}__].choice}">
+                                <option value="">NONE</option>
+                                <option th:each="profic : *{race.proficiencies.choices[__${status.index}__].getOptions()}"
+                                        th:value="${profic}"
+                                        th:text="${profic.displayName}">
+                                </option>
+                            </select>
+                        </li>
+                    </ul>
                     <div class="d-inline-flex justify-content-center align-items-center">
                         <button type="button" data-bs-toggle="collapse" data-bs-target="#race-traits-collapse"
                                 class="btn badge text-bg-success rounded-pill me-1 mb-2 d-inline-flex">
@@ -112,7 +123,7 @@
         <div class="col-12">
             <div class="row">
                 <div class="col-2 mb-2">
-                    <label for="class">Class:</label>
+                    <label for="class" class="mb-2">Class:</label>
                     <select id="class" class="form-control" th:field="*{chosenCharacterClassKey}"
                             onchange="this.form.action='/characterAdd?addClass'; this.form.submit();">
                         <option value="" th:text="'Select a class'"></option>
@@ -139,20 +150,48 @@
         <div class="col-12">
             <div class="row">
                 <div class="col-12" th:each="classEntry: *{classes}">
-                    <div class="row">
+                    <div class="row mb-2">
                         <div class="col-1">
-                            <div class="d-inline-flex">
-                                <div>Select&nbsp;</div>
-                                <div th:text="${classEntry.value.name}">Class</div>
-                                <div>&nbsp;level:</div>
-                            </div>
-                            <select id="class-level" class="form-control mb-2" type="text"
-                                    th:field="*{classes[__${classEntry.key}__].level}">
-                                <option th:each="lvl : ${levels}"
-                                        th:value="${lvl}"
-                                        th:text="${lvl.numericValue}">
-                            </select>
+                                <div class="d-inline-flex mb-2">
+                                    <div>Select&nbsp;</div>
+                                    <div th:text="${classEntry.value.name}">Class</div>
+                                    <div>&nbsp;level:</div>
+                                </div>
+                                <select id="class-level" class="form-control mb-2" type="text"
+                                        th:field="*{classes[__${classEntry.key}__].level}">
+                                    <option th:each="lvl : ${levels}"
+                                            th:value="${lvl}"
+                                            th:text="${lvl.numericValue}">
+                                </select>
                         </div>
+                    </div>
+                    <div class="row mb-2" th:if="${classEntry.value.isFirst}">
+                        <div class="mb-2">Select additional skill proficiencies for your class:</div>
+                        <ul class="list-unstyled d-inline-flex">
+                            <li class="col-2 me-2" th:each="skillChoice, status : *{classes[__${classEntry.key}__].classProficiencies.skillChoices}">
+                                <select class="form-control mb-2" type="text"
+                                        th:field="*{classes[__${classEntry.key}__].classProficiencies.skillChoices[__${status.index}__].choice}">
+                                    <option value="">NONE</option>
+                                    <option th:each="profic : *{classes[__${classEntry.key}__].classProficiencies.skillChoices[__${status.index}__].getOptions()}"
+                                            th:value="${profic}"
+                                            th:text="${profic.getDisplayName()}">
+                                </select>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="row mb-2" th:if="${classEntry.value.isFirst}">
+                        <div class="mb-2">Select additional tool or musical instrument proficiencies for your class:</div>
+                        <ul class="list-unstyled d-inline-flex">
+                            <li class="col-2 me-2" th:each="toolChoice, status : *{classes[__${classEntry.key}__].classProficiencies.toolChoices}">
+                                <select class="form-control mb-2" type="text"
+                                        th:field="*{classes[__${classEntry.key}__].classProficiencies.toolChoices[__${status.index}__].choice}">
+                                    <option value="">NONE</option>
+                                    <option th:each="profic : *{classes[__${classEntry.key}__].classProficiencies.toolChoices[__${status.index}__].getOptions()}"
+                                            th:value="${profic}"
+                                            th:text="${profic.getDisplayName()}">
+                                </select>
+                            </li>
+                        </ul>
                     </div>
                     <div class="d-inline-flex justify-content-center align-items-center">
                         <button type="button" data-bs-toggle="collapse" data-bs-target="#class-traits-collapse"

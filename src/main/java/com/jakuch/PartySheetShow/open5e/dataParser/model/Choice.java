@@ -1,4 +1,9 @@
 package com.jakuch.PartySheetShow.open5e.dataParser.model;
 
-public interface Choice {
+import java.util.List;
+
+public interface Choice<T> {
+    void setChoice(T choice);
+    T getChoice();
+    List<T> getOptions();
 }

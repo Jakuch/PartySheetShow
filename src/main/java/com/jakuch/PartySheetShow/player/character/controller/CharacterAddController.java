@@ -35,7 +35,6 @@ public class CharacterAddController {
     private CharacterClassService characterClassService;
     private RaceService raceService;
 
-
     @ModelAttribute("character")
     public CharacterForm characterForm() {
         var characterForm = new CharacterForm();
@@ -91,7 +90,7 @@ public class CharacterAddController {
             characterService.addClassToForm(characterForm, classes);
         }
 
-        return "redirect:/characterAdd";
+        return "characterAdd";
     }
 
     @PostMapping(params = {"deleteClass"})
@@ -99,7 +98,7 @@ public class CharacterAddController {
         selectedClassesFeatures.removeIf(feature -> classKey.equalsIgnoreCase(feature.getClassSrdKey()));
         characterService.deleteClassFromForm(characterForm, classKey);
         characterForm.setChosenCharacterClassKey(null);
-        return "redirect:/characterAdd";
+        return "characterAdd";
     }
 
     @PostMapping(params = {"addRace"})
@@ -110,7 +109,7 @@ public class CharacterAddController {
             characterService.addRaceToForm(characterForm, races);
         }
 
-        return "redirect:/characterAdd";
+        return "characterAdd";
     }
 
     @PostMapping(params = {"deleteRace"})
@@ -121,7 +120,7 @@ public class CharacterAddController {
             characterForm.setChosenRaceKey(null);
         }
 
-        return "redirect:/characterAdd";
+        return "characterAdd";
     }
 
     @PostMapping("/submitForm")

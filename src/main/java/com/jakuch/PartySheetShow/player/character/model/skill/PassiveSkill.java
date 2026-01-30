@@ -10,6 +10,6 @@ import lombok.ToString;
 public class PassiveSkill extends Skill {
     @Override
     public String getDisplayName() {
-        return "Passive " + getSkillName().getDisplayName();
+        return "Passive " + getName().getDisplayName();
     }
 }

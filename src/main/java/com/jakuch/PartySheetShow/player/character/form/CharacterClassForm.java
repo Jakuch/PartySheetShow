@@ -1,5 +1,6 @@
 package com.jakuch.PartySheetShow.player.character.form;
 
+import com.jakuch.PartySheetShow.open5e.dataParser.model.ClassProficiencies;
 import com.jakuch.PartySheetShow.player.character.model.Level;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,4 +16,5 @@ public class CharacterClassForm {
     private String name;
     private Level level;
     boolean isFirst;
+    private ClassProficiencies classProficiencies;
 }

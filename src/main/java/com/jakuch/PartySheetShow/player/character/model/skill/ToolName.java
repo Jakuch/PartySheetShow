@@ -55,6 +55,10 @@ public enum ToolName {
         this.type = type;
     }
 
+    public static Optional<ToolName> fromSrdKey(String srdKey) {
+        return Arrays.stream(ToolName.values()).filter(el -> el.srdKey.equalsIgnoreCase(srdKey.toLowerCase())).findFirst();
+    }
+
     public static Optional<ToolName> toolsFromName(String name) {
         if (name == null) return Optional.empty();
         var normalized = normalize(name);
@@ -93,6 +97,7 @@ public enum ToolName {
     public static List<ToolName> all() {
         return Arrays.stream(values()).toList();
     }
+
     public static List<ToolName> instruments() {
         return Arrays.stream(values()).filter(el -> el.type.equals(Type.INSTRUMENT)).toList();
     }

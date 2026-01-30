@@ -261,7 +261,7 @@
                             <div class="row border border-2 rounded text-start">
                                 <div class="col-12" th:each="passiveSense: ${character.passiveSenses}">
                                     <div class="row text-center align-items-center">
-                                        <div class="col-6" th:text="${passiveSense.skillName.getDisplayName()}">
+                                        <div class="col-6" th:text="${passiveSense.name.getDisplayName()}">
                                             passive
                                         </div>
                                         <div class="col-2" th:text="${passiveSense.proficiency.getShortName()}">
@@ -335,6 +335,30 @@
                                         </div>
                                         <div class="col-2"
                                              th:switch="${character.getSkillAdvantage(skillName.srdKey)}">
+                                            <span th:case="${T(com.jakuch.PartySheetShow.player.character.model.Advantage).ADVANTAGE}"
+                                                  class="badge rounded-circle text-bg-success p-2">
+                                                <span class="visually-hidden">A</span>
+                                            </span>
+                                            <span th:case="${T(com.jakuch.PartySheetShow.player.character.model.Advantage).DISADVANTAGE}"
+                                                  class="badge rounded-circle text-bg-danger p-2">
+                                                <span class="visually-hidden">D</span>
+                                            </span>
+                                            <span th:case="*"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row" th:each="toolProfi : ${character.toolProficiencies}">
+                                        <div class="col-7" th:text="${toolProfi.name}">
+                                            name
+                                        </div>
+                                        <div class="col-1"
+                                             th:text="${toolProfi.proficiency.shortName}">
+                                            profi
+                                        </div>
+                                        <div class="col-2" th:text="${toolProfi.value}">
+                                            value
+                                        </div>
+                                        <div class="col-2"
+                                             th:switch="${toolProfi.advantage}">
                                             <span th:case="${T(com.jakuch.PartySheetShow.player.character.model.Advantage).ADVANTAGE}"
                                                   class="badge rounded-circle text-bg-success p-2">
                                                 <span class="visually-hidden">A</span>
