@@ -7,6 +7,7 @@ import com.jakuch.PartySheetShow.open5e.model.Open5eItemSet;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import static com.jakuch.PartySheetShow.open5e.Open5eTypeReferences.ITEM_SET;
@@ -18,9 +19,7 @@ public class ItemSetsService extends Open5eServiceBase<Open5eItemSet> {
     }
 
     public Optional<Open5eItemSet> getSet(ItemSetType type) {
-        var itemSet = getByKey(type.getSrdKey());
-        itemSet.ifPresent(el -> el.setType(type));
-        return itemSet;
+        return getByKey(type.getSrdKey());
     }
 
     @Getter
@@ -50,6 +49,13 @@ public class ItemSetsService extends Open5eServiceBase<Open5eItemSet> {
 
         ItemSetType(String srdKey) {
             this.srdKey = srdKey;
+        }
+
+
+        public static ItemSetType getBySrdKey(String srdKey) {
+            return Arrays.stream(values()).filter(type -> type.getSrdKey().equalsIgnoreCase(srdKey.toLowerCase()))
+                    .findFirst()
+                    .orElse(null);
         }
     }
 }

@@ -2,6 +2,7 @@ package com.jakuch.PartySheetShow.open5e;
 
 import com.jakuch.PartySheetShow.open5e.dataParser.ClassProficienciesParser;
 import com.jakuch.PartySheetShow.open5e.dataParser.RaceTraitsParser;
+import com.jakuch.PartySheetShow.open5e.dataParser.StartingEquipmentParser;
 import com.jakuch.PartySheetShow.open5e.dataParser.model.ClassProficiencies;
 import com.jakuch.PartySheetShow.open5e.model.*;
 import com.jakuch.PartySheetShow.open5e.services.*;
@@ -26,12 +27,13 @@ public class Open5eController {
     private CharacterClassService characterClassService;
     private ClassProficienciesParser classProficienciesParser;
     private AbilityService abilityService;
-    private RaceTraitsParser raceTraitsParser;
     private ItemService itemService;
+    private StartingEquipmentParser startingEquipmentParser;
 
     @GetMapping("/item-sets")
-    public Map<String, ItemSetsService.ItemSetType> getItemSets() {
-        return itemService.getAllSets().stream().collect(Collectors.toMap(Open5eData::getSrdKey, Open5eItemSet::getType));
+    public Map<String, List<Open5eItem>> getItemSets() {
+        List<Open5eItemSet> allSets = itemService.getAllSets();
+        return allSets.stream().collect(Collectors.toMap(Open5eData::getSrdKey, Open5eItemSet::getItems));
     }
 
     @GetMapping("/tools")
@@ -44,24 +46,23 @@ public class Open5eController {
         return itemService.getSet(ItemSetsService.ItemSetType.MUSICAL_INSTRUMENTS);
     }
 
-    @GetMapping("/single-race")
-    public Open5eRace getRace(@RequestParam String srdKey) {
-        return raceService.getByKey(srdKey).orElse(null);
+    @GetMapping("/normal-items")
+    public List<Open5eItem> getNormalItems() {
+        return itemService.getAll(Map.of("is_magic_item", false));
     }
 
-    @GetMapping("/single-race-mapped")
-    public Race getRaceMapped(@RequestParam String srdKey) {
-        return raceService.getMappedRaceByKey(srdKey).orElse(null);
+    @GetMapping("/weapons")
+    public List<Open5eItem> getWeapons() {
+        return itemService.getAll(Map.of(
+                "is_magic_item", false,
+                "is_weapon", true));
     }
 
-    @GetMapping("/all-traits")
-    public List<TraitsSupportClass> getAllTraits() {
-        return raceService.getAll().stream().map(r -> new TraitsSupportClass(r.getName(), r.getRaceTraits())).toList();
-    }
-
-    @GetMapping("/all-traits-mapped")
-    public List<Map<RaceTraitsParser.RaceTraitsKey, Object>> mappedTraits() {
-        return raceService.getAll().stream().map(r -> raceTraitsParser.parseRaceTraits(r)).toList();
+    @GetMapping("/armors")
+    public List<Open5eItem> getArmors() {
+        return itemService.getAll(Map.of(
+                        "is_magic_item", false,
+                        "is_armor", true));
     }
 
     @GetMapping("/all-traits-desc")
@@ -83,6 +84,21 @@ public class Open5eController {
     @GetMapping("/class-profiraw")
     public List<String> getRawprofi() {
         return characterClassService.getAllClasses().stream().map(el -> el.getClassProficienciesFeature().getDescription()).toList();
+    }
+
+    @GetMapping("/class-prof-types")
+    public Map<String, List<String>> getFeatureTypes() {
+        return characterClassService.getAllClasses().stream().collect(Collectors.toMap(Open5eData::getName, c -> c.getFeatures().stream().map(Open5eFeature::getType).toList()));
+    }
+
+    @GetMapping("/class-start-eq")
+    public Map<String, String> getStargEq() {
+        return characterClassService.getAllClasses().stream().collect(Collectors.toMap(Open5eData::getName, c -> c.getStartingEquipment().getDescription()));
+    }
+
+    @GetMapping("/class-start-eq-split")
+    public Map<String, List<String>> getStargEqSplit() {
+        return characterClassService.getAllClasses().stream().collect(Collectors.toMap(Open5eData::getName, c -> startingEquipmentParser.parseStartingEquipment(c.getStartingEquipment())));
     }
 
     @GetMapping("/class-features")

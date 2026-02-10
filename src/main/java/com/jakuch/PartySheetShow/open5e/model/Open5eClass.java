@@ -27,11 +27,16 @@ public class Open5eClass extends Open5eData {
 
     public List<Open5eFeature> getClassLevelFeatures() {
         features.sort(Comparator.comparingInt(Open5eFeature::getLowestGainedAtLevel));
-        return this.features.stream().filter(f -> FeatureType.CLASS_LEVEL_FEATURE.name().equalsIgnoreCase(f.getType())).toList();
+        return features.stream().filter(f -> FeatureType.CLASS_LEVEL_FEATURE.name().equalsIgnoreCase(f.getType())).toList();
+    }
+
+    public Open5eFeature getStartingEquipment() {
+        return features.stream().filter(f -> FeatureType.STARTING_EQUIPMENT.name().equalsIgnoreCase(f.getType())).findFirst()
+                .orElse(null);
     }
 
     public Open5eFeature getClassProficienciesFeature() {
-        return this.features.stream().filter(f -> FeatureType.PROFICIENCIES.name().equalsIgnoreCase(f.getType())).findFirst()
+        return features.stream().filter(f -> FeatureType.PROFICIENCIES.name().equalsIgnoreCase(f.getType())).findFirst()
                 .orElse(null);
     }
 }
