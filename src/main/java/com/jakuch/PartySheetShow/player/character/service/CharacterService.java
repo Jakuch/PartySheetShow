@@ -1,6 +1,5 @@
 package com.jakuch.PartySheetShow.player.character.service;
 
-import com.jakuch.PartySheetShow.open5e.dataParser.RaceTraitsParser;
 import com.jakuch.PartySheetShow.open5e.model.Open5eClass;
 import com.jakuch.PartySheetShow.open5e.model.Open5eRace;
 import com.jakuch.PartySheetShow.open5e.services.CharacterClassService;
@@ -19,7 +18,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -76,18 +74,18 @@ public class CharacterService {
                         .key(c.getSrdKey())
                         .name(c.getName())
                         .isFirst(characterForm.getClasses().isEmpty())
-                                .classProficiencies(characterClassService.getClassProficiencies(c))
+                        .classProficiencies(characterClassService.getClassProficiencies(c))
                         .build()));
     }
 
     public void addRaceToForm(CharacterForm characterForm, List<Open5eRace> open5eRaces) {
         var race = open5eRaces.stream().filter(r -> characterForm.getChosenRaceKey().equals(r.getSrdKey())).findFirst();
         race.ifPresent(r ->
-            characterForm.setRace(CharacterRaceForm.builder()
-                    .key(r.getSrdKey())
-                    .name(r.getName())
-                    .traits(raceService.getParsedTraits(r))
-                    .build()));
+                characterForm.setRace(CharacterRaceForm.builder()
+                        .key(r.getSrdKey())
+                        .name(r.getName())
+                        .traits(raceService.getParsedTraits(r))
+                        .build()));
     }
 
     public void deleteClassFromForm(CharacterForm characterForm, String classKey) {

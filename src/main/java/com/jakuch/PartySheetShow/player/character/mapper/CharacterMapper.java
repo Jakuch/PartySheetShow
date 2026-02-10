@@ -1,10 +1,7 @@
 package com.jakuch.PartySheetShow.player.character.mapper;
 
 import com.jakuch.PartySheetShow.open5e.dataParser.RaceTraitsParser;
-import com.jakuch.PartySheetShow.open5e.dataParser.model.AbilityChoice;
-import com.jakuch.PartySheetShow.open5e.dataParser.model.SkillChoice;
-import com.jakuch.PartySheetShow.open5e.dataParser.model.SkillOrToolChoice;
-import com.jakuch.PartySheetShow.open5e.dataParser.model.ToolChoice;
+import com.jakuch.PartySheetShow.open5e.dataParser.model.*;
 import com.jakuch.PartySheetShow.open5e.model.Open5eSkill;
 import com.jakuch.PartySheetShow.open5e.services.AbilityService;
 import com.jakuch.PartySheetShow.open5e.services.CharacterClassService;
@@ -70,16 +67,12 @@ public class CharacterMapper {
         var formClasses = characterForm.getClasses();
         if (!formClasses.isEmpty()) {
             var classes = mapClasses(formClasses);
-            var firstClass = classes.stream()
-                    .filter(CharacterClass::isFirst)
-                    .findFirst()
-                    .get();
 
-            var classProficiencies = firstClass.getClassProficiencies();
-            classProficiencies.skillChoices().forEach(skillChoice -> character.getSkill(skillChoice.getChoice().getSrdKey()).setProficient());
-            classProficiencies.toolChoices().forEach(toolChoice -> character.addTool(toolChoice.getChoice().getSrdKey()));
+            var firstClass = getFirstClass(classes);
+            firstClass.getClassProficiencies().skillChoices().forEach(skillChoice -> character.getSkill(skillChoice.getChoice().getSrdKey()).setProficient());
+            firstClass.getClassProficiencies().toolChoices().forEach(toolChoice -> character.addTool(toolChoice.getChoice().getSrdKey()));
+            character.setSavingThrows(mapSavingThrows(character.getAbilities(), firstClass.getClassProficiencies()));
 
-            character.setSavingThrows(mapSavingThrows(character.getAbilities(), firstClass));
             character.getCharacterClasses().addAll(classes);
             character.setHealth(mapHealthAndCalculateHitDices(characterForm, classes));
         }
@@ -91,12 +84,12 @@ public class CharacterMapper {
                 character.getAbilities().forEach(ability -> {
                     var fixedBonus = raceForm.getAbilityBonuses().getFixed().get(ability.getName());
                     if (fixedBonus != null) {
-                        ability.addValue(fixedBonus);
+                        ability.addBonusValue(fixedBonus);
                     }
 
                     raceForm.getAbilityBonuses().getChoices().stream()
                             .filter(abilityChoice -> abilityChoice.getChosenAbility().equals(ability.getName()))
-                            .forEach(abilityChoice -> ability.addValue(abilityChoice.getAmount()));
+                            .forEach(abilityChoice -> ability.addBonusValue(abilityChoice.getAmount()));
                 });
                 raceForm.getProficiencies().getChoices().forEach(choice -> {
                     switch (choice) {
@@ -146,6 +139,7 @@ public class CharacterMapper {
         character.setLevel(characterForm.getLevel());
         updateAbilities(characterForm.getAbilities(), character.getAbilities());
         calculateSkillValues(character.getAbilities());
+        updateInitiative(character.getInitiative(), character.getAbility(AbilityName.DEXTERITY.getSrdKey()));
 //        character.setCurrentExperiencePoints(characterForm.getCurrentExperiencePoints()); TODO
 //        character.setInitiativeBonus(); TODO
 
@@ -158,12 +152,17 @@ public class CharacterMapper {
                 }
             }).toList();
 
-            character.setSavingThrows(mapSavingThrows(character.getAbilities(), classes.getFirst()));
+            var characterClass = getFirstClass(classes);
+            character.setSavingThrows(mapSavingThrows(character.getAbilities(), characterClass.getClassProficiencies())); //TODO take from form any bonus value
             character.setHealth(updateHealthAndHitDices(character.getHealth(), characterForm, classes));
         });
 
 //        character.setWalkingSpeed(characterForm.getWalkingSpeed()); //TODO that need to be calculated from race/class/features/items...
         return character;
+    }
+
+    private CharacterClass getFirstClass(List<CharacterClass> classes) {
+        return classes.stream().filter(CharacterClass::isFirst).findFirst().get();
     }
 
     private List<Ability> mapAbilities(CharacterForm characterForm) {
@@ -214,7 +213,7 @@ public class CharacterMapper {
 
     private Initiative mapInitiative(Ability ability) {
         var initiative = new Initiative();
-        initiative.setValue(ability.getBonus());
+        initiative.setValue(ability.getAbilityBonus());
         return initiative;
     }
 
@@ -246,15 +245,15 @@ public class CharacterMapper {
                 .toList();
     }
 
-    private List<SavingThrow> mapSavingThrows(List<Ability> abilities, CharacterClass characterClass) {
+    private List<SavingThrow> mapSavingThrows(List<Ability> abilities, ClassProficiencies classProficiencies) {
         return abilities.stream().map(ability -> {
             var savingThrow = new SavingThrow();
             savingThrow.setAbilityName(ability.getName());
-            savingThrow.setValue(ability.getBonus());
+            savingThrow.setValue(ability.getAbilityBonus());
 
-            characterClass.getClassProficiencies().savingThrows().forEach(st -> {
+            classProficiencies.savingThrows().forEach(st -> {
                 if (st.getSrdKey().equalsIgnoreCase(ability.getName().getSrdKey())) {
-                    savingThrow.setProficiency(Proficiency.FULL);
+                    savingThrow.setProficient();
                 }
             });
 
@@ -265,7 +264,7 @@ public class CharacterMapper {
     private void updateAbilities(Map<AbilityName, Integer> abilities, List<Ability> toUpdate) {
         toUpdate.forEach(ability -> {
             var value = abilities.get(AbilityName.findByNameOrSrdKey(ability.getName().getSrdKey()));
-            ability.setValue(value);
+            ability.setValue(value); //TODO instead of set it should should be add but that needs changes on chracterSheet form
         });
     }
 
@@ -286,7 +285,11 @@ public class CharacterMapper {
 
     private void calculateSkillValues(List<Ability> abilities) {
         abilities.forEach(ability ->
-                ability.getSkills().forEach(skill -> skill.setValue(ability.getBonus()))
+                ability.getSkills().forEach(skill -> skill.setValue(ability.getAbilityBonus()))
         );
+    }
+
+    private void updateInitiative(Initiative initiative, Ability ability) {
+        initiative.setValue(ability.getAbilityBonus());
     }
 }

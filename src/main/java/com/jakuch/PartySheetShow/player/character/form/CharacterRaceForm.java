@@ -23,7 +23,17 @@ public class CharacterRaceForm {
         return (AbilityBonuses) traits.get(RaceTraitsParser.RaceTraitsKey.ABILITY_INCREASE);
     }
 
+    public boolean hasAbilityBonusChoices() {
+        var abilityBonuses = getAbilityBonuses();
+        return abilityBonuses != null && abilityBonuses.getChoices() != null && !abilityBonuses.getChoices().isEmpty();
+    }
+
     public ProficiencyBonuses getProficiencies() {
         return (ProficiencyBonuses) traits.get(RaceTraitsParser.RaceTraitsKey.PROFICIENCY);
+    }
+
+    public boolean hasProficiencyChoices() {
+        ProficiencyBonuses proficiencies = getProficiencies();
+        return proficiencies != null && proficiencies.getChoices() != null && !proficiencies.getChoices().isEmpty();
     }
 }

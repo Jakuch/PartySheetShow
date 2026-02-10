@@ -209,7 +209,7 @@
                                                    th:field="*{abilities[__${abilityName}__]}">
                                         </div>
                                         <div class="col-3"
-                                             th:text="${character.getAbility(abilityName.getSrdKey()).getBonus()}">
+                                             th:text="${character.getAbility(abilityName.getSrdKey()).getAbilityBonus()}">
                                             bonus
                                         </div>
                                     </div>
@@ -330,7 +330,7 @@
                                              th:text="${character.getSkillProficiencyShortName(skillName.srdKey)}">
                                             profi
                                         </div>
-                                        <div class="col-2" th:text="${character.getSkill(skillName.srdKey).value}">
+                                        <div class="col-2" th:text="${character.getSkill(skillName.srdKey).getTotalValue(character.level)}">
                                             value
                                         </div>
                                         <div class="col-2"

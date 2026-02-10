@@ -63,20 +63,12 @@ public class RaceTraitsParser {
 
     private boolean containsResistance(Open5eRaceTrait trait) {
         var description = ParserHelper.removeSpecialCharacters(trait.getDescription());
-        return containsResistance(description);
-    }
-
-    private boolean containsResistance(String description) {
-        return description != null && RESISTANCE_PATTERN.matcher(description).find();
+        return RESISTANCE_PATTERN.matcher(description).find();
     }
 
     private boolean containsAdvantage(Open5eRaceTrait trait) {
         var description = ParserHelper.removeSpecialCharacters(trait.getDescription());
-        return containsAdvantage(description);
-    }
-
-    private boolean containsAdvantage(String description) {
-        return description != null && ADV_PATTERN.matcher(description).find();
+        return ADV_PATTERN.matcher(description).find();
     }
 
     private int parseDarkvision(Open5eRaceTrait trait) {
@@ -85,23 +77,17 @@ public class RaceTraitsParser {
                 .trim(), 0);
     }
 
-    private int parseDarkvision(Open5eRace open5eRace) {
-        return filterTraitsByKey(open5eRace.getRaceTraits(), RaceTraitsKey.DARKVISION)
-                .map(this::parseDarkvision)
-                .orElse(0);
-    }
-
-    public int parseSpeedInFt(Open5eRaceTrait trait) {
+    private int parseSpeedInFt(Open5eRaceTrait trait) {
         var speedValue = trait.getDescription().replaceAll("[^-?0-9]+", " ").trim();
         return ParserHelper.safeParseInt(speedValue, 30);
     }
 
-    public int parseSpeedInFt(Open5eRace open5eRace) {
+    private int parseSpeedInFt(Open5eRace open5eRace) {
         var trait = filterTraitsByKey(open5eRace.getRaceTraits(), RaceTraitsKey.SPEED);
         return trait.map(this::parseSpeedInFt).orElse(0);
     }
 
-    public Size parseSize(Open5eRaceTrait trait) {
+    private Size parseSize(Open5eRaceTrait trait) {
         var size = Arrays.stream(ParserHelper.removeSpecialCharacters(trait.getDescription())
                         .split(" "))
                 .map(String::toUpperCase)
@@ -111,16 +97,16 @@ public class RaceTraitsParser {
         return Size.valueOf(size);
     }
 
-    public Size parseSize(Open5eRace open5eRace) {
+    private Size parseSize(Open5eRace open5eRace) {
         var trait = filterTraitsByKey(open5eRace.getRaceTraits(), RaceTraitsKey.SIZE);
         return trait.map(this::parseSize).orElse(Size.MEDIUM);
     }
 
-    public AbilityBonuses parseAbilityIncrease(Open5eRaceTrait trait) {
+    private AbilityBonuses parseAbilityIncrease(Open5eRaceTrait trait) {
         return abilityIncreaseParser.parse(trait.getDescription());
     }
 
-    public AbilityBonuses parseAbilityIncrease(Open5eRace open5eRace) {
+    private AbilityBonuses parseAbilityIncrease(Open5eRace open5eRace) {
         return filterTraitsByKey(open5eRace.getRaceTraits(), RaceTraitsKey.ABILITY_INCREASE)
                 .map(this::parseAbilityIncrease).orElse(AbilityBonuses.builder().build());
     }

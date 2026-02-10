@@ -18,7 +18,7 @@ public abstract class BaseSkill {
         return this.value + this.bonusValue + calculateProficiencyBonus(level);
     }
 
-    public int calculateProficiencyBonus(Level level) {
+    private int calculateProficiencyBonus(Level level) {
         return Proficiency.calculateProficiencyBonus(this.proficiency, level);
     }
 

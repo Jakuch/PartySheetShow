@@ -81,7 +81,7 @@
         <div class="col-12" th:if="*{race}">
             <div class="row">
                 <div class="col-12 mb-2">
-                    <div class="mb-2">Select Race bonus abilities:</div>
+                    <div th:if="*{race.hasAbilityBonusChoices()}" class="mb-2">Select Race bonus abilities:</div>
                     <ul class="row list-unstyled">
                         <li class="col-2" th:each="choice, status : *{race.abilityBonuses.choices}">
                             <select class="form-control"
@@ -94,7 +94,7 @@
                             </select>
                         </li>
                     </ul>
-                    <div class="mb-2">Select Race bonus proficiencies:</div>
+                    <div th:if="*{race.hasProficiencyChoices()}" class="mb-2">Select Race bonus proficiencies:</div>
                     <ul class="row list-unstyled">
                         <li class="col-2" th:each="choice, status : *{race.proficiencies.choices}">
                             <select class="form-control"

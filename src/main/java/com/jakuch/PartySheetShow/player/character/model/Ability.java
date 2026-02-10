@@ -12,24 +12,22 @@ public class Ability {
     private AbilityName name;
     private int value;
     private int bonusValue;
-    private int bonus;
     private List<Skill> skills;
 
     public int getTotalValue() {
         return this.value + this.bonusValue;
     }
 
-    private void calculateBonus() {
-        this.bonus = (this.value - 10) / 2;
+    public int getAbilityBonus() {
+        return (getTotalValue() - 10) / 2;
     }
 
     private void setSkillValues() {
-        this.skills.forEach(skill -> skill.setValue(this.getBonus()));
+        this.skills.forEach(skill -> skill.setValue(this.getAbilityBonus()));
     }
 
-    public void addValue(int value) {
-        this.value += value;
-        calculateBonus();
+    public void addBonusValue(int bonusValue) {
+        this.bonusValue += bonusValue;
     }
 
     public static class AbilityBuilder {

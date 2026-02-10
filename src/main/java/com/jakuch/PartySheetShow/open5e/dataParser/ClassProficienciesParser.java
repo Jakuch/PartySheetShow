@@ -22,6 +22,36 @@ public class ClassProficienciesParser {
     private static final Pattern TOOL_CHOICE_PATTERN = Pattern.compile("(?i)\\b(?:choose\\s+)?" + NUMBER_TOKEN + "(?:\\s+\\w+)?" + "\\s*(?:choice)?\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern SKILL_LIST_PATTERN = Pattern.compile("(?:from|:)\\s*(.+)$", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 
+    public ClassProficiencies mapToClassProficiencies(String description) {
+        Map<String, String> sections = extractSections(description);
+
+        List<String> armor = mapToList(sections.get("Armor"));
+        List<String> weapons = mapToList(sections.get("Weapons"));
+
+        var toolsSection = sections.get("Tools");
+        List<ToolName> tools = mapTools(toolsSection);
+        var toolChoices = new ArrayList<ToolChoice>();
+        int toolsCount = countTools(toolsSection);
+        for (int i = 0; i < toolsCount; i++) {
+            toolChoices.add(ToolChoice.builder()
+                    .options(getToolOptions(toolsSection))
+                    .build());
+        }
+
+        List<AbilityName> savingThrows = parseSavingThrowsProficiencies(sections.get("Saving Throws"));
+
+        var skillsSection = sections.get("Skills");
+        int skillCount = getChooseCount(skillsSection);
+        var skillChoices = new ArrayList<SkillChoice>();
+        for (int i = 0; i < skillCount; i++) {
+            skillChoices.add(SkillChoice.builder()
+                    .options(getSkillOptions(skillsSection))
+                    .build());
+        }
+
+        return new ClassProficiencies(armor, weapons, tools, toolChoices, savingThrows, skillChoices);
+    }
+
     private Map<String, String> extractSections(String description) {
         if (description == null) return Map.of();
 
@@ -90,43 +120,13 @@ public class ClassProficienciesParser {
         return List.of();
     }
 
-    public int getChooseCount(String section) {
+    private int getChooseCount(String section) {
         var matcher = CHOOSE_SKILL_COUNT_PATTERN.matcher(section);
         if (!matcher.find()) {
             throw new IllegalArgumentException("Cannot find count in: " + section);
         }
 
         return WORD_NUMBERS.getOrDefault(matcher.group(1), 0);
-    }
-
-    public ClassProficiencies mapToClassProficiencies(String description) {
-        Map<String, String> sections = extractSections(description);
-
-        List<String> armor = mapToList(sections.get("Armor"));
-        List<String> weapons = mapToList(sections.get("Weapons"));
-
-        var toolsSection = sections.get("Tools");
-        List<ToolName> tools = mapTools(toolsSection);
-        var toolChoices = new ArrayList<ToolChoice>();
-        int toolsCount = countTools(toolsSection);
-        for (int i = 0; i < toolsCount; i++) {
-            toolChoices.add(ToolChoice.builder()
-                    .options(getToolOptions(toolsSection))
-                    .build());
-        }
-
-        List<AbilityName> savingThrows = parseSavingThrowsProficiencies(sections.get("Saving Throws"));
-
-        var skillsSection = sections.get("Skills");
-        int skillCount = getChooseCount(skillsSection);
-        var skillChoices = new ArrayList<SkillChoice>();
-        for (int i = 0; i < skillCount; i++) {
-            skillChoices.add(SkillChoice.builder()
-                    .options(getSkillOptions(skillsSection))
-                    .build());
-        }
-
-        return new ClassProficiencies(armor, weapons, tools, toolChoices, savingThrows, skillChoices);
     }
 
     private List<ToolName> getToolOptions(String toolsSection) {
